@@ -438,7 +438,10 @@ tr:hover td{background:var(--surface3)}
     <div id="auth-user-ui" style="display:none" class="auth-user-badge">
       <div class="auth-avatar" id="auth-avatar">م</div>
       <div>
-        <div class="auth-username" id="auth-username-label">—</div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <div class="auth-username" id="auth-username-label">—</div>
+          <div id="auth-dept-badges" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+        </div>
         <span class="auth-role" id="auth-role-badge">مدير النظام</span>
       </div>
       <button class="auth-logout-btn" id="logout-btn" data-i18n="logoutBtn">خروج</button>
@@ -914,6 +917,22 @@ function applyAuthState(){
     const roleEl=document.getElementById('auth-role-badge');
     if(roleEl) roleEl.textContent=auth.role==='head'?(lang==='en'?'Head Admin':'المدير الرئيسي'):(lang==='en'?'Admin':'مدير');
     roleEl&&(roleEl.style.color=auth.role==='head'?'#c9a227':'');
+    // Department badges
+    const deptBadgesEl=document.getElementById('auth-dept-badges');
+    if(deptBadgesEl){
+      const users=loadUsers()||[];
+      const u=users.find(x=>x.username===auth.username);
+      const assignedIds=u?.depts||[];
+      if(assignedIds.length>0){
+        deptBadgesEl.innerHTML=assignedIds.map(id=>{
+          const d=orgDepts.find(x=>x.id===id);
+          if(!d)return '';
+          return `<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px;background:${d.color}28;color:${d.color};border:1px solid ${d.color}55;white-space:nowrap">${lang==='en'?d.nameEn:d.name}</span>`;
+        }).join('');
+      } else {
+        deptBadgesEl.innerHTML=''; // no badges if assigned to all
+      }
+    }
     // Show entry content, hide locked
     document.getElementById('entry-locked').style.display='none';
     document.getElementById('entry-content').style.display='block';
