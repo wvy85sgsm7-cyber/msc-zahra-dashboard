@@ -813,15 +813,25 @@ tr:hover td{background:var(--surface3)}
 'use strict';
 
 /* ─── DEPARTMENTS ─────────────────────────────────── */
-const DEFAULT_DEPTS=[
+/* Student-tracking departments — fixed, never shown in dept manager */
+const DEPTS=[
   {id:'d1',name:'قسم البنين الأهلي الابتدائي',nameEn:'Boys National Elementary',short:'ب.أ.ا',shortEn:'BNE',icon:'🏫',color:'#1A8C8C'},
   {id:'d2',name:'قسم البنين الأهلي المتوسط والثانوي',nameEn:'Boys National Middle/High',short:'ب.أ.م',shortEn:'BNM',icon:'📚',color:'#0B6E8C'},
   {id:'d3',name:'قسم البنين العالمي',nameEn:'Boys International',short:'ب.ع',shortEn:'BI',icon:'🌐',color:'#2AB5A0'},
   {id:'d4',name:'قسم البنات الأهلي',nameEn:'Girls National',short:'بت.أ',shortEn:'GN',icon:'🎀',color:'#3A9E6E'},
   {id:'d5',name:'قسم البنات العالمي',nameEn:'Girls International',short:'بت.ع',shortEn:'GI',icon:'🌸',color:'#5BB85D'},
 ];
-let DEPTS=load('msc_depts_v1', DEFAULT_DEPTS);
-function saveDepts(){localStorage.setItem('msc_depts_v1',JSON.stringify(DEPTS));}
+
+/* Organisational departments — internal only, for user assignment in settings */
+const DEFAULT_ORG_DEPTS=[
+  {id:'d1',name:'قسم البنين الأهلي الابتدائي',nameEn:'Boys National Elementary',icon:'🏫',color:'#1A8C8C'},
+  {id:'d2',name:'قسم البنين الأهلي المتوسط والثانوي',nameEn:'Boys National Middle/High',icon:'📚',color:'#0B6E8C'},
+  {id:'d3',name:'قسم البنين العالمي',nameEn:'Boys International',icon:'🌐',color:'#2AB5A0'},
+  {id:'d4',name:'قسم البنات الأهلي',nameEn:'Girls National',icon:'🎀',color:'#3A9E6E'},
+  {id:'d5',name:'قسم البنات العالمي',nameEn:'Girls International',icon:'🌸',color:'#5BB85D'},
+];
+let orgDepts=load('msc_depts_v1', DEFAULT_ORG_DEPTS);
+function saveOrgDepts(){localStorage.setItem('msc_depts_v1',JSON.stringify(orgDepts));}
 
 /* ─── TUITION DATA ────────────────────────────────── */
 const DEFAULT_FEES=[
@@ -963,7 +973,7 @@ function closeLoginModal(){document.getElementById('login-modal').classList.remo
 let data=load(K.DATA,defaultData());
 let reports=load(K.REPORTS,[]);
 let fees=load(K.FEES,DEFAULT_FEES);
-DEPTS=load(K.DEPTS,DEFAULT_DEPTS);
+orgDepts=load(K.DEPTS,DEFAULT_ORG_DEPTS);
 let isDark=true;
 const charts={};
 
@@ -1560,7 +1570,7 @@ function renderUsersTable(){
     const deleteBtn=!isMe&&!isHead
       ?`<button class="btn" style="padding:3px 9px;font-size:11px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)" onclick="deleteUser('${u.username}')">${t('deleteBtnLabel')}</button>`:'';
     const userDepts=(u.depts&&u.depts.length>0)
-      ?u.depts.map(id=>{const d=DEPTS.find(x=>x.id===id);return d?`<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:${d.color}22;color:${d.color};border:1px solid ${d.color}44">${lang==='en'?d.shortEn:d.short}</span>`:''}).join(' ')
+      ?u.depts.map(id=>{const d=orgDepts.find(x=>x.id===id);return d?`<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:${d.color}22;color:${d.color};border:1px solid ${d.color}44">${d.nameEn||d.name}</span>`:''}).join(' ')
       :`<span style="font-size:10px;color:var(--text3)">${lang==='en'?'All':'الكل'}</span>`;
     const assignBtn=auth.role==='head'?`<button class="btn" style="padding:2px 7px;font-size:10px;border:1px solid var(--border)" onclick="openDeptAssign('${u.username}')">${lang==='en'?'✏️ Edit':'✏️ تعديل'}</button>`:'';
     return `<tr>
@@ -1685,12 +1695,13 @@ async function doLogin(){
   toast(t('toastWelcome')+' '+user.displayName+' 👋');
 }
 
-/* ─── DEPARTMENT MANAGER ──────────────────────────── */
+/* ─── DEPARTMENT MANAGER (internal / settings only) ── */
 function buildDeptManager(){
   const list=document.getElementById('dept-mgr-list');
   if(!list)return;
   list.innerHTML='';
-  DEPTS.forEach(d=>{
+  orgDepts.forEach(d=>{
+    const isDefault=['d1','d2','d3','d4','d5'].includes(d.id);
     const row=document.createElement('div');
     row.style.cssText='display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)';
     row.innerHTML=`
@@ -1698,8 +1709,10 @@ function buildDeptManager(){
       <div style="flex:1;font-size:13px;font-weight:700;color:var(--text)">${d.name}</div>
       <div style="font-size:11px;color:var(--text3)">${d.nameEn}</div>
       <span style="width:18px;height:18px;border-radius:4px;background:${d.color};display:inline-block;border:1px solid var(--border)"></span>
-      <button class="btn" style="padding:4px 11px;font-size:12px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)" data-del-dept="${d.id}">${lang==='en'?'🗑 Remove':'🗑 حذف'}</button>`;
-    row.querySelector('[data-del-dept]').addEventListener('click',()=>deleteDept(d.id));
+      ${isDefault
+        ? `<span style="font-size:10px;color:var(--text3);padding:3px 8px;border:1px solid var(--border);border-radius:5px">${lang==='en'?'Default':'افتراضي'}</span>`
+        : `<button class="btn" style="padding:4px 11px;font-size:12px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)" data-del-dept="${d.id}">${lang==='en'?'🗑 Remove':'🗑 حذف'}</button>`}`;
+    row.querySelector('[data-del-dept]')?.addEventListener('click',()=>deleteDept(d.id));
     list.appendChild(row);
   });
 }
@@ -1712,13 +1725,9 @@ function addDept(){
   const msg=document.getElementById('add-dept-msg');
   if(!name){msg.textContent=lang==='en'?'Enter department name':'أدخل اسم القسم';msg.style.display='block';return;}
   const id='dept_'+Date.now();
-  const short=nameEn?nameEn.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,4):name.slice(0,3);
-  DEPTS.push({id,name,nameEn:nameEn||name,short:name.slice(0,4),shortEn:short,icon,color});
-  saveDepts();
-  // Add empty data slot
-  if(!data[id]) data[id]={base:0,newS:0,out:0};
-  save(K.DATA,data);
-  buildDeptManager();buildEntryGrid();updateDashboard();
+  orgDepts.push({id,name,nameEn:nameEn||name,icon,color});
+  saveOrgDepts();
+  buildDeptManager();
   document.getElementById('new-dept-name').value='';
   document.getElementById('new-dept-name-en').value='';
   document.getElementById('new-dept-icon').value='';
@@ -1727,17 +1736,17 @@ function addDept(){
 }
 
 function deleteDept(id){
-  const d=DEPTS.find(x=>x.id===id);
+  const d=orgDepts.find(x=>x.id===id);
   if(!d)return;
   if(['d1','d2','d3','d4','d5'].includes(id)){toast(lang==='en'?'Cannot delete default departments':'لا يمكن حذف الأقسام الافتراضية','err');return;}
   if(!confirm((lang==='en'?'Delete department: ':'حذف القسم: ')+d.name+'؟'))return;
-  DEPTS=DEPTS.filter(x=>x.id!==id);
-  saveDepts();
-  // Remove from user dept assignments
+  orgDepts=orgDepts.filter(x=>x.id!==id);
+  saveOrgDepts();
+  // Remove from all user dept assignments
   const users=loadUsers()||[];
   users.forEach(u=>{if(u.depts)u.depts=u.depts.filter(x=>x!==id);});
   localStorage.setItem(K.USERS,JSON.stringify(users));
-  buildDeptManager();buildEntryGrid();updateDashboard();
+  buildDeptManager();
   logAction('DEPT_DELETE',d.name);toast(lang==='en'?'Department removed':'تم حذف القسم','err');
 }
 
@@ -1750,7 +1759,7 @@ function openDeptAssign(username){
   if(!u)return;
   document.getElementById('dept-assign-title').textContent=(lang==='en'?'Assign Departments — ':'تعيين الأقسام — ')+u.displayName;
   const box=document.getElementById('dept-assign-checkboxes');
-  box.innerHTML=DEPTS.map(d=>`
+  box.innerHTML=orgDepts.map(d=>`
     <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
       <input type="checkbox" value="${d.id}" ${(!u.depts||u.depts.length===0||u.depts.includes(d.id))?'checked':''} style="accent-color:var(--brand-light);width:16px;height:16px"/>
       <span style="font-size:18px">${d.icon}</span>
