@@ -353,6 +353,76 @@ tr:hover td{background:var(--surface3)}
 .report-btn{position:relative;background:rgba(201,162,39,.15);border:1px solid rgba(201,162,39,.35);color:#c9a227}
 .report-btn:hover{background:rgba(201,162,39,.28);color:#c9a227}
 .report-btn-badge{position:absolute;top:-5px;right:-5px;min-width:16px;height:16px;border-radius:8px;background:#e05252;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;line-height:1}
+/* ── MESSAGES ── */
+.msg-panel{width:min(860px,96vw);height:min(620px,88vh);border-radius:var(--radius);
+  background:var(--bg2);border:1px solid var(--border2);box-shadow:var(--shadow);
+  display:flex;flex-direction:column;overflow:hidden}
+.msg-panel-header{display:flex;align-items:center;justify-content:space-between;
+  padding:15px 20px;border-bottom:1px solid var(--border);flex-shrink:0;
+  background:linear-gradient(135deg,var(--brand) 0%,#0d3a50 100%)}
+.msg-panel-title{font-size:15px;font-weight:800;color:#fff}
+.msg-close-btn{background:rgba(255,255,255,0.1);border:none;border-radius:8px;
+  width:32px;height:32px;color:#fff;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;transition:all var(--tr)}
+.msg-close-btn:hover{background:rgba(255,255,255,0.22)}
+.msg-body{display:flex;flex:1;overflow:hidden}
+.msg-sidebar{width:230px;flex-shrink:0;border-left:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;background:var(--bg3)}
+[dir=ltr] .msg-sidebar{border-left:none;border-right:1px solid var(--border)}
+.msg-sidebar-top{padding:10px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:6px}
+.msg-contacts{flex:1;overflow-y:auto;padding:5px}
+.msg-contact{display:flex;align-items:center;gap:9px;padding:9px 10px;
+  border-radius:9px;cursor:pointer;transition:all var(--tr);margin-bottom:2px;position:relative}
+.msg-contact:hover{background:var(--surface2)}
+.msg-contact.active{background:var(--surface3);border:1px solid var(--border2)}
+.msg-contact-av{width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--brand-light),var(--brand-green));
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff}
+.msg-contact-info{flex:1;overflow:hidden}
+.msg-contact-name{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg-contact-preview{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.msg-unread-dot{width:18px;height:18px;border-radius:50%;background:var(--red);
+  color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0}
+.msg-thread-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.msg-empty-state{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;color:var(--text3);gap:10px;padding:40px}
+.msg-thread-hdr{padding:12px 16px;border-bottom:1px solid var(--border);
+  font-size:14px;font-weight:700;color:var(--text);flex-shrink:0;
+  display:flex;align-items:center;gap:10px}
+.msg-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:6px}
+.msg-bw{display:flex;flex-direction:column;max-width:68%}
+.msg-bw.sent{align-self:flex-start}
+.msg-bw.recv{align-self:flex-end}
+[dir=ltr] .msg-bw.sent{align-self:flex-end}
+[dir=ltr] .msg-bw.recv{align-self:flex-start}
+.msg-bubble{padding:9px 14px;border-radius:14px;font-size:13px;line-height:1.55;word-break:break-word}
+.msg-bw.sent .msg-bubble{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-bottom-right-radius:3px}
+.msg-bw.recv .msg-bubble{background:var(--surface2);color:var(--text);border-bottom-left-radius:3px}
+[dir=ltr] .msg-bw.sent .msg-bubble{border-bottom-right-radius:14px;border-bottom-left-radius:3px}
+[dir=ltr] .msg-bw.recv .msg-bubble{border-bottom-left-radius:14px;border-bottom-right-radius:3px}
+.msg-meta{font-size:10px;color:var(--text3);margin-top:3px;padding:0 4px}
+.msg-bw.sent .msg-meta{text-align:right}
+[dir=ltr] .msg-bw.sent .msg-meta{text-align:left}
+.msg-bw.recv .msg-meta{text-align:left}
+[dir=ltr] .msg-bw.recv .msg-meta{text-align:right}
+.msg-input-row{display:flex;gap:8px;padding:11px 14px;border-top:1px solid var(--border);flex-shrink:0}
+.msg-inp{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:10px;
+  padding:9px 13px;color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;outline:none;
+  transition:border-color var(--tr)}
+.msg-inp:focus{border-color:var(--brand-light)}
+.msg-send-btn{background:linear-gradient(135deg,var(--brand),var(--brand2));border:none;
+  border-radius:10px;padding:9px 18px;color:#fff;font-family:'Cairo',sans-serif;
+  font-size:13px;font-weight:700;cursor:pointer;transition:all var(--tr);white-space:nowrap}
+.msg-send-btn:hover{filter:brightness(1.12)}
+.msg-sec-label{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.6px;
+  text-transform:uppercase;padding:8px 10px 2px}
+.msg-btn{position:relative;background:rgba(59,130,246,.13);border:1px solid rgba(59,130,246,.32);color:#60a5fa}
+.msg-btn:hover{background:rgba(59,130,246,.24);color:#93c5fd}
+.msg-picker{position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);
+  box-shadow:var(--shadow);min-width:200px;z-index:300;padding:5px;
+  display:none;max-height:220px;overflow-y:auto}
 /* ── SCHOOL MANAGER ── */
 .school-mgr{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
 .school-mgr-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;transition:border-color var(--tr)}
@@ -462,6 +532,7 @@ tr:hover td{background:var(--surface3)}
       </div>
       <button class="auth-logout-btn" id="logout-btn" data-i18n="logoutBtn">خروج</button>
     </div>
+    <button class="tb-btn msg-btn" id="msg-open-btn" title="الرسائل" style="display:none;position:relative">💬<span class="report-btn-badge" id="msg-unread-badge" style="display:none;background:#3b82f6">0</span></button>
     <button class="tb-btn report-btn" id="report-issue-btn" title="الإبلاغ عن مشكلة" style="display:none">📩<span class="report-btn-badge" id="inbox-unread-badge" style="display:none">0</span></button>
     <button class="tb-btn" id="lang-btn" title="English / عربي">🌐 EN</button>
     <button class="tb-btn" id="theme-btn" title="تبديل المظهر">🌙</button>
@@ -824,6 +895,49 @@ tr:hover td{background:var(--surface3)}
   </div>
 </div>
 
+<!-- MESSAGES MODAL -->
+<div class="modal-overlay" id="messages-modal">
+  <div class="msg-panel">
+    <div class="msg-panel-header">
+      <span class="msg-panel-title">💬 <span data-i18n="msgTitle">الرسائل</span></span>
+      <button class="msg-close-btn" id="msg-close-btn">✕</button>
+    </div>
+    <div class="msg-body">
+      <!-- Sidebar -->
+      <div class="msg-sidebar">
+        <div class="msg-sidebar-top">
+          <div style="position:relative">
+            <button class="btn btn-brand" id="msg-new-btn" style="width:100%;font-size:12px;padding:7px 10px" data-i18n="msgNewBtn">✉️ محادثة جديدة</button>
+            <div class="msg-picker" id="msg-picker"></div>
+          </div>
+          <div id="msg-all-convos-wrap" style="display:none">
+            <button id="msg-all-toggle-btn" onclick="toggleMsgViewAll()" style="width:100%;text-align:right;background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text2);font-family:'Cairo',sans-serif;font-size:12px;cursor:pointer;transition:all var(--tr)">
+              👁️ <span data-i18n="msgAllConvos">كل المحادثات</span>
+            </button>
+          </div>
+        </div>
+        <div class="msg-sec-label" id="msg-sidebar-label" data-i18n="msgMyChats">محادثاتي</div>
+        <div class="msg-contacts" id="msg-contacts"></div>
+      </div>
+      <!-- Thread panel -->
+      <div class="msg-thread-panel">
+        <div class="msg-empty-state" id="msg-empty-state">
+          <div style="font-size:44px">💬</div>
+          <div style="font-size:14px" data-i18n="msgSelectChat">اختر محادثة للبدء</div>
+        </div>
+        <div id="msg-thread-active" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+          <div class="msg-thread-hdr" id="msg-thread-hdr"></div>
+          <div class="msg-messages" id="msg-messages"></div>
+          <div class="msg-input-row" id="msg-input-row">
+            <input class="msg-inp" id="msg-inp" type="text" placeholder="اكتب رسالة…"/>
+            <button class="msg-send-btn" id="msg-send-btn" data-i18n="msgSend">إرسال ←</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- LOGIN MODAL -->
 <div class="modal-overlay" id="login-modal">
   <div class="modal login-modal-inner">
@@ -918,7 +1032,7 @@ const FEE_STAGES=[{key:'kg',label:'روضة'},{key:'elem',label:'ابتدائي'
 
 /* ─── STORAGE KEYS ────────────────────────────────── */
 const K={DATA:'msc_data_v3',REPORTS:'msc_reports_v3',THEME:'msc_theme_v3',
-  SAVED:'msc_last_saved',FEES:'msc_fees_v4',USERS:'msc_users_v3',SESSION:'msc_sess_v2',LOGS:'msc_logs_v1',DEPTS:'msc_depts_v1',ISSUES:'msc_issues_v1'};
+  SAVED:'msc_last_saved',FEES:'msc_fees_v4',USERS:'msc_users_v3',SESSION:'msc_sess_v2',LOGS:'msc_logs_v1',DEPTS:'msc_depts_v1',ISSUES:'msc_issues_v1',MESSAGES:'msc_msgs_v1'};
 
 /* ─── AUTH ────────────────────────────────────────── */
 // Default user stored if none exist
@@ -1022,7 +1136,10 @@ function applyAuthState(){
     if(userMgmtSec) userMgmtSec.style.display=isHead?'':'none';
     const deptMgmtSec=document.getElementById('dept-mgmt-section');
     if(deptMgmtSec) deptMgmtSec.style.display=isHead?'':'none';
-    // Report button (all logged-in users) + inbox tab (head only)
+    // Messages button (all logged-in) + report button + inbox tab (head only)
+    const msgBtn=document.getElementById('msg-open-btn');
+    if(msgBtn) msgBtn.style.display='flex';
+    updateMsgBadge();
     const reportBtn=document.getElementById('report-issue-btn');
     if(reportBtn) reportBtn.style.display='flex';
     document.getElementById('inbox-tab-btn').style.display=isHead?'':'none';
@@ -1052,6 +1169,8 @@ function applyAuthState(){
     document.getElementById('inbox-tab-btn').style.display='none';
     const reportBtnGuest=document.getElementById('report-issue-btn');
     if(reportBtnGuest) reportBtnGuest.style.display='none';
+    const msgBtnGuest=document.getElementById('msg-open-btn');
+    if(msgBtnGuest) msgBtnGuest.style.display='none';
   }
   renderReports(); // re-render table with/without delete buttons
 }
@@ -1551,6 +1670,20 @@ async function init(){
   document.getElementById('add-user-btn').addEventListener('click',addUser);
 
   // Dept manager
+  // Messaging system
+  document.getElementById('msg-open-btn').addEventListener('click',openMessagesModal);
+  document.getElementById('msg-close-btn').addEventListener('click',closeMessagesModal);
+  document.getElementById('messages-modal').addEventListener('click',e=>{if(e.target.id==='messages-modal')closeMessagesModal();});
+  document.getElementById('msg-new-btn').addEventListener('click',showMsgNewPicker);
+  document.getElementById('msg-send-btn').addEventListener('click',sendMsg);
+  document.getElementById('msg-inp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
+  // Close picker when clicking elsewhere
+  document.addEventListener('click',e=>{
+    const picker=document.getElementById('msg-picker');
+    const newBtn=document.getElementById('msg-new-btn');
+    if(picker&&newBtn&&!newBtn.contains(e.target)&&!picker.contains(e.target)) picker.style.display='none';
+  });
+
   // Issues / report system
   document.getElementById('report-issue-btn').addEventListener('click',openReportModal);
   document.getElementById('report-cancel-btn').addEventListener('click',closeReportModal);
@@ -2031,6 +2164,194 @@ function clearResolved(){
   toast(lang==='en'?'Resolved reports cleared.':'تم مسح البلاغات المحلولة.');
 }
 
+/* ─── MESSAGING SYSTEM ───────────────────────────── */
+function loadMessages(){try{return JSON.parse(localStorage.getItem(K.MESSAGES))||[];}catch{return[];}}
+function saveMessages(msgs){localStorage.setItem(K.MESSAGES,JSON.stringify(msgs));}
+
+let _msgThread=null;   // username of the person currently in thread (or "pair:u1|u2" for head view-all)
+let _msgViewAll=false; // head admin "all convos" mode
+
+function updateMsgBadge(){
+  const msgs=loadMessages();
+  const unread=msgs.filter(m=>m.to===auth.username&&!m.read).length;
+  const b=document.getElementById('msg-unread-badge');
+  if(b){b.textContent=unread;b.style.display=unread>0?'flex':'none';}
+}
+
+function openMessagesModal(){
+  if(!auth.loggedIn){openLoginModal();return;}
+  _msgThread=null;_msgViewAll=false;
+  document.getElementById('messages-modal').classList.add('open');
+  document.getElementById('msg-empty-state').style.display='flex';
+  document.getElementById('msg-thread-active').style.display='none';
+  if(auth.role==='head') document.getElementById('msg-all-convos-wrap').style.display='block';
+  else document.getElementById('msg-all-convos-wrap').style.display='none';
+  renderMsgSidebar();
+}
+function closeMessagesModal(){document.getElementById('messages-modal').classList.remove('open');}
+
+/* Build sidebar contact list */
+function renderMsgSidebar(){
+  const msgs=loadMessages();
+  const isHead=auth.role==='head';
+  const lbl=document.getElementById('msg-sidebar-label');
+
+  if(_msgViewAll&&isHead){
+    if(lbl) lbl.textContent=lang==='en'?'All Conversations':'كل المحادثات';
+    // Build all unique pairs
+    const pairMap={};
+    msgs.forEach(m=>{
+      const key=[m.from,m.to].sort().join('|');
+      if(!pairMap[key]) pairMap[key]={key,u1:m.from,u2:m.to,u1d:m.fromDisplay,u2d:m.toDisplay,lastTs:0,msgs:[]};
+      pairMap[key].msgs.push(m);
+      if(m.ts>pairMap[key].lastTs) pairMap[key].lastTs=m.ts;
+    });
+    const pairs=Object.values(pairMap).sort((a,b)=>b.lastTs-a.lastTs);
+    if(!pairs.length){
+      document.getElementById('msg-contacts').innerHTML=`<div style="padding:20px;text-align:center;color:var(--text3);font-size:12px">${lang==='en'?'No conversations yet.':'لا توجد محادثات بعد.'}</div>`;
+      return;
+    }
+    document.getElementById('msg-contacts').innerHTML=pairs.map(p=>{
+      const last=p.msgs.sort((a,b)=>b.ts-a.ts)[0];
+      const preview=(last?.body||'').substring(0,28)+(last?.body?.length>28?'…':'');
+      const active=_msgThread===('pair:'+p.key);
+      return `<div class="msg-contact${active?' active':''}" onclick="openPairThread('${p.key}','${p.u1}','${p.u2}','${p.u1d}','${p.u2d}')">
+        <div class="msg-contact-av" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);font-size:11px;width:34px;height:34px">${p.u1.charAt(0).toUpperCase()}↔${p.u2.charAt(0).toUpperCase()}</div>
+        <div class="msg-contact-info">
+          <div class="msg-contact-name">${p.u1d} ↔ ${p.u2d}</div>
+          <div class="msg-contact-preview">${preview}</div>
+        </div>
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  // My conversations
+  if(lbl) lbl.textContent=lang==='en'?'My Chats':'محادثاتي';
+  const myMsgs=msgs.filter(m=>m.from===auth.username||m.to===auth.username);
+  const threadMap={};
+  myMsgs.forEach(m=>{
+    const other=m.from===auth.username?m.to:m.from;
+    const otherD=m.from===auth.username?m.toDisplay:m.fromDisplay;
+    if(!threadMap[other]) threadMap[other]={other,otherD,msgs:[],unread:0};
+    threadMap[other].msgs.push(m);
+    if(m.to===auth.username&&!m.read) threadMap[other].unread++;
+  });
+  const threads=Object.values(threadMap).sort((a,b)=>{
+    return (b.msgs.sort((x,y)=>y.ts-x.ts)[0]?.ts||0)-(a.msgs.sort((x,y)=>y.ts-x.ts)[0]?.ts||0);
+  });
+  if(!threads.length){
+    document.getElementById('msg-contacts').innerHTML=`<div style="padding:20px;text-align:center;color:var(--text3);font-size:12px">${lang==='en'?'No messages yet.':'لا توجد رسائل بعد.'}</div>`;
+    return;
+  }
+  document.getElementById('msg-contacts').innerHTML=threads.map(t=>{
+    const last=t.msgs.sort((a,b)=>b.ts-a.ts)[0];
+    const preview=(last?.body||'').substring(0,28)+(last?.body?.length>28?'…':'');
+    const active=_msgThread===t.other;
+    return `<div class="msg-contact${active?' active':''}" onclick="openUserThread('${t.other}','${t.otherD}')">
+      <div class="msg-contact-av">${t.otherD.charAt(0)}</div>
+      <div class="msg-contact-info">
+        <div class="msg-contact-name">${t.otherD}</div>
+        <div class="msg-contact-preview">${preview}</div>
+      </div>
+      ${t.unread>0?`<div class="msg-unread-dot">${t.unread}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function toggleMsgViewAll(){
+  _msgViewAll=!_msgViewAll;
+  _msgThread=null;
+  const btn=document.getElementById('msg-all-toggle-btn');
+  if(btn){btn.style.background=_msgViewAll?'var(--surface3)':'transparent';btn.style.borderColor=_msgViewAll?'var(--border2)':'var(--border)';}
+  document.getElementById('msg-empty-state').style.display='flex';
+  document.getElementById('msg-thread-active').style.display='none';
+  renderMsgSidebar();
+}
+
+function openUserThread(otherUser,otherDisplay){
+  _msgThread=otherUser;_msgViewAll=false;
+  // Mark messages from them as read
+  const msgs=loadMessages();let changed=false;
+  msgs.forEach(m=>{if(m.from===otherUser&&m.to===auth.username&&!m.read){m.read=true;changed=true;}});
+  if(changed){saveMessages(msgs);updateMsgBadge();}
+  renderMsgSidebar();
+  document.getElementById('msg-empty-state').style.display='none';
+  const active=document.getElementById('msg-thread-active');
+  active.style.display='flex';
+  document.getElementById('msg-thread-hdr').innerHTML=`<span>💬</span> ${otherDisplay}`;
+  document.getElementById('msg-input-row').style.display='flex';
+  const inp=document.getElementById('msg-inp');
+  inp.dataset.to=otherUser;inp.dataset.toDisplay=otherDisplay;
+  inp.placeholder=lang==='en'?`Message ${otherDisplay}…`:`رسالة إلى ${otherDisplay}…`;
+  renderThreadMsgs(otherUser);
+  setTimeout(()=>inp.focus(),60);
+}
+
+function openPairThread(key,u1,u2,u1d,u2d){
+  _msgThread='pair:'+key;
+  renderMsgSidebar();
+  document.getElementById('msg-empty-state').style.display='none';
+  const active=document.getElementById('msg-thread-active');
+  active.style.display='flex';
+  document.getElementById('msg-thread-hdr').innerHTML=`<span>👁️</span> ${u1d} ↔ ${u2d}`;
+  document.getElementById('msg-input-row').style.display='none'; // observer, no send
+  const msgs=loadMessages().filter(m=>(m.from===u1&&m.to===u2)||(m.from===u2&&m.to===u1)).sort((a,b)=>a.ts-b.ts);
+  const cont=document.getElementById('msg-messages');
+  cont.innerHTML=msgs.length?msgs.map(m=>renderBubble(m,u1)).join(''):`<div class="msg-empty-state"><div style="font-size:32px">💬</div><div>${lang==='en'?'No messages in this thread.':'لا توجد رسائل في هذه المحادثة.'}</div></div>`;
+  cont.scrollTop=cont.scrollHeight;
+}
+
+function renderThreadMsgs(otherUser){
+  const msgs=loadMessages().filter(m=>(m.from===auth.username&&m.to===otherUser)||(m.from===otherUser&&m.to===auth.username)).sort((a,b)=>a.ts-b.ts);
+  const cont=document.getElementById('msg-messages');
+  cont.innerHTML=msgs.length?msgs.map(m=>renderBubble(m,auth.username)).join(''):`<div class="msg-empty-state"><div style="font-size:32px">💬</div><div>${lang==='en'?'Start the conversation!':'ابدأ المحادثة!'}</div></div>`;
+  cont.scrollTop=cont.scrollHeight;
+}
+
+function renderBubble(m,selfUser){
+  const sent=m.from===selfUser;
+  const d=new Date(m.ts);
+  const ts=d.toLocaleTimeString(lang==='en'?'en-US':'ar-SA',{hour:'2-digit',minute:'2-digit'});
+  const body=m.body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return `<div class="msg-bw ${sent?'sent':'recv'}">
+    <div class="msg-bubble">${body}</div>
+    <div class="msg-meta">${sent?'':`${m.fromDisplay} · `}${ts}</div>
+  </div>`;
+}
+
+function sendMsg(){
+  const inp=document.getElementById('msg-inp');
+  const body=inp.value.trim();
+  if(!body||!inp.dataset.to)return;
+  const to=inp.dataset.to;
+  const toDisplay=inp.dataset.toDisplay||to;
+  const msgs=loadMessages();
+  msgs.push({
+    id:Date.now()+''+Math.random().toString(36).slice(2,6),
+    ts:Date.now(),
+    from:auth.username,fromDisplay:auth.displayName,
+    to,toDisplay,body,read:false
+  });
+  saveMessages(msgs);
+  inp.value='';
+  renderThreadMsgs(to);
+  renderMsgSidebar();
+}
+
+function showMsgNewPicker(){
+  const users=loadUsers()||[];
+  const others=users.filter(u=>u.username!==auth.username);
+  const picker=document.getElementById('msg-picker');
+  if(picker.style.display==='block'){picker.style.display='none';return;}
+  if(!others.length){toast(lang==='en'?'No other users to message.':'لا يوجد مستخدمون آخرون.','err');return;}
+  picker.innerHTML=others.map(u=>`<div onclick="openUserThread('${u.username}','${u.displayName}');document.getElementById('msg-picker').style.display='none'" style="padding:9px 12px;cursor:pointer;border-radius:7px;font-size:13px;display:flex;align-items:center;gap:9px;transition:background var(--tr)" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+    <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--brand-light),var(--brand-green));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">${u.displayName.charAt(0)}</div>
+    <div><div style="font-weight:700;color:var(--text)">${u.displayName}</div><div style="font-size:11px;color:var(--text3)">@${u.username}${u.role==='head'?' 👑':''}</div></div>
+  </div>`).join('');
+  picker.style.display='block';
+}
+
 /* ─── I18N ────────────────────────────────────────── */
 const K_LANG = 'msc_lang_v1';
 let lang = localStorage.getItem(K_LANG) || 'ar';
@@ -2144,6 +2465,8 @@ const TRANSLATIONS = {
     btnClearResolved: 'مسح المحلولة',
     catBug: '🐛 خلل تقني', catSuggestion: '💡 اقتراح', catAccess: '🔐 صلاحيات',
     catData: '📊 بيانات', catOther: '📌 أخرى',
+    msgTitle: 'الرسائل', msgNewBtn: '✉️ محادثة جديدة', msgAllConvos: 'كل المحادثات',
+    msgMyChats: 'محادثاتي', msgSelectChat: 'اختر محادثة للبدء', msgSend: 'إرسال ←',
   },
   en: {
     tabDashboard: 'Dashboard', tabEntry: 'Data Entry', tabAnalytics: 'Analytics',
@@ -2253,6 +2576,8 @@ const TRANSLATIONS = {
     btnClearResolved: 'Clear Resolved',
     catBug: '🐛 Bug', catSuggestion: '💡 Suggestion', catAccess: '🔐 Access',
     catData: '📊 Data', catOther: '📌 Other',
+    msgTitle: 'Messages', msgNewBtn: '✉️ New Chat', msgAllConvos: 'All Conversations',
+    msgMyChats: 'My Chats', msgSelectChat: 'Select a chat to start', msgSend: 'Send →',
   }
 };
 
