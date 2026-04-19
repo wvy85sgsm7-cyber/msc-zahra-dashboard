@@ -458,6 +458,7 @@ tr:hover td{background:var(--surface3)}
     <button class="tab-btn" data-tab="tab-reports" data-i18n="tabReports"><span class="tab-icon">📋</span> التقارير <span id="rep-count" class="badge badge-teal" style="display:none;margin-right:2px"></span></button>
     <button class="tab-btn" data-tab="tab-tuition" data-i18n="tabTuition"><span class="tab-icon">💰</span> مقارنة الرسوم</button>
     <button class="tab-btn" data-tab="tab-settings" id="settings-tab-btn" data-i18n="tabSettings" style="display:none"><span class="tab-icon">⚙️</span> الإعدادات</button>
+    <button class="tab-btn" data-tab="tab-log" id="log-tab-btn" data-i18n="tabLog" style="display:none"><span class="tab-icon">📜</span> سجل النشاط</button>
   </nav>
 
   <!-- TAB 1: DASHBOARD -->
@@ -704,6 +705,35 @@ tr:hover td{background:var(--surface3)}
     </div>
 
   </section>
+
+  <!-- TAB 7: ACTIVITY LOG -->
+  <section class="page" id="tab-log">
+    <div class="action-bar">
+      <span class="section-title">📜 <span data-i18n="sectionLog">سجل النشاط</span></span>
+      <div class="action-right">
+        <input class="log-search" id="log-search" type="text" data-i18n-ph="phLogSearch" placeholder="بحث في السجل…" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 13px;color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;outline:none;width:180px"/>
+        <select id="log-filter" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;outline:none">
+          <option value="">— كل الأنواع —</option>
+        </select>
+        <button class="btn btn-danger" id="clear-log-btn" style="display:none">🗑️ <span data-i18n="btnClearLog">مسح السجل</span></button>
+      </div>
+    </div>
+    <div class="card" id="log-card">
+      <div class="empty" id="empty-log"><div class="empty-icon">📭</div><div class="empty-text" data-i18n="emptyLog">لا توجد أحداث مسجّلة بعد.</div></div>
+      <div class="table-wrap" id="log-table-wrap" style="display:none">
+        <table>
+          <thead><tr>
+            <th style="width:38px">#</th>
+            <th data-i18n="thLogTime">الوقت</th>
+            <th data-i18n="thLogUser">المستخدم</th>
+            <th data-i18n="thLogAction">الحدث</th>
+            <th data-i18n="thLogDetails">التفاصيل</th>
+          </tr></thead>
+          <tbody id="log-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 </div>
 
 <!-- LOGIN MODAL -->
@@ -774,7 +804,7 @@ const FEE_STAGES=[{key:'kg',label:'روضة'},{key:'elem',label:'ابتدائي'
 
 /* ─── STORAGE KEYS ────────────────────────────────── */
 const K={DATA:'msc_data_v3',REPORTS:'msc_reports_v3',THEME:'msc_theme_v3',
-  SAVED:'msc_last_saved',FEES:'msc_fees_v4',USERS:'msc_users_v3',SESSION:'msc_sess_v2'};
+  SAVED:'msc_last_saved',FEES:'msc_fees_v4',USERS:'msc_users_v3',SESSION:'msc_sess_v2',LOGS:'msc_logs_v1'};
 
 /* ─── AUTH ────────────────────────────────────────── */
 // Default user stored if none exist
@@ -852,9 +882,13 @@ function applyAuthState(){
     document.querySelectorAll('.guest-banner').forEach(b=>b.style.display='none');
     entryLock.style.display='none';
     document.getElementById('settings-tab-btn').style.display='';
-    // Show user-management section only for head admin
+    // Log tab + user management: head admin only
+    const isHead=auth.role==='head';
+    document.getElementById('log-tab-btn').style.display=isHead?'':'none';
+    const clearLogBtn=document.getElementById('clear-log-btn');
+    if(clearLogBtn) clearLogBtn.style.display=isHead?'':'none';
     const userMgmtSec=document.getElementById('user-mgmt-section');
-    if(userMgmtSec) userMgmtSec.style.display=auth.role==='head'?'':'none';
+    if(userMgmtSec) userMgmtSec.style.display=isHead?'':'none';
   } else {
     guestUI.style.display='flex';
     userUI.style.display='none';
@@ -874,6 +908,7 @@ function applyAuthState(){
     document.getElementById('guest-banner-tuition').style.display='flex';
     entryLock.style.display='inline';
     document.getElementById('settings-tab-btn').style.display='none';
+    document.getElementById('log-tab-btn').style.display='none';
   }
   renderReports(); // re-render table with/without delete buttons
 }
@@ -1117,7 +1152,7 @@ function buildSchoolManager(){
       if(!confirm(lang==='en'?'Remove '+school.name+'?':'حذف '+school.name+'؟'))return;
       fees=fees.filter(s=>s.id!==school.id);
       buildSchoolManager();renderCompCards();setTimeout(renderFeeBar,50);
-      toast(lang==='en'?'School removed':'تم حذف المدرسة','err');
+      logAction(LOG_ACTIONS.SCHOOL_REMOVE,school.name);toast(lang==='en'?'School removed':'تم حذف المدرسة','err');
     });
   });
 }
@@ -1140,7 +1175,7 @@ function addSchool(){
   // clear form
   ['new-school-name','new-school-type','new-fee-kg','new-fee-elem','new-fee-mid','new-fee-high','new-fee-intl'].forEach(id=>{document.getElementById(id).value='';});
   buildSchoolManager();renderCompCards();setTimeout(renderFeeBar,50);
-  toast(lang==='en'?'School added':'تمت إضافة المدرسة');
+  logAction(LOG_ACTIONS.SCHOOL_ADD,name);toast(lang==='en'?'School added':'تمت إضافة المدرسة');
 }
 
 /* ─── REPORTS TABLE ───────────────────────────────── */
@@ -1166,8 +1201,9 @@ function renderReports(){
   tbody.querySelectorAll('[data-id]').forEach(btn=>{
     btn.addEventListener('click',()=>{
       if(!auth.loggedIn)return;
+      const delRep=reports.find(r=>r.id===btn.dataset.id);
       reports=reports.filter(r=>r.id!==btn.dataset.id);
-      save(K.REPORTS,reports);renderReports();renderLine();toast(t('toastRepDeleted'),'err');
+      save(K.REPORTS,reports);renderReports();renderLine();logAction(LOG_ACTIONS.REPORT_DELETE,delRep?.name||'');toast(t('toastRepDeleted'),'err');
     });
   });
 }
@@ -1231,7 +1267,7 @@ function doSaveReport(){
   const depts={};DEPTS.forEach(dep=>{depts[dep.id]={base:data[dep.id].base||0,newS:data[dep.id].newS||0,out:data[dep.id].out||0,total:deptTotal(dep)};});
   reports.push({id:Date.now().toString(),name,ts:new Date().toISOString(),grand:grandTotal(),
     sumBase:sumField('base'),sumNew:sumField('newS'),sumOut:sumField('out'),depts});
-  save(K.REPORTS,reports);closeSaveModal();renderReports();renderLine();toast(t('toastRepSaved')+': '+name);
+  save(K.REPORTS,reports);closeSaveModal();renderReports();renderLine();logAction(LOG_ACTIONS.REPORT_SAVE,name);toast(t('toastRepSaved')+': '+name);
 }
 
 /* ─── TOAST ───────────────────────────────────────── */
@@ -1257,6 +1293,7 @@ function switchTab(id){
     document.getElementById('add-user-msg').style.display='none';
     renderUsersTable();
   }
+  if(id==='tab-log') renderLog();
 }
 
 /* ─── INIT ────────────────────────────────────────── */
@@ -1312,19 +1349,19 @@ async function init(){
   // Logout
   document.getElementById('logout-btn').addEventListener('click',()=>{
     auth={loggedIn:false,username:'',displayName:''};clearSession();
-    applyAuthState();toast(t('toastLoggedOut'));
+    logAction(LOG_ACTIONS.LOGOUT);applyAuthState();toast(t('toastLoggedOut'));
   });
 
   // Entry
   document.getElementById('save-btn').addEventListener('click',()=>{
     if(!auth.loggedIn){openLoginModal();return;}
     save(K.DATA,data);localStorage.setItem(K.SAVED,new Date().toISOString());
-    updateLastSaved();updateDashboard();renderBar();renderDonut();toast(t('toastSaved'));
+    updateLastSaved();updateDashboard();renderBar();renderDonut();logAction(LOG_ACTIONS.DATA_SAVE);toast(t('toastSaved'));
   });
   document.getElementById('reset-btn').addEventListener('click',()=>{
     if(!auth.loggedIn)return;
     if(!confirm(t('confirmClear')))return;
-    data=defaultData();save(K.DATA,data);buildEntryGrid();updateDashboard();renderBar();renderDonut();toast(t('toastCleared'),'err');
+    data=defaultData();save(K.DATA,data);buildEntryGrid();updateDashboard();renderBar();renderDonut();logAction(LOG_ACTIONS.DATA_RESET);toast(t('toastCleared'),'err');
   });
 
   // Reports
@@ -1332,7 +1369,7 @@ async function init(){
   document.getElementById('clear-all-btn').addEventListener('click',()=>{
     if(!auth.loggedIn)return;
     if(!reports.length||!confirm(t('confirmDelAll')))return;
-    reports=[];save(K.REPORTS,reports);renderReports();renderLine();toast(t('toastAllDeleted'),'err');
+    reports=[];save(K.REPORTS,reports);renderReports();renderLine();logAction(LOG_ACTIONS.REPORT_CLEAR);toast(t('toastAllDeleted'),'err');
   });
 
   // Save report modal
@@ -1343,15 +1380,24 @@ async function init(){
 
   // Fees
   document.getElementById('save-fees-btn').addEventListener('click',()=>{
-    if(!auth.loggedIn)return;save(K.FEES,fees);renderCompCards();renderFeeBar();toast(t('toastFeesSaved'));
+    if(!auth.loggedIn)return;save(K.FEES,fees);renderCompCards();renderFeeBar();logAction(LOG_ACTIONS.FEE_SAVE);toast(t('toastFeesSaved'));
   });
   document.getElementById('reset-fees-btn').addEventListener('click',()=>{
     if(!auth.loggedIn)return;
     if(!confirm(t('confirmResetFees')))return;
-    fees=JSON.parse(JSON.stringify(DEFAULT_FEES));save(K.FEES,fees);buildFeeEditGrid();renderCompCards();renderFeeBar();toast(t('toastFeesReset'));
+    fees=JSON.parse(JSON.stringify(DEFAULT_FEES));save(K.FEES,fees);buildFeeEditGrid();renderCompCards();renderFeeBar();logAction(LOG_ACTIONS.FEE_RESET);toast(t('toastFeesReset'));
   });
   // Add school button
   document.getElementById('add-school-btn').addEventListener('click',addSchool);
+
+  // Activity log
+  document.getElementById('clear-log-btn').addEventListener('click',()=>{
+    if(auth.role!=='head')return;
+    if(!confirm(lang==='en'?'Clear entire activity log?':'مسح سجل النشاط بالكامل؟'))return;
+    saveLogs([]);renderLog();toast(lang==='en'?'Log cleared':'تم مسح السجل','err');
+  });
+  document.getElementById('log-search').addEventListener('input',renderLog);
+  document.getElementById('log-filter').addEventListener('change',renderLog);
 
   // Settings
   document.getElementById('change-pass-btn').addEventListener('click',changePassword);
@@ -1367,6 +1413,88 @@ async function init(){
 
   lang = localStorage.getItem(K_LANG) || 'ar';
   applyLang();
+}
+
+/* ─── ACTIVITY LOG ────────────────────────────────── */
+const LOG_ACTIONS={
+  LOGIN:'LOGIN',LOGOUT:'LOGOUT',
+  DATA_SAVE:'DATA_SAVE',DATA_RESET:'DATA_RESET',
+  REPORT_SAVE:'REPORT_SAVE',REPORT_DELETE:'REPORT_DELETE',REPORT_CLEAR:'REPORT_CLEAR',
+  FEE_SAVE:'FEE_SAVE',FEE_RESET:'FEE_RESET',
+  SCHOOL_ADD:'SCHOOL_ADD',SCHOOL_REMOVE:'SCHOOL_REMOVE',SCHOOL_EDIT:'SCHOOL_EDIT',
+  USER_ADD:'USER_ADD',USER_DELETE:'USER_DELETE',ROLE_CHANGE:'ROLE_CHANGE',
+  PW_CHANGE:'PW_CHANGE',NAME_CHANGE:'NAME_CHANGE',
+};
+const LOG_LABELS_AR={LOGIN:'تسجيل دخول',LOGOUT:'تسجيل خروج',DATA_SAVE:'حفظ البيانات',DATA_RESET:'مسح البيانات',REPORT_SAVE:'حفظ تقرير',REPORT_DELETE:'حذف تقرير',REPORT_CLEAR:'حذف كل التقارير',FEE_SAVE:'حفظ الرسوم',FEE_RESET:'إعادة تعيين الرسوم',SCHOOL_ADD:'إضافة مدرسة',SCHOOL_REMOVE:'حذف مدرسة',SCHOOL_EDIT:'تعديل مدرسة',USER_ADD:'إضافة مستخدم',USER_DELETE:'حذف مستخدم',ROLE_CHANGE:'تغيير الدور',PW_CHANGE:'تغيير كلمة المرور',NAME_CHANGE:'تغيير الاسم'};
+const LOG_LABELS_EN={LOGIN:'Login',LOGOUT:'Logout',DATA_SAVE:'Data Saved',DATA_RESET:'Data Reset',REPORT_SAVE:'Report Saved',REPORT_DELETE:'Report Deleted',REPORT_CLEAR:'All Reports Cleared',FEE_SAVE:'Fees Saved',FEE_RESET:'Fees Reset',SCHOOL_ADD:'School Added',SCHOOL_REMOVE:'School Removed',SCHOOL_EDIT:'School Edited',USER_ADD:'User Added',USER_DELETE:'User Deleted',ROLE_CHANGE:'Role Changed',PW_CHANGE:'Password Changed',NAME_CHANGE:'Name Changed'};
+const LOG_COLORS={LOGIN:'#2A8C4A',LOGOUT:'#7a9aac',DATA_SAVE:'#4BBFB8',DATA_RESET:'#e05252',REPORT_SAVE:'#3b82f6',REPORT_DELETE:'#e05252',REPORT_CLEAR:'#e05252',FEE_SAVE:'#c9a227',FEE_RESET:'#7a9aac',SCHOOL_ADD:'#2A8C4A',SCHOOL_REMOVE:'#e05252',SCHOOL_EDIT:'#c9a227',USER_ADD:'#2A8C4A',USER_DELETE:'#e05252',ROLE_CHANGE:'#c9a227',PW_CHANGE:'#4BBFB8',NAME_CHANGE:'#4BBFB8'};
+
+function loadLogs(){try{return JSON.parse(localStorage.getItem(K.LOGS))||[];}catch{return[];}}
+function saveLogs(logs){localStorage.setItem(K.LOGS,JSON.stringify(logs));}
+
+function logAction(action,details=''){
+  const logs=loadLogs();
+  logs.unshift({
+    id:Date.now()+''+Math.random().toString(36).slice(2,6),
+    ts:Date.now(),
+    username:auth.loggedIn?auth.username:'—',
+    displayName:auth.loggedIn?auth.displayName:'—',
+    role:auth.loggedIn?(auth.role||'admin'):'guest',
+    action,
+    details
+  });
+  // Keep max 500 entries
+  saveLogs(logs.slice(0,500));
+}
+
+function renderLog(){
+  const logs=loadLogs();
+  const empty=document.getElementById('empty-log');
+  const wrap=document.getElementById('log-table-wrap');
+  const tbody=document.getElementById('log-tbody');
+  const filter=document.getElementById('log-filter').value;
+  const search=document.getElementById('log-search').value.trim().toLowerCase();
+
+  // Populate filter dropdown
+  const sel=document.getElementById('log-filter');
+  const currentVal=sel.value;
+  sel.innerHTML=`<option value="">${lang==='en'?'— All Types —':'— كل الأنواع —'}</option>`;
+  const usedActions=[...new Set(logs.map(l=>l.action))].sort();
+  usedActions.forEach(a=>{
+    const opt=document.createElement('option');
+    opt.value=a;opt.textContent=lang==='en'?(LOG_LABELS_EN[a]||a):(LOG_LABELS_AR[a]||a);
+    if(a===currentVal)opt.selected=true;
+    sel.appendChild(opt);
+  });
+
+  let filtered=logs;
+  if(filter) filtered=filtered.filter(l=>l.action===filter);
+  if(search) filtered=filtered.filter(l=>
+    (l.username||'').toLowerCase().includes(search)||
+    (l.displayName||'').toLowerCase().includes(search)||
+    (l.details||'').toLowerCase().includes(search)||
+    (LOG_LABELS_AR[l.action]||'').includes(search)||
+    (LOG_LABELS_EN[l.action]||'').toLowerCase().includes(search)
+  );
+
+  if(!filtered.length){empty.style.display='block';wrap.style.display='none';return;}
+  empty.style.display='none';wrap.style.display='block';
+
+  tbody.innerHTML=filtered.map((l,i)=>{
+    const d=new Date(l.ts);
+    const dateStr=d.toLocaleDateString(lang==='en'?'en-GB':'ar-SA',{year:'numeric',month:'short',day:'numeric'});
+    const timeStr=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
+    const label=lang==='en'?(LOG_LABELS_EN[l.action]||l.action):(LOG_LABELS_AR[l.action]||l.action);
+    const color=LOG_COLORS[l.action]||'var(--text2)';
+    const roleBadge=l.role==='head'?`<span style="font-size:10px;color:#c9a227">★</span> `:'';
+    return `<tr>
+      <td><span class="badge badge-gray" style="font-size:10px">${filtered.length-i}</span></td>
+      <td style="color:var(--text2);font-size:12px;white-space:nowrap">${dateStr}<br/><span style="color:var(--text3)">${timeStr}</span></td>
+      <td><strong style="font-size:13px">${roleBadge}${l.displayName||l.username}</strong><br/><span style="font-size:10px;color:var(--text3);font-family:monospace">${l.username}</span></td>
+      <td><span style="display:inline-block;padding:3px 9px;border-radius:6px;font-size:12px;font-weight:700;color:${color};background:${color}22;border:1px solid ${color}44">${label}</span></td>
+      <td style="font-size:12px;color:var(--text2);max-width:220px">${l.details||'—'}</td>
+    </tr>`;
+  }).join('');
 }
 
 /* ─── SETTINGS ────────────────────────────────────── */
@@ -1406,9 +1534,10 @@ function toggleUserRole(username){
   const u=users.find(x=>x.username===username);
   if(!u)return;
   if(u.username==='alyamani'){toast(lang==='en'?'Cannot change head admin role':'لا يمكن تغيير دور المدير الرئيسي','err');return;}
-  u.role=u.role==='head'?'admin':'head';
+  const newRole=u.role==='head'?'admin':'head';
+  u.role=newRole;
   localStorage.setItem(K.USERS,JSON.stringify(users));
-  renderUsersTable();
+  logAction(LOG_ACTIONS.ROLE_CHANGE,username+' → '+newRole);renderUsersTable();
   toast(lang==='en'?'Role updated':'تم تحديث الدور');
 }
 
@@ -1432,7 +1561,7 @@ async function changePassword(){
   document.getElementById('s-confirm-pass').value='';
   msg.style.color='var(--brand-light)';
   msg.textContent='✅ '+t('toastPwUpdated');msg.style.display='block';
-  toast(t('toastPwUpdated'));
+  logAction(LOG_ACTIONS.PW_CHANGE);toast(t('toastPwUpdated'));
 }
 
 function updateDisplayName(){
@@ -1451,7 +1580,7 @@ function updateDisplayName(){
   msg.style.color='var(--brand-light)';
   msg.style.color='var(--brand-light)';
   msg.textContent='✅ '+t('toastNameUpdated');msg.style.display='block';
-  toast(t('toastNameUpdated'));
+  logAction(LOG_ACTIONS.NAME_CHANGE,name);toast(t('toastNameUpdated'));
 }
 
 async function addUser(){
@@ -1473,7 +1602,7 @@ async function addUser(){
   msg.style.color='var(--brand-light)';
   msg.style.color='var(--brand-light)';
   msg.textContent='✅ '+t('toastUserAdded');msg.style.display='block';
-  renderUsersTable();
+  logAction(LOG_ACTIONS.USER_ADD,username);renderUsersTable();
   toast(t('toastUserAdded'));
 }
 
@@ -1485,7 +1614,7 @@ function deleteUser(username){
   if(target?.role==='head'){toast(lang==='en'?'Cannot delete another head admin':'لا يمكن حذف مدير رئيسي','err');return;}
   if(!confirm(t('confirmDelUser')+username+'؟'))return;
   localStorage.setItem(K.USERS,JSON.stringify(users.filter(u=>u.username!==username)));
-  renderUsersTable();
+  logAction(LOG_ACTIONS.USER_DELETE,username);renderUsersTable();
   toast(t('toastUserDeleted'),'err');
 }
 
@@ -1499,6 +1628,7 @@ async function doLogin(){
   if(!user){errEl.textContent=t('errBadCreds');errEl.style.display='block';return;}
   auth={loggedIn:true,username:user.username,displayName:user.displayName,role:user.role||'admin'};
   saveSession(user);closeLoginModal();applyAuthState();
+  logAction(LOG_ACTIONS.LOGIN);
   toast(t('toastWelcome')+' '+user.displayName+' 👋');
 }
 
@@ -1600,6 +1730,9 @@ const TRANSLATIONS = {
     phSchoolName: 'اسم المدرسة', phSchoolType: 'أهلي — منهج وطني',
     btnAddSchool: '➕ إضافة مدرسة', sectionEditFees: '⚙️ إدارة المدارس',
     toggleEdit: '⚙️ إدارة المدارس',
+    tabLog: 'سجل النشاط', sectionLog: 'سجل النشاط', btnClearLog: 'مسح السجل',
+    emptyLog: 'لا توجد أحداث مسجّلة بعد.', phLogSearch: 'بحث في السجل…',
+    thLogTime: 'الوقت', thLogUser: 'المستخدم', thLogAction: 'الحدث', thLogDetails: 'التفاصيل',
   },
   en: {
     tabDashboard: 'Dashboard', tabEntry: 'Data Entry', tabAnalytics: 'Analytics',
@@ -1694,6 +1827,9 @@ const TRANSLATIONS = {
     phSchoolName: 'School name', phSchoolType: 'National — National Curriculum',
     btnAddSchool: '➕ Add School', sectionEditFees: '⚙️ School Manager',
     toggleEdit: '⚙️ Manage Schools',
+    tabLog: 'Activity Log', sectionLog: 'Activity Log', btnClearLog: 'Clear Log',
+    emptyLog: 'No activity recorded yet.', phLogSearch: 'Search log…',
+    thLogTime: 'Time', thLogUser: 'User', thLogAction: 'Event', thLogDetails: 'Details',
   }
 };
 
