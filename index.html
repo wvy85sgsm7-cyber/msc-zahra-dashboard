@@ -922,8 +922,12 @@ tr:hover td{background:var(--surface3)}
       <!-- Thread panel -->
       <div class="msg-thread-panel">
         <div class="msg-empty-state" id="msg-empty-state">
-          <div style="font-size:44px">💬</div>
-          <div style="font-size:14px" data-i18n="msgSelectChat">اختر محادثة للبدء</div>
+          <div style="font-size:40px">🔒</div>
+          <div style="font-size:15px;font-weight:800;color:var(--text)" data-i18n="msgSelectChat">اختر محادثة للبدء</div>
+          <div style="max-width:320px;text-align:center;background:rgba(75,191,184,0.07);border:1px solid var(--border2);border-radius:12px;padding:14px 18px;margin-top:6px">
+            <div style="font-size:12px;font-weight:700;color:var(--brand-light);margin-bottom:6px" data-i18n="msgConfidentialTitle">🔐 سرية تامة</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.7" data-i18n="msgConfidentialBody">جميع المحادثات في هذا النظام سرية وخاصة. لا يمكن لأي مستخدم الاطلاع على محادثات الآخرين. يُرجى الالتزام بمبادئ السرية المهنية في جميع رسائلك.</div>
+          </div>
         </div>
         <div id="msg-thread-active" style="display:none;flex:1;flex-direction:column;overflow:hidden">
           <div class="msg-thread-hdr" id="msg-thread-hdr"></div>
@@ -2298,14 +2302,22 @@ function openPairThread(key,u1,u2,u1d,u2d){
   document.getElementById('msg-input-row').style.display='none'; // observer, no send
   const msgs=loadMessages().filter(m=>(m.from===u1&&m.to===u2)||(m.from===u2&&m.to===u1)).sort((a,b)=>a.ts-b.ts);
   const cont=document.getElementById('msg-messages');
-  cont.innerHTML=msgs.length?msgs.map(m=>renderBubble(m,u1)).join(''):`<div class="msg-empty-state"><div style="font-size:32px">💬</div><div>${lang==='en'?'No messages in this thread.':'لا توجد رسائل في هذه المحادثة.'}</div></div>`;
+  cont.innerHTML=msgs.length?msgs.map(m=>renderBubble(m,u1)).join(''):`<div class="msg-empty-state"><div style="font-size:32px">💬</div><div style="font-size:13px">${lang==='en'?'No messages in this thread yet.':'لا توجد رسائل في هذه المحادثة بعد.'}</div></div>`;
   cont.scrollTop=cont.scrollHeight;
 }
 
 function renderThreadMsgs(otherUser){
   const msgs=loadMessages().filter(m=>(m.from===auth.username&&m.to===otherUser)||(m.from===otherUser&&m.to===auth.username)).sort((a,b)=>a.ts-b.ts);
   const cont=document.getElementById('msg-messages');
-  cont.innerHTML=msgs.length?msgs.map(m=>renderBubble(m,auth.username)).join(''):`<div class="msg-empty-state"><div style="font-size:32px">💬</div><div>${lang==='en'?'Start the conversation!':'ابدأ المحادثة!'}</div></div>`;
+  const confNote=`<div class="msg-empty-state" style="padding:24px 20px">
+    <div style="font-size:30px">🔒</div>
+    <div style="font-size:13px;font-weight:800;color:var(--text)">${lang==='en'?'Start the conversation':'ابدأ المحادثة'}</div>
+    <div style="max-width:300px;text-align:center;background:rgba(75,191,184,0.07);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;margin-top:4px">
+      <div style="font-size:11px;font-weight:700;color:var(--brand-light);margin-bottom:5px">${lang==='en'?'🔐 Full Confidentiality':'🔐 سرية تامة'}</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.65">${lang==='en'?'This conversation is private and fully confidential. No other user can access your messages. Please maintain professional discretion in all communications.':'هذه المحادثة خاصة وسرية تماماً. لا يمكن لأي مستخدم آخر الاطلاع على رسائلك. يُرجى الالتزام بمبادئ السرية المهنية.'}</div>
+    </div>
+  </div>`;
+  cont.innerHTML=msgs.length?msgs.map(m=>renderBubble(m,auth.username)).join(''):confNote;
   cont.scrollTop=cont.scrollHeight;
 }
 
@@ -2467,6 +2479,8 @@ const TRANSLATIONS = {
     catData: '📊 بيانات', catOther: '📌 أخرى',
     msgTitle: 'الرسائل', msgNewBtn: '✉️ محادثة جديدة', msgAllConvos: 'كل المحادثات',
     msgMyChats: 'محادثاتي', msgSelectChat: 'اختر محادثة للبدء', msgSend: 'إرسال ←',
+    msgConfidentialTitle: '🔐 سرية تامة',
+    msgConfidentialBody: 'جميع المحادثات في هذا النظام سرية وخاصة. لا يمكن لأي مستخدم الاطلاع على محادثات الآخرين. يُرجى الالتزام بمبادئ السرية المهنية في جميع رسائلك.',
   },
   en: {
     tabDashboard: 'Dashboard', tabEntry: 'Data Entry', tabAnalytics: 'Analytics',
@@ -2578,6 +2592,8 @@ const TRANSLATIONS = {
     catData: '📊 Data', catOther: '📌 Other',
     msgTitle: 'Messages', msgNewBtn: '✉️ New Chat', msgAllConvos: 'All Conversations',
     msgMyChats: 'My Chats', msgSelectChat: 'Select a chat to start', msgSend: 'Send →',
+    msgConfidentialTitle: '🔐 Full Confidentiality',
+    msgConfidentialBody: 'All conversations in this system are private and fully confidential. No other user can access your messages. Please maintain professional discretion in all communications.',
   }
 };
 
