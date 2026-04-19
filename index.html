@@ -346,7 +346,7 @@ tr:hover td{background:var(--surface3)}
 .smr-inp:focus{border-color:var(--brand-light)}
 .smr-name{flex:1;min-width:140px;font-size:13px;font-weight:700}
 .smr-type{flex:1;min-width:120px;font-size:12px;color:var(--text2)}
-.smr-fees{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.smr-fees{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .smr-fee-col{display:flex;flex-direction:column;gap:4px}
 .smr-fee-col label{font-size:10.5px;color:var(--text3);font-weight:600;text-align:center}
 .smr-fee-inp{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 6px;color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;text-align:center;outline:none;transition:border-color var(--tr);-moz-appearance:textfield}
@@ -358,7 +358,8 @@ tr:hover td{background:var(--surface3)}
 .add-school-strip .smr-inp{font-size:13px}
 .smr-add-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px}
 .smr-add-group label{font-size:11px;color:var(--text3);font-weight:600}
-@media(max-width:600px){.smr-fees{grid-template-columns:repeat(2,1fr)}.school-mgr-header{gap:7px}}
+@media(max-width:700px){.smr-fees{grid-template-columns:repeat(3,1fr)}.school-mgr-header{gap:7px}}
+@media(max-width:480px){.smr-fees{grid-template-columns:repeat(2,1fr)}}
 
 /* ── PRINT ── */
 @media print{
@@ -585,6 +586,10 @@ tr:hover td{background:var(--surface3)}
           <input class="smr-inp smr-type" id="new-school-type" data-i18n-ph="phSchoolType" placeholder="أهلي — منهج وطني"/>
         </div>
         <div class="smr-add-group" style="min-width:80px;max-width:90px">
+          <label data-i18n="labelKG">روضة</label>
+          <input class="smr-inp smr-fee-inp" id="new-fee-kg" type="number" min="0" step="500" placeholder="0"/>
+        </div>
+        <div class="smr-add-group" style="min-width:80px;max-width:90px">
           <label data-i18n="labelElem">ابتدائي</label>
           <input class="smr-inp smr-fee-inp" id="new-fee-elem" type="number" min="0" step="500" placeholder="0"/>
         </div>
@@ -756,20 +761,20 @@ const DEPTS=[
 
 /* ─── TUITION DATA ────────────────────────────────── */
 const DEFAULT_FEES=[
-  {id:'own',name:'المدارس المتقدمة',own:true,type:'أهلي وعالمي',fees:{elem:22000,mid:26000,high:30000,intl:48000}},
-  {id:'s2',name:'مدارس الأجيال الدولية',own:false,type:'دولي — منهج بريطاني',fees:{elem:58000,mid:65000,high:72000,intl:80000}},
-  {id:'s3',name:'مدارس جيمس (GEMS)',own:false,type:'دولي — منهج أمريكي',fees:{elem:68000,mid:75000,high:85000,intl:95000}},
-  {id:'s4',name:'مدارس المعرفة الدولية',own:false,type:'دولي — منهج أمريكي',fees:{elem:42000,mid:50000,high:56000,intl:65000}},
-  {id:'s5',name:'AISJ — المدرسة الأمريكية الدولية',own:false,type:'دولي — منهج أمريكي',fees:{elem:55000,mid:65000,high:75000,intl:75000}},
-  {id:'s6',name:'BISJ — المدرسة البريطانية الدولية',own:false,type:'دولي — منهج بريطاني',fees:{elem:50000,mid:60000,high:68000,intl:68000}},
-  {id:'s7',name:'MIS — مدارس منارات الدولية',own:false,type:'دولي — منهج متنوع',fees:{elem:32000,mid:40000,high:47000,intl:47000}},
-  {id:'s8',name:'مدارس ابن خلدون الدولية',own:false,type:'دولي — منهج IB',fees:{elem:45000,mid:52000,high:60000,intl:70000}},
+  {id:'own',name:'المدارس المتقدمة',own:true,type:'أهلي وعالمي',fees:{kg:18000,elem:22000,mid:26000,high:30000,intl:48000}},
+  {id:'s2',name:'مدارس الأجيال الدولية',own:false,type:'دولي — منهج بريطاني',fees:{kg:52000,elem:58000,mid:65000,high:72000,intl:80000}},
+  {id:'s3',name:'مدارس جيمس (GEMS)',own:false,type:'دولي — منهج أمريكي',fees:{kg:62000,elem:68000,mid:75000,high:85000,intl:95000}},
+  {id:'s4',name:'مدارس المعرفة الدولية',own:false,type:'دولي — منهج أمريكي',fees:{kg:38000,elem:42000,mid:50000,high:56000,intl:65000}},
+  {id:'s5',name:'AISJ — المدرسة الأمريكية الدولية',own:false,type:'دولي — منهج أمريكي',fees:{kg:50000,elem:55000,mid:65000,high:75000,intl:75000}},
+  {id:'s6',name:'BISJ — المدرسة البريطانية الدولية',own:false,type:'دولي — منهج بريطاني',fees:{kg:45000,elem:50000,mid:60000,high:68000,intl:68000}},
+  {id:'s7',name:'MIS — مدارس منارات الدولية',own:false,type:'دولي — منهج متنوع',fees:{kg:28000,elem:32000,mid:40000,high:47000,intl:47000}},
+  {id:'s8',name:'مدارس ابن خلدون الدولية',own:false,type:'دولي — منهج IB',fees:{kg:40000,elem:45000,mid:52000,high:60000,intl:70000}},
 ];
-const FEE_STAGES=[{key:'elem',label:'ابتدائي'},{key:'mid',label:'متوسط'},{key:'high',label:'ثانوي'},{key:'intl',label:'عالمي'}];
+const FEE_STAGES=[{key:'kg',label:'روضة'},{key:'elem',label:'ابتدائي'},{key:'mid',label:'متوسط'},{key:'high',label:'ثانوي'},{key:'intl',label:'عالمي'}];
 
 /* ─── STORAGE KEYS ────────────────────────────────── */
 const K={DATA:'msc_data_v3',REPORTS:'msc_reports_v3',THEME:'msc_theme_v3',
-  SAVED:'msc_last_saved',FEES:'msc_fees_v3',USERS:'msc_users_v2',SESSION:'msc_sess_v1'};
+  SAVED:'msc_last_saved',FEES:'msc_fees_v4',USERS:'msc_users_v2',SESSION:'msc_sess_v1'};
 
 /* ─── AUTH ────────────────────────────────────────── */
 // Default user stored if none exist
@@ -991,9 +996,9 @@ function renderLine(){
 }
 function renderFeeBar(){
   destroyChart('feeBar');const{tc,gc}=cd();
-  const sc={elem:'#4BBFB8aa',mid:'#2AB5A0aa',high:'#1A8C8Caa',intl:'#0B4E6Caa'};
-  const sb={elem:'#4BBFB8',mid:'#2AB5A0',high:'#1A8C8C',intl:'#0B4E6C'};
-  const feeStageKeys={elem:'feeElem',mid:'feeMid',high:'feeHigh',intl:'feeIntl'};
+  const sc={kg:'#5BB85Daa',elem:'#4BBFB8aa',mid:'#2AB5A0aa',high:'#1A8C8Caa',intl:'#0B4E6Caa'};
+  const sb={kg:'#5BB85D',elem:'#4BBFB8',mid:'#2AB5A0',high:'#1A8C8C',intl:'#0B4E6C'};
+  const feeStageKeys={kg:'labelKG',elem:'feeElem',mid:'feeMid',high:'feeHigh',intl:'feeIntl'};
   charts.feeBar=new Chart(document.getElementById('feeBarChart').getContext('2d'),{type:'bar',
     data:{labels:fees.map(s=>s.name),
       datasets:FEE_STAGES.filter(st=>fees.some(s=>s.fees[st.key]>0)).map(st=>({
@@ -1021,7 +1026,7 @@ function renderCompCards(){
     const diff=avgSch-avgAll;
     const rc=diff<-2000?'badge-green':diff>5000?'badge-red':'badge-gold';
     const rt=diff<-2000?t('badgeLow'):diff>5000?t('badgeHigh'):t('badgeMid');
-    const feeStageKeysC={elem:'feeElem',mid:'feeMid',high:'feeHigh',intl:'feeIntl'};
+    const feeStageKeysC={kg:'labelKG',elem:'feeElem',mid:'feeMid',high:'feeHigh',intl:'feeIntl'};
     const feesHtml=FEE_STAGES.filter(st=>school.fees[st.key]>0).map(st=>{
       const bw=Math.round((school.fees[st.key]/maxFee[st.key])*100);
       return `<div class="comp-fee-row"><span class="comp-fee-stage">${t(feeStageKeysC[st.key]||st.key)}</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:${bw}%;background:${school.own?'#4BBFB8':'#7a9aac'}"></div></div><span class="comp-fee-val">${fmt(school.fees[st.key])} ﷼</span></div>`;
@@ -1053,7 +1058,7 @@ function buildSchoolManager(){
     const row=document.createElement('div');
     row.className='school-mgr-row'+(school.own?' is-own':'');
     row.dataset.sid=school.id;
-    const stageKeys={elem:'labelElem',mid:'labelMid',high:'labelHigh',intl:'labelIntl'};
+    const stageKeys={kg:'labelKG',elem:'labelElem',mid:'labelMid',high:'labelHigh',intl:'labelIntl'};
     row.innerHTML=`
       <div class="school-mgr-header">
         <span style="font-size:18px">${school.own?'🏫':'🏛️'}</span>
@@ -1111,6 +1116,7 @@ function addSchool(){
   fees.push({
     id:newId, name, own:false, type:type||(lang==='en'?'National — National Curriculum':'أهلي — منهج وطني'),
     fees:{
+      kg:parseInt(document.getElementById('new-fee-kg').value)||0,
       elem:parseInt(document.getElementById('new-fee-elem').value)||0,
       mid:parseInt(document.getElementById('new-fee-mid').value)||0,
       high:parseInt(document.getElementById('new-fee-high').value)||0,
@@ -1118,7 +1124,7 @@ function addSchool(){
     }
   });
   // clear form
-  ['new-school-name','new-school-type','new-fee-elem','new-fee-mid','new-fee-high','new-fee-intl'].forEach(id=>{document.getElementById(id).value='';});
+  ['new-school-name','new-school-type','new-fee-kg','new-fee-elem','new-fee-mid','new-fee-high','new-fee-intl'].forEach(id=>{document.getElementById(id).value='';});
   buildSchoolManager();renderCompCards();setTimeout(renderFeeBar,50);
   toast(lang==='en'?'School added':'تمت إضافة المدرسة');
 }
@@ -1546,7 +1552,7 @@ const TRANSLATIONS = {
     errBadCreds: 'اسم المستخدم أو كلمة المرور غير صحيحة',
     lineChartLabel: 'إجمالي الطلاب',
     noData: 'لا توجد بيانات كافية',
-    labelElem: 'ابتدائي', labelMid: 'متوسط', labelHigh: 'ثانوي', labelIntl: 'دولي',
+    labelKG: 'روضة', labelElem: 'ابتدائي', labelMid: 'متوسط', labelHigh: 'ثانوي', labelIntl: 'دولي',
     labelSchoolName: 'اسم المدرسة', labelSchoolType: 'النوع / المنهج',
     phSchoolName: 'اسم المدرسة', phSchoolType: 'أهلي — منهج وطني',
     btnAddSchool: '➕ إضافة مدرسة', sectionEditFees: '⚙️ إدارة المدارس',
@@ -1640,7 +1646,7 @@ const TRANSLATIONS = {
     errBadCreds: 'Incorrect username or password',
     lineChartLabel: 'Total Students',
     noData: 'Insufficient data',
-    labelElem: 'Elementary', labelMid: 'Middle School', labelHigh: 'High School', labelIntl: 'International',
+    labelKG: 'KG', labelElem: 'Elementary', labelMid: 'Middle School', labelHigh: 'High School', labelIntl: 'International',
     labelSchoolName: 'School Name', labelSchoolType: 'Type / Curriculum',
     phSchoolName: 'School name', phSchoolType: 'National — National Curriculum',
     btnAddSchool: '➕ Add School', sectionEditFees: '⚙️ School Manager',
