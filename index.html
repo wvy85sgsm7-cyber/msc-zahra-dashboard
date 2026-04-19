@@ -439,7 +439,7 @@ tr:hover td{background:var(--surface3)}
       <div class="auth-avatar" id="auth-avatar">م</div>
       <div>
         <div class="auth-username" id="auth-username-label">—</div>
-        <span class="auth-role" data-i18n="adminRole">مدير النظام</span>
+        <span class="auth-role" id="auth-role-badge">مدير النظام</span>
       </div>
       <button class="auth-logout-btn" id="logout-btn" data-i18n="logoutBtn">خروج</button>
     </div>
@@ -670,8 +670,8 @@ tr:hover td{background:var(--surface3)}
 
     </div>
 
-    <!-- User Management -->
-    <div class="settings-card" style="margin-bottom:16px">
+    <!-- User Management (head admin only) -->
+    <div class="settings-card" id="user-mgmt-section" style="margin-bottom:16px;display:none">
       <div class="settings-card-title" data-i18n="titleUserMgmt">👥 إدارة المستخدمين</div>
       <div class="users-table-wrap">
         <table class="users-table">
@@ -774,7 +774,7 @@ const FEE_STAGES=[{key:'kg',label:'روضة'},{key:'elem',label:'ابتدائي'
 
 /* ─── STORAGE KEYS ────────────────────────────────── */
 const K={DATA:'msc_data_v3',REPORTS:'msc_reports_v3',THEME:'msc_theme_v3',
-  SAVED:'msc_last_saved',FEES:'msc_fees_v4',USERS:'msc_users_v2',SESSION:'msc_sess_v1'};
+  SAVED:'msc_last_saved',FEES:'msc_fees_v4',USERS:'msc_users_v3',SESSION:'msc_sess_v2'};
 
 /* ─── AUTH ────────────────────────────────────────── */
 // Default user stored if none exist
@@ -794,10 +794,17 @@ function loadUsers(){
 async function ensureDefaultUser(){
   let users=loadUsers();
   if(!users){
-    // Create default admin with password msc@zahra
-    const h=await sha256('msc@zahra');
-    users=[{username:'alyamani',passHash:'bf4bcedaacc966a99376cf0ee1b5b23f291e2ed3f79df3f09386435d685ca650',displayName:'اليماني'}];
+    users=[{username:'alyamani',passHash:'bf4bcedaacc966a99376cf0ee1b5b23f291e2ed3f79df3f09386435d685ca650',displayName:'اليماني',role:'head'}];
     localStorage.setItem(K.USERS,JSON.stringify(users));
+  } else {
+    // Migrate: ensure alyamani always has head role
+    let changed=false;
+    users=users.map(u=>{
+      if(u.username==='alyamani'&&u.role!=='head'){u=Object.assign({},u,{role:'head'});changed=true;}
+      else if(!u.role){u=Object.assign({},u,{role:'admin'});changed=true;}
+      return u;
+    });
+    if(changed) localStorage.setItem(K.USERS,JSON.stringify(users));
   }
   return users;
 }
@@ -811,7 +818,7 @@ async function attemptLogin(username,password){
 }
 
 function saveSession(user){
-  sessionStorage.setItem(K.SESSION,JSON.stringify({username:user.username,displayName:user.displayName}));
+  sessionStorage.setItem(K.SESSION,JSON.stringify({username:user.username,displayName:user.displayName,role:user.role||'admin'}));
 }
 function loadSession(){
   try{return JSON.parse(sessionStorage.getItem(K.SESSION))||null;}catch{return null;}
@@ -828,6 +835,10 @@ function applyAuthState(){
     userUI.style.display='flex';
     document.getElementById('auth-username-label').textContent=auth.displayName;
     document.getElementById('auth-avatar').textContent=auth.displayName.charAt(0)||'م';
+    // Role badge
+    const roleEl=document.getElementById('auth-role-badge');
+    if(roleEl) roleEl.textContent=auth.role==='head'?(lang==='en'?'Head Admin':'المدير الرئيسي'):(lang==='en'?'Admin':'مدير');
+    roleEl&&(roleEl.style.color=auth.role==='head'?'#c9a227':'');
     // Show entry content, hide locked
     document.getElementById('entry-locked').style.display='none';
     document.getElementById('entry-content').style.display='block';
@@ -841,6 +852,9 @@ function applyAuthState(){
     document.querySelectorAll('.guest-banner').forEach(b=>b.style.display='none');
     entryLock.style.display='none';
     document.getElementById('settings-tab-btn').style.display='';
+    // Show user-management section only for head admin
+    const userMgmtSec=document.getElementById('user-mgmt-section');
+    if(userMgmtSec) userMgmtSec.style.display=auth.role==='head'?'':'none';
   } else {
     guestUI.style.display='flex';
     userUI.style.display='none';
@@ -1251,7 +1265,7 @@ async function init(){
 
   // Restore session
   const sess=loadSession();
-  if(sess){auth.loggedIn=true;auth.username=sess.username;auth.displayName=sess.displayName;}
+  if(sess){auth.loggedIn=true;auth.username=sess.username;auth.displayName=sess.displayName;auth.role=sess.role||'admin';}
 
   // Theme
   isDark=load(K.THEME,'dark')!=='light';
@@ -1360,15 +1374,42 @@ function renderUsersTable(){
   const users=loadUsers()||[];
   const tbody=document.getElementById('users-tbody');
   if(!tbody)return;
-  tbody.innerHTML=users.map(u=>`
-    <tr>
-      <td><code style="font-family:monospace;font-size:13px">${u.username}</code></td>
+  tbody.innerHTML=users.map(u=>{
+    const isMe=u.username===auth.username;
+    const isHead=u.role==='head';
+    const roleBadge=isHead
+      ?`<span style="font-size:11px;font-weight:700;color:#c9a227;background:rgba(201,162,39,.15);border:1px solid rgba(201,162,39,.3);border-radius:5px;padding:2px 7px">${lang==='en'?'Head Admin':'مدير رئيسي'}</span>`
+      :`<span style="font-size:11px;font-weight:600;color:var(--brand-light);background:rgba(75,191,184,.1);border:1px solid var(--border2);border-radius:5px;padding:2px 7px">${lang==='en'?'Admin':'مدير'}</span>`;
+    const demoteBtn=!isHead&&!isMe
+      ?`<button class="btn" style="padding:3px 9px;font-size:11px;background:rgba(201,162,39,.12);color:#c9a227;border:1px solid rgba(201,162,39,.3)" onclick="toggleUserRole('${u.username}')">${lang==='en'?'▲ Make Head':'▲ ترقية'}</button>`
+      :(isHead&&!isMe?`<button class="btn" style="padding:3px 9px;font-size:11px;background:rgba(75,191,184,.1);color:var(--text2);border:1px solid var(--border)" onclick="toggleUserRole('${u.username}')">${lang==='en'?'▼ Demote':'▼ تخفيض'}</button>`:'');
+    const deleteBtn=!isMe&&!isHead
+      ?`<button class="btn" style="padding:3px 9px;font-size:11px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)" onclick="deleteUser('${u.username}')">${t('deleteBtnLabel')}</button>`:'';
+    return `<tr>
+      <td><code style="font-family:monospace;font-size:13px">${u.username}</code>${isMe?` <span style="font-size:10px;color:var(--text3)">(${lang==='en'?'you':'أنت'})</span>`:''}</td>
       <td>${u.displayName||''}</td>
-      <td>
-        ${u.username===auth.username?`<span style="color:var(--brand-light);font-size:12px">${t('currentAccLabel')}</span>`:
-        `<button class="btn" style="padding:4px 12px;font-size:12px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)" onclick="deleteUser('${u.username}')">${t('deleteBtnLabel')}</button>`}
-      </td>
-    </tr>`).join('');
+      <td>${roleBadge}</td>
+      <td style="display:flex;gap:5px;flex-wrap:wrap">${demoteBtn}${deleteBtn}${isMe?`<span style="font-size:11px;color:var(--text3)">${t('currentAccLabel')}</span>`:''}</td>
+    </tr>`;
+  }).join('');
+  // Update table header to include Role column
+  const thead=tbody.closest('table').querySelector('thead tr');
+  if(thead&&thead.children.length<4){
+    const th=document.createElement('th');th.textContent=lang==='en'?'Role':'الدور';
+    thead.insertBefore(th,thead.children[2]);
+  }
+}
+
+function toggleUserRole(username){
+  if(auth.role!=='head'){toast(lang==='en'?'Head admin only':'للمدير الرئيسي فقط','err');return;}
+  const users=loadUsers()||[];
+  const u=users.find(x=>x.username===username);
+  if(!u)return;
+  if(u.username==='alyamani'){toast(lang==='en'?'Cannot change head admin role':'لا يمكن تغيير دور المدير الرئيسي','err');return;}
+  u.role=u.role==='head'?'admin':'head';
+  localStorage.setItem(K.USERS,JSON.stringify(users));
+  renderUsersTable();
+  toast(lang==='en'?'Role updated':'تم تحديث الدور');
 }
 
 async function changePassword(){
@@ -1424,7 +1465,7 @@ async function addUser(){
   const users=loadUsers()||[];
   if(users.find(u=>u.username===username)){msg.textContent=t('errUsernameExists');msg.style.display='block';return;}
   const passHash=await sha256(pass);
-  users.push({username,passHash,displayName:display});
+  users.push({username,passHash,displayName:display,role:'admin'});
   localStorage.setItem(K.USERS,JSON.stringify(users));
   document.getElementById('new-user-username').value='';
   document.getElementById('new-user-pass').value='';
@@ -1437,11 +1478,13 @@ async function addUser(){
 }
 
 function deleteUser(username){
+  if(auth.role!=='head'){toast(lang==='en'?'Head admin only':'للمدير الرئيسي فقط','err');return;}
   if(username===auth.username){toast(t('errCantDeleteSelf'),'err');return;}
+  const users=loadUsers()||[];
+  const target=users.find(u=>u.username===username);
+  if(target?.role==='head'){toast(lang==='en'?'Cannot delete another head admin':'لا يمكن حذف مدير رئيسي','err');return;}
   if(!confirm(t('confirmDelUser')+username+'؟'))return;
-  let users=loadUsers()||[];
-  users=users.filter(u=>u.username!==username);
-  localStorage.setItem(K.USERS,JSON.stringify(users));
+  localStorage.setItem(K.USERS,JSON.stringify(users.filter(u=>u.username!==username)));
   renderUsersTable();
   toast(t('toastUserDeleted'),'err');
 }
@@ -1454,7 +1497,7 @@ async function doLogin(){
   if(!username||!password){errEl.textContent=t('errFillCreds');errEl.style.display='block';return;}
   const user=await attemptLogin(username,password);
   if(!user){errEl.textContent=t('errBadCreds');errEl.style.display='block';return;}
-  auth={loggedIn:true,username:user.username,displayName:user.displayName};
+  auth={loggedIn:true,username:user.username,displayName:user.displayName,role:user.role||'admin'};
   saveSession(user);closeLoginModal();applyAuthState();
   toast(t('toastWelcome')+' '+user.displayName+' 👋');
 }
