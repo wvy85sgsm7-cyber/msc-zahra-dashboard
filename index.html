@@ -2178,7 +2178,7 @@ function updateMsgBadge(){
 
 function openMessagesModal(){
   if(!auth.loggedIn){openLoginModal();return;}
-  _msgThread=null;_msgViewAll=false;
+  _msgThread=null;
   document.getElementById('messages-modal').classList.add('open');
   document.getElementById('msg-empty-state').style.display='flex';
   document.getElementById('msg-thread-active').style.display='none';
@@ -2211,7 +2211,9 @@ function renderMsgSidebar(){
     const last=t.msgs.sort((a,b)=>b.ts-a.ts)[0];
     const preview=(last?.body||'').substring(0,28)+(last?.body?.length>28?'…':'');
     const active=_msgThread===t.other;
-    return `<div class="msg-contact${active?' active':''}" onclick="openUserThread('${t.other}','${t.otherD}')">
+    const safeUser=t.other.replace(/'/g,"\\'");
+    const safeDisplay=t.otherD.replace(/'/g,"\\'");
+    return `<div class="msg-contact${active?' active':''}" onclick="openUserThread('${safeUser}','${safeDisplay}')">
       <div class="msg-contact-av">${t.otherD.charAt(0)}</div>
       <div class="msg-contact-info">
         <div class="msg-contact-name">${t.otherD}</div>
@@ -2224,7 +2226,7 @@ function renderMsgSidebar(){
 
 
 function openUserThread(otherUser,otherDisplay){
-  _msgThread=otherUser;_msgViewAll=false;
+  _msgThread=otherUser;
   // Mark messages from them as read
   const msgs=loadMessages();let changed=false;
   msgs.forEach(m=>{if(m.from===otherUser&&m.to===auth.username&&!m.read){m.read=true;changed=true;}});
@@ -2286,6 +2288,7 @@ function sendMsg(){
   inp.value='';
   renderThreadMsgs(to);
   renderMsgSidebar();
+  updateMsgBadge();
 }
 
 function showMsgNewPicker(){
@@ -2294,10 +2297,14 @@ function showMsgNewPicker(){
   const picker=document.getElementById('msg-picker');
   if(picker.style.display==='block'){picker.style.display='none';return;}
   if(!others.length){toast(lang==='en'?'No other users to message.':'لا يوجد مستخدمون آخرون.','err');return;}
-  picker.innerHTML=others.map(u=>`<div onclick="openUserThread('${u.username}','${u.displayName}');document.getElementById('msg-picker').style.display='none'" style="padding:9px 12px;cursor:pointer;border-radius:7px;font-size:13px;display:flex;align-items:center;gap:9px;transition:background var(--tr)" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
-    <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--brand-light),var(--brand-green));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">${u.displayName.charAt(0)}</div>
-    <div><div style="font-weight:700;color:var(--text)">${u.displayName}</div><div style="font-size:11px;color:var(--text3)">@${u.username}${u.role==='head'?' 👑':''}</div></div>
-  </div>`).join('');
+  picker.innerHTML=others.map(u=>{
+    const su=u.username.replace(/'/g,"\\'");
+    const sd=u.displayName.replace(/'/g,"\\'");
+    return `<div onclick="openUserThread('${su}','${sd}');document.getElementById('msg-picker').style.display='none'" style="padding:9px 12px;cursor:pointer;border-radius:7px;font-size:13px;display:flex;align-items:center;gap:9px;transition:background var(--tr)" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+      <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--brand-light),var(--brand-green));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">${u.displayName.charAt(0)}</div>
+      <div><div style="font-weight:700;color:var(--text)">${u.displayName}</div><div style="font-size:11px;color:var(--text3)">@${u.username}${u.role==='head'?' 👑':''}</div></div>
+    </div>`;
+  }).join('');
   picker.style.display='block';
 }
 
