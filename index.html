@@ -337,6 +337,28 @@ tr:hover td{background:var(--surface3)}
   text-align:center;outline:none;transition:border-color var(--tr);-moz-appearance:textfield}
 .fee-inp::-webkit-outer-spin-button,.fee-inp::-webkit-inner-spin-button{-webkit-appearance:none}
 .fee-inp:focus{border-color:var(--brand-light)}
+/* ── SCHOOL MANAGER ── */
+.school-mgr{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
+.school-mgr-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;transition:border-color var(--tr)}
+.school-mgr-row.is-own{border-color:var(--brand-light);background:var(--surface3)}
+.school-mgr-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.smr-inp{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 12px;color:var(--text);font-family:'Cairo',sans-serif;outline:none;transition:border-color var(--tr)}
+.smr-inp:focus{border-color:var(--brand-light)}
+.smr-name{flex:1;min-width:140px;font-size:13px;font-weight:700}
+.smr-type{flex:1;min-width:120px;font-size:12px;color:var(--text2)}
+.smr-fees{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.smr-fee-col{display:flex;flex-direction:column;gap:4px}
+.smr-fee-col label{font-size:10.5px;color:var(--text3);font-weight:600;text-align:center}
+.smr-fee-inp{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 6px;color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;text-align:center;outline:none;transition:border-color var(--tr);-moz-appearance:textfield}
+.smr-fee-inp::-webkit-outer-spin-button,.smr-fee-inp::-webkit-inner-spin-button{-webkit-appearance:none}
+.smr-fee-inp:focus{border-color:var(--brand-light)}
+.own-toggle{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--brand-light);white-space:nowrap;cursor:pointer;background:rgba(75,191,184,.1);border:1px solid var(--border2);border-radius:6px;padding:5px 9px}
+.own-toggle input{accent-color:var(--brand-light);width:14px;height:14px;cursor:pointer}
+.add-school-strip{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;padding:14px 16px;background:var(--surface);border:2px dashed var(--border2);border-radius:var(--radius-sm);margin-bottom:18px}
+.add-school-strip .smr-inp{font-size:13px}
+.smr-add-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px}
+.smr-add-group label{font-size:11px;color:var(--text3);font-weight:600}
+@media(max-width:600px){.smr-fees{grid-template-columns:repeat(2,1fr)}.school-mgr-header{gap:7px}}
 
 /* ── PRINT ── */
 @media print{
@@ -551,11 +573,40 @@ tr:hover td{background:var(--surface3)}
       <span style="font-size:11px;color:var(--text3);align-self:center" data-i18n="feesCurrency">الرسوم بالريال السعودي سنوياً</span>
     </div>
     <div id="fee-edit-wrap" style="display:none">
-      <div class="section-head"><span class="section-title" style="font-size:14px" data-i18n="sectionEditFees">⚙️ تعديل الرسوم</span><div class="section-line"></div></div>
-      <div class="fee-edit-grid" id="fee-edit-grid"></div>
+      <div class="section-head" style="margin-bottom:16px"><span class="section-title" style="font-size:14px" data-i18n="sectionEditFees">⚙️ إدارة المدارس</span><div class="section-line"></div></div>
+      <!-- Add school form -->
+      <div class="add-school-strip" id="add-school-strip">
+        <div class="smr-add-group">
+          <label data-i18n="labelSchoolName">اسم المدرسة</label>
+          <input class="smr-inp smr-name" id="new-school-name" data-i18n-ph="phSchoolName" placeholder="اسم المدرسة"/>
+        </div>
+        <div class="smr-add-group">
+          <label data-i18n="labelSchoolType">النوع / المنهج</label>
+          <input class="smr-inp smr-type" id="new-school-type" data-i18n-ph="phSchoolType" placeholder="أهلي — منهج وطني"/>
+        </div>
+        <div class="smr-add-group" style="min-width:80px;max-width:90px">
+          <label data-i18n="labelElem">ابتدائي</label>
+          <input class="smr-inp smr-fee-inp" id="new-fee-elem" type="number" min="0" step="500" placeholder="0"/>
+        </div>
+        <div class="smr-add-group" style="min-width:80px;max-width:90px">
+          <label data-i18n="labelMid">متوسط</label>
+          <input class="smr-inp smr-fee-inp" id="new-fee-mid" type="number" min="0" step="500" placeholder="0"/>
+        </div>
+        <div class="smr-add-group" style="min-width:80px;max-width:90px">
+          <label data-i18n="labelHigh">ثانوي</label>
+          <input class="smr-inp smr-fee-inp" id="new-fee-high" type="number" min="0" step="500" placeholder="0"/>
+        </div>
+        <div class="smr-add-group" style="min-width:80px;max-width:90px">
+          <label data-i18n="labelIntl">دولي</label>
+          <input class="smr-inp smr-fee-inp" id="new-fee-intl" type="number" min="0" step="500" placeholder="0"/>
+        </div>
+        <button class="btn btn-brand" id="add-school-btn" style="white-space:nowrap;align-self:flex-end" data-i18n="btnAddSchool">➕ إضافة مدرسة</button>
+      </div>
+      <!-- School list -->
+      <div class="school-mgr" id="school-mgr-list"></div>
       <div style="margin-bottom:20px"></div>
     </div>
-    <button class="btn btn-outline edit-action" id="toggle-edit-btn" data-i18n="toggleEdit" style="margin-bottom:20px;font-size:13px">⚙️ تعديل بيانات الرسوم</button>
+    <button class="btn btn-outline edit-action" id="toggle-edit-btn" data-i18n="toggleEdit" style="margin-bottom:20px;font-size:13px">⚙️ إدارة المدارس</button>
     <div class="card" style="margin-bottom:18px">
       <div class="card-title"><span class="ct-dot"></span> <span data-i18n="chartFeeComp">مقارنة الرسوم السنوية بين مدارس جدة</span></div>
       <div class="chart-wrap" style="height:350px"><canvas id="feeBarChart"></canvas></div>
@@ -992,22 +1043,84 @@ function renderInsights(avgs){
     return `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px"><div style="font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:600">مرحلة ${st.label}</div><div style="font-size:22px;font-weight:900;color:var(--text);direction:ltr;text-align:right;margin-bottom:6px">${fmt(own.fees[st.key])} ﷼</div><span class="badge ${cls}">${sign}${pct}% من المتوسط</span><div style="font-size:11px;color:var(--text3);margin-top:6px">${cheaper} مدارس أغلى منا</div></div>`;
   }).join('');
 }
-function buildFeeEditGrid(){
-  const grid=document.getElementById('fee-edit-grid');grid.innerHTML='';
+function buildFeeEditGrid(){ buildSchoolManager(); } // alias kept for compat
+
+function buildSchoolManager(){
+  const list=document.getElementById('school-mgr-list');
+  if(!list)return;
+  list.innerHTML='';
   fees.forEach(school=>{
-    const card=document.createElement('div');card.className='fee-edit-card'+(school.own?' own':'');
-    const feeStageKeysE={elem:'feeElem',mid:'feeMid',high:'feeHigh',intl:'feeIntl'};
-    card.innerHTML=`<div class="fee-edit-title">${school.own?'🏫 ':'🏛️ '}${school.name}</div>`+
-      FEE_STAGES.map(st=>`<div class="fee-row"><label>${t(feeStageKeysE[st.key]||st.key)}</label><input class="fee-inp" type="number" min="0" step="500" data-school="${school.id}" data-stage="${st.key}" value="${school.fees[st.key]||0}"/></div>`).join('');
-    grid.appendChild(card);
-  });
-  grid.querySelectorAll('.fee-inp').forEach(inp=>{
-    inp.addEventListener('input',()=>{
-      const s=fees.find(x=>x.id===inp.dataset.school);
-      if(s)s.fees[inp.dataset.stage]=parseInt(inp.value)||0;
-      renderCompCards();setTimeout(renderFeeBar,50);
+    const row=document.createElement('div');
+    row.className='school-mgr-row'+(school.own?' is-own':'');
+    row.dataset.sid=school.id;
+    const stageKeys={elem:'labelElem',mid:'labelMid',high:'labelHigh',intl:'labelIntl'};
+    row.innerHTML=`
+      <div class="school-mgr-header">
+        <span style="font-size:18px">${school.own?'🏫':'🏛️'}</span>
+        <input class="smr-inp smr-name" data-field="name" value="${school.name}" placeholder="${t('phSchoolName')}"/>
+        <input class="smr-inp smr-type" data-field="type" value="${school.type}" placeholder="${t('phSchoolType')}"/>
+        <label class="own-toggle" title="${lang==='en'?'Mark as our school':'حدد كمدرستنا'}">
+          <input type="radio" name="own-school" value="${school.id}" ${school.own?'checked':''}/>
+          ${lang==='en'?'Our School':'مدرستنا'}
+        </label>
+        ${!school.own?`<button class="btn" style="padding:5px 11px;font-size:12px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);flex-shrink:0" data-del="${school.id}">${lang==='en'?'🗑 Remove':'🗑 حذف'}</button>`:''}
+      </div>
+      <div class="smr-fees">
+        ${FEE_STAGES.map(st=>`<div class="smr-fee-col"><label>${t(stageKeys[st.key]||st.key)}</label><input class="smr-fee-inp" type="number" min="0" step="500" data-stage="${st.key}" value="${school.fees[st.key]||0}"/></div>`).join('')}
+      </div>`;
+    list.appendChild(row);
+
+    // Name/type live edit
+    row.querySelectorAll('[data-field]').forEach(inp=>{
+      inp.addEventListener('input',()=>{
+        school[inp.dataset.field]=inp.value;
+        renderCompCards();setTimeout(renderFeeBar,50);
+      });
+    });
+    // Fee live edit
+    row.querySelectorAll('.smr-fee-inp').forEach(inp=>{
+      inp.addEventListener('input',()=>{
+        school.fees[inp.dataset.stage]=parseInt(inp.value)||0;
+        renderCompCards();setTimeout(renderFeeBar,50);
+      });
+    });
+    // Own-school radio
+    row.querySelector('input[type=radio]')?.addEventListener('change',e=>{
+      if(e.target.checked){
+        fees.forEach(s=>s.own=false);
+        school.own=true;
+        buildSchoolManager();renderCompCards();setTimeout(renderFeeBar,50);
+      }
+    });
+    // Delete
+    row.querySelector('[data-del]')?.addEventListener('click',()=>{
+      if(school.own){toast(lang==='en'?'Cannot remove our own school':'لا يمكن حذف مدرستنا','err');return;}
+      if(!confirm(lang==='en'?'Remove '+school.name+'?':'حذف '+school.name+'؟'))return;
+      fees=fees.filter(s=>s.id!==school.id);
+      buildSchoolManager();renderCompCards();setTimeout(renderFeeBar,50);
+      toast(lang==='en'?'School removed':'تم حذف المدرسة','err');
     });
   });
+}
+
+function addSchool(){
+  const name=document.getElementById('new-school-name').value.trim();
+  const type=document.getElementById('new-school-type').value.trim();
+  if(!name){toast(lang==='en'?'Enter school name':'أدخل اسم المدرسة','err');return;}
+  const newId='s'+Date.now();
+  fees.push({
+    id:newId, name, own:false, type:type||(lang==='en'?'National — National Curriculum':'أهلي — منهج وطني'),
+    fees:{
+      elem:parseInt(document.getElementById('new-fee-elem').value)||0,
+      mid:parseInt(document.getElementById('new-fee-mid').value)||0,
+      high:parseInt(document.getElementById('new-fee-high').value)||0,
+      intl:parseInt(document.getElementById('new-fee-intl').value)||0
+    }
+  });
+  // clear form
+  ['new-school-name','new-school-type','new-fee-elem','new-fee-mid','new-fee-high','new-fee-intl'].forEach(id=>{document.getElementById(id).value='';});
+  buildSchoolManager();renderCompCards();setTimeout(renderFeeBar,50);
+  toast(lang==='en'?'School added':'تمت إضافة المدرسة');
 }
 
 /* ─── REPORTS TABLE ───────────────────────────────── */
@@ -1217,6 +1330,9 @@ async function init(){
     if(!confirm(t('confirmResetFees')))return;
     fees=JSON.parse(JSON.stringify(DEFAULT_FEES));save(K.FEES,fees);buildFeeEditGrid();renderCompCards();renderFeeBar();toast(t('toastFeesReset'));
   });
+  // Add school button
+  document.getElementById('add-school-btn').addEventListener('click',addSchool);
+
   // Settings
   document.getElementById('change-pass-btn').addEventListener('click',changePassword);
   document.getElementById('update-name-btn').addEventListener('click',updateDisplayName);
@@ -1226,7 +1342,7 @@ async function init(){
     if(!auth.loggedIn)return;
     const wrap=document.getElementById('fee-edit-wrap');const btn=document.getElementById('toggle-edit-btn');
     const open=wrap.style.display==='none';wrap.style.display=open?'block':'none';
-    btn.textContent=open?'⬆️ إخفاء التعديلات':t('toggleEdit');
+    btn.textContent=open?(lang==='en'?'⬆️ Hide Manager':'⬆️ إخفاء المدير'):t('toggleEdit');
   });
 
   lang = localStorage.getItem(K_LANG) || 'ar';
@@ -1430,6 +1546,11 @@ const TRANSLATIONS = {
     errBadCreds: 'اسم المستخدم أو كلمة المرور غير صحيحة',
     lineChartLabel: 'إجمالي الطلاب',
     noData: 'لا توجد بيانات كافية',
+    labelElem: 'ابتدائي', labelMid: 'متوسط', labelHigh: 'ثانوي', labelIntl: 'دولي',
+    labelSchoolName: 'اسم المدرسة', labelSchoolType: 'النوع / المنهج',
+    phSchoolName: 'اسم المدرسة', phSchoolType: 'أهلي — منهج وطني',
+    btnAddSchool: '➕ إضافة مدرسة', sectionEditFees: '⚙️ إدارة المدارس',
+    toggleEdit: '⚙️ إدارة المدارس',
   },
   en: {
     tabDashboard: 'Dashboard', tabEntry: 'Data Entry', tabAnalytics: 'Analytics',
@@ -1519,6 +1640,11 @@ const TRANSLATIONS = {
     errBadCreds: 'Incorrect username or password',
     lineChartLabel: 'Total Students',
     noData: 'Insufficient data',
+    labelElem: 'Elementary', labelMid: 'Middle School', labelHigh: 'High School', labelIntl: 'International',
+    labelSchoolName: 'School Name', labelSchoolType: 'Type / Curriculum',
+    phSchoolName: 'School name', phSchoolType: 'National — National Curriculum',
+    btnAddSchool: '➕ Add School', sectionEditFees: '⚙️ School Manager',
+    toggleEdit: '⚙️ Manage Schools',
   }
 };
 
