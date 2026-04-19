@@ -910,11 +910,6 @@ tr:hover td{background:var(--surface3)}
             <button class="btn btn-brand" id="msg-new-btn" style="width:100%;font-size:12px;padding:7px 10px" data-i18n="msgNewBtn">✉️ محادثة جديدة</button>
             <div class="msg-picker" id="msg-picker"></div>
           </div>
-          <div id="msg-all-convos-wrap" style="display:none">
-            <button id="msg-all-toggle-btn" onclick="toggleMsgViewAll()" style="width:100%;text-align:right;background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text2);font-family:'Cairo',sans-serif;font-size:12px;cursor:pointer;transition:all var(--tr)">
-              👁️ <span data-i18n="msgAllConvos">كل المحادثات</span>
-            </button>
-          </div>
         </div>
         <div class="msg-sec-label" id="msg-sidebar-label" data-i18n="msgMyChats">محادثاتي</div>
         <div class="msg-contacts" id="msg-contacts"></div>
@@ -2172,8 +2167,7 @@ function clearResolved(){
 function loadMessages(){try{return JSON.parse(localStorage.getItem(K.MESSAGES))||[];}catch{return[];}}
 function saveMessages(msgs){localStorage.setItem(K.MESSAGES,JSON.stringify(msgs));}
 
-let _msgThread=null;   // username of the person currently in thread (or "pair:u1|u2" for head view-all)
-let _msgViewAll=false; // head admin "all convos" mode
+let _msgThread=null;   // username of the person currently in thread
 
 function updateMsgBadge(){
   const msgs=loadMessages();
@@ -2188,8 +2182,6 @@ function openMessagesModal(){
   document.getElementById('messages-modal').classList.add('open');
   document.getElementById('msg-empty-state').style.display='flex';
   document.getElementById('msg-thread-active').style.display='none';
-  if(auth.role==='head') document.getElementById('msg-all-convos-wrap').style.display='block';
-  else document.getElementById('msg-all-convos-wrap').style.display='none';
   renderMsgSidebar();
 }
 function closeMessagesModal(){document.getElementById('messages-modal').classList.remove('open');}
@@ -2197,40 +2189,7 @@ function closeMessagesModal(){document.getElementById('messages-modal').classLis
 /* Build sidebar contact list */
 function renderMsgSidebar(){
   const msgs=loadMessages();
-  const isHead=auth.role==='head';
   const lbl=document.getElementById('msg-sidebar-label');
-
-  if(_msgViewAll&&isHead){
-    if(lbl) lbl.textContent=lang==='en'?'All Conversations':'كل المحادثات';
-    // Build all unique pairs
-    const pairMap={};
-    msgs.forEach(m=>{
-      const key=[m.from,m.to].sort().join('|');
-      if(!pairMap[key]) pairMap[key]={key,u1:m.from,u2:m.to,u1d:m.fromDisplay,u2d:m.toDisplay,lastTs:0,msgs:[]};
-      pairMap[key].msgs.push(m);
-      if(m.ts>pairMap[key].lastTs) pairMap[key].lastTs=m.ts;
-    });
-    const pairs=Object.values(pairMap).sort((a,b)=>b.lastTs-a.lastTs);
-    if(!pairs.length){
-      document.getElementById('msg-contacts').innerHTML=`<div style="padding:20px;text-align:center;color:var(--text3);font-size:12px">${lang==='en'?'No conversations yet.':'لا توجد محادثات بعد.'}</div>`;
-      return;
-    }
-    document.getElementById('msg-contacts').innerHTML=pairs.map(p=>{
-      const last=p.msgs.sort((a,b)=>b.ts-a.ts)[0];
-      const preview=(last?.body||'').substring(0,28)+(last?.body?.length>28?'…':'');
-      const active=_msgThread===('pair:'+p.key);
-      return `<div class="msg-contact${active?' active':''}" onclick="openPairThread('${p.key}','${p.u1}','${p.u2}','${p.u1d}','${p.u2d}')">
-        <div class="msg-contact-av" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);font-size:11px;width:34px;height:34px">${p.u1.charAt(0).toUpperCase()}↔${p.u2.charAt(0).toUpperCase()}</div>
-        <div class="msg-contact-info">
-          <div class="msg-contact-name">${p.u1d} ↔ ${p.u2d}</div>
-          <div class="msg-contact-preview">${preview}</div>
-        </div>
-      </div>`;
-    }).join('');
-    return;
-  }
-
-  // My conversations
   if(lbl) lbl.textContent=lang==='en'?'My Chats':'محادثاتي';
   const myMsgs=msgs.filter(m=>m.from===auth.username||m.to===auth.username);
   const threadMap={};
@@ -2263,15 +2222,6 @@ function renderMsgSidebar(){
   }).join('');
 }
 
-function toggleMsgViewAll(){
-  _msgViewAll=!_msgViewAll;
-  _msgThread=null;
-  const btn=document.getElementById('msg-all-toggle-btn');
-  if(btn){btn.style.background=_msgViewAll?'var(--surface3)':'transparent';btn.style.borderColor=_msgViewAll?'var(--border2)':'var(--border)';}
-  document.getElementById('msg-empty-state').style.display='flex';
-  document.getElementById('msg-thread-active').style.display='none';
-  renderMsgSidebar();
-}
 
 function openUserThread(otherUser,otherDisplay){
   _msgThread=otherUser;_msgViewAll=false;
@@ -2292,19 +2242,6 @@ function openUserThread(otherUser,otherDisplay){
   setTimeout(()=>inp.focus(),60);
 }
 
-function openPairThread(key,u1,u2,u1d,u2d){
-  _msgThread='pair:'+key;
-  renderMsgSidebar();
-  document.getElementById('msg-empty-state').style.display='none';
-  const active=document.getElementById('msg-thread-active');
-  active.style.display='flex';
-  document.getElementById('msg-thread-hdr').innerHTML=`<span>👁️</span> ${u1d} ↔ ${u2d}`;
-  document.getElementById('msg-input-row').style.display='none'; // observer, no send
-  const msgs=loadMessages().filter(m=>(m.from===u1&&m.to===u2)||(m.from===u2&&m.to===u1)).sort((a,b)=>a.ts-b.ts);
-  const cont=document.getElementById('msg-messages');
-  cont.innerHTML=msgs.length?msgs.map(m=>renderBubble(m,u1)).join(''):`<div class="msg-empty-state"><div style="font-size:32px">💬</div><div style="font-size:13px">${lang==='en'?'No messages in this thread yet.':'لا توجد رسائل في هذه المحادثة بعد.'}</div></div>`;
-  cont.scrollTop=cont.scrollHeight;
-}
 
 function renderThreadMsgs(otherUser){
   const msgs=loadMessages().filter(m=>(m.from===auth.username&&m.to===otherUser)||(m.from===otherUser&&m.to===auth.username)).sort((a,b)=>a.ts-b.ts);
@@ -2478,7 +2415,7 @@ const TRANSLATIONS = {
     catBug: '🐛 خلل تقني', catSuggestion: '💡 اقتراح', catAccess: '🔐 صلاحيات',
     catData: '📊 بيانات', catOther: '📌 أخرى',
     msgTitle: 'الرسائل', msgNewBtn: '✉️ محادثة جديدة', msgAllConvos: 'كل المحادثات',
-    msgMyChats: 'محادثاتي', msgSelectChat: 'اختر محادثة للبدء', msgSend: 'إرسال ←',
+    msgMyChats: 'محادثاتي', msgSelectChat: 'اختر محادثة للبدء', msgSend: 'إرسال ←', msgAllConvos: '',
     msgConfidentialTitle: '🔐 سرية تامة',
     msgConfidentialBody: 'جميع المحادثات في هذا النظام سرية وخاصة. لا يمكن لأي مستخدم الاطلاع على محادثات الآخرين. يُرجى الالتزام بمبادئ السرية المهنية في جميع رسائلك.',
   },
