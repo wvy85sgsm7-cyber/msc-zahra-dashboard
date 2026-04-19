@@ -337,6 +337,22 @@ tr:hover td{background:var(--surface3)}
   text-align:center;outline:none;transition:border-color var(--tr);-moz-appearance:textfield}
 .fee-inp::-webkit-outer-spin-button,.fee-inp::-webkit-inner-spin-button{-webkit-appearance:none}
 .fee-inp:focus{border-color:var(--brand-light)}
+/* ── ISSUE INBOX ── */
+.issue-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 18px;transition:border-color var(--tr)}
+.issue-card.open{border-color:rgba(239,68,68,.35)}
+.issue-card.reviewed{border-color:rgba(201,162,39,.35)}
+.issue-card.resolved{border-color:rgba(42,140,74,.35);opacity:.7}
+.issue-card-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px}
+.issue-status-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.issue-title{font-size:14px;font-weight:800;color:var(--text);flex:1}
+.issue-meta{font-size:11px;color:var(--text3);margin-bottom:8px}
+.issue-body{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px;white-space:pre-wrap}
+.issue-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.issue-note-inp{flex:1;min-width:160px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 11px;color:var(--text);font-family:'Cairo',sans-serif;font-size:12px;outline:none}
+.issue-note-inp:focus{border-color:var(--brand-light)}
+.report-btn{position:relative;background:rgba(201,162,39,.15);border:1px solid rgba(201,162,39,.35);color:#c9a227}
+.report-btn:hover{background:rgba(201,162,39,.28);color:#c9a227}
+.report-btn-badge{position:absolute;top:-5px;right:-5px;min-width:16px;height:16px;border-radius:8px;background:#e05252;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;line-height:1}
 /* ── SCHOOL MANAGER ── */
 .school-mgr{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
 .school-mgr-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;transition:border-color var(--tr)}
@@ -446,6 +462,7 @@ tr:hover td{background:var(--surface3)}
       </div>
       <button class="auth-logout-btn" id="logout-btn" data-i18n="logoutBtn">خروج</button>
     </div>
+    <button class="tb-btn report-btn" id="report-issue-btn" title="الإبلاغ عن مشكلة" style="display:none">📩<span class="report-btn-badge" id="inbox-unread-badge" style="display:none">0</span></button>
     <button class="tb-btn" id="lang-btn" title="English / عربي">🌐 EN</button>
     <button class="tb-btn" id="theme-btn" title="تبديل المظهر">🌙</button>
     <button class="tb-btn" id="print-btn" title="طباعة">🖨️</button>
@@ -462,6 +479,7 @@ tr:hover td{background:var(--surface3)}
     <button class="tab-btn" data-tab="tab-tuition" data-i18n="tabTuition"><span class="tab-icon">💰</span> مقارنة الرسوم</button>
     <button class="tab-btn" data-tab="tab-settings" id="settings-tab-btn" data-i18n="tabSettings" style="display:none"><span class="tab-icon">⚙️</span> الإعدادات</button>
     <button class="tab-btn" data-tab="tab-log" id="log-tab-btn" data-i18n="tabLog" style="display:none"><span class="tab-icon">📜</span> سجل النشاط</button>
+    <button class="tab-btn" data-tab="tab-inbox" id="inbox-tab-btn" style="display:none"><span class="tab-icon">📥</span> <span data-i18n="tabInbox">صندوق البلاغات</span> <span id="inbox-tab-badge" class="badge badge-red" style="display:none;margin-right:2px"></span></button>
   </nav>
 
   <!-- TAB 1: DASHBOARD -->
@@ -755,6 +773,55 @@ tr:hover td{background:var(--surface3)}
       </div>
     </div>
   </section>
+
+  <!-- TAB: INBOX (head admin only) -->
+  <section class="page" id="tab-inbox">
+    <div class="action-bar">
+      <span class="section-title">📥 <span data-i18n="tabInbox">صندوق البلاغات</span></span>
+      <div class="action-right">
+        <select id="inbox-filter" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;outline:none">
+          <option value="">— كل البلاغات —</option>
+          <option value="open">🔴 مفتوح</option>
+          <option value="reviewed">🟡 قيد المراجعة</option>
+          <option value="resolved">🟢 تم الحل</option>
+        </select>
+        <button class="btn btn-danger" id="clear-resolved-btn" style="font-size:13px">🗑️ <span data-i18n="btnClearResolved">مسح المحلولة</span></button>
+      </div>
+    </div>
+    <div class="empty" id="empty-inbox" style="display:none"><div class="empty-icon">📭</div><div class="empty-text" data-i18n="emptyInbox">لا توجد بلاغات بعد.</div></div>
+    <div id="inbox-list" style="display:flex;flex-direction:column;gap:12px"></div>
+  </section>
+</div>
+
+<!-- REPORT ISSUE MODAL -->
+<div class="modal-overlay" id="report-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="login-school-name" style="font-size:15px;margin-bottom:4px" data-i18n="reportModalTitle">📩 إرسال بلاغ</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:18px" data-i18n="reportModalSub">سيصل بلاغك مباشرة إلى المدير الرئيسي</div>
+    <div style="margin-bottom:12px">
+      <label class="input-label" data-i18n="labelIssueTitle">عنوان المشكلة</label>
+      <input class="modal-inp" id="issue-title-inp" data-i18n-ph="phIssueTitle" placeholder="وصف مختصر للمشكلة"/>
+    </div>
+    <div style="margin-bottom:12px">
+      <label class="input-label" data-i18n="labelIssueCategory">الفئة</label>
+      <select class="modal-inp" id="issue-cat-inp" style="cursor:pointer">
+        <option value="bug" data-i18n="catBug">🐛 خلل تقني</option>
+        <option value="suggestion" data-i18n="catSuggestion">💡 اقتراح</option>
+        <option value="access" data-i18n="catAccess">🔐 صلاحيات</option>
+        <option value="data" data-i18n="catData">📊 بيانات</option>
+        <option value="other" data-i18n="catOther">📌 أخرى</option>
+      </select>
+    </div>
+    <div style="margin-bottom:18px">
+      <label class="input-label" data-i18n="labelIssueBody">التفاصيل</label>
+      <textarea class="modal-inp" id="issue-body-inp" rows="4" data-i18n-ph="phIssueBody" placeholder="اشرح المشكلة بالتفصيل…" style="resize:vertical;min-height:90px"></textarea>
+    </div>
+    <div class="settings-msg" id="report-msg"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+      <button class="btn btn-outline" id="report-cancel-btn" data-i18n="btnCancel">إلغاء</button>
+      <button class="btn btn-brand" id="report-submit-btn" data-i18n="btnSubmitReport">📩 إرسال البلاغ</button>
+    </div>
+  </div>
 </div>
 
 <!-- LOGIN MODAL -->
@@ -851,7 +918,7 @@ const FEE_STAGES=[{key:'kg',label:'روضة'},{key:'elem',label:'ابتدائي'
 
 /* ─── STORAGE KEYS ────────────────────────────────── */
 const K={DATA:'msc_data_v3',REPORTS:'msc_reports_v3',THEME:'msc_theme_v3',
-  SAVED:'msc_last_saved',FEES:'msc_fees_v4',USERS:'msc_users_v3',SESSION:'msc_sess_v2',LOGS:'msc_logs_v1',DEPTS:'msc_depts_v1'};
+  SAVED:'msc_last_saved',FEES:'msc_fees_v4',USERS:'msc_users_v3',SESSION:'msc_sess_v2',LOGS:'msc_logs_v1',DEPTS:'msc_depts_v1',ISSUES:'msc_issues_v1'};
 
 /* ─── AUTH ────────────────────────────────────────── */
 // Default user stored if none exist
@@ -955,6 +1022,13 @@ function applyAuthState(){
     if(userMgmtSec) userMgmtSec.style.display=isHead?'':'none';
     const deptMgmtSec=document.getElementById('dept-mgmt-section');
     if(deptMgmtSec) deptMgmtSec.style.display=isHead?'':'none';
+    // Report button (all logged-in users) + inbox tab (head only)
+    const reportBtn=document.getElementById('report-issue-btn');
+    if(reportBtn) reportBtn.style.display='flex';
+    document.getElementById('inbox-tab-btn').style.display=isHead?'':'none';
+    const clearResBtn=document.getElementById('clear-resolved-btn');
+    if(clearResBtn) clearResBtn.style.display=isHead?'':'none';
+    updateInboxBadge();
   } else {
     guestUI.style.display='flex';
     userUI.style.display='none';
@@ -975,6 +1049,9 @@ function applyAuthState(){
     entryLock.style.display='inline';
     document.getElementById('settings-tab-btn').style.display='none';
     document.getElementById('log-tab-btn').style.display='none';
+    document.getElementById('inbox-tab-btn').style.display='none';
+    const reportBtnGuest=document.getElementById('report-issue-btn');
+    if(reportBtnGuest) reportBtnGuest.style.display='none';
   }
   renderReports(); // re-render table with/without delete buttons
 }
@@ -1362,6 +1439,7 @@ function switchTab(id){
     if(auth.role==='head') buildDeptManager();
   }
   if(id==='tab-log') renderLog();
+  if(id==='tab-inbox') renderInbox();
 }
 
 /* ─── INIT ────────────────────────────────────────── */
@@ -1473,6 +1551,15 @@ async function init(){
   document.getElementById('add-user-btn').addEventListener('click',addUser);
 
   // Dept manager
+  // Issues / report system
+  document.getElementById('report-issue-btn').addEventListener('click',openReportModal);
+  document.getElementById('report-cancel-btn').addEventListener('click',closeReportModal);
+  document.getElementById('report-modal').addEventListener('click',e=>{if(e.target.id==='report-modal')closeReportModal();});
+  document.getElementById('report-submit-btn').addEventListener('click',submitIssue);
+  document.getElementById('issue-title-inp').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('issue-body-inp').focus();});
+  document.getElementById('clear-resolved-btn').addEventListener('click',clearResolved);
+  document.getElementById('inbox-filter').addEventListener('change',renderInbox);
+
   document.getElementById('add-dept-btn').addEventListener('click',addDept);
   document.getElementById('dept-assign-cancel').addEventListener('click',closeDeptAssignModal);
   document.getElementById('dept-assign-confirm').addEventListener('click',saveDeptAssign);
@@ -1499,10 +1586,11 @@ const LOG_ACTIONS={
   USER_ADD:'USER_ADD',USER_DELETE:'USER_DELETE',ROLE_CHANGE:'ROLE_CHANGE',
   PW_CHANGE:'PW_CHANGE',NAME_CHANGE:'NAME_CHANGE',
   DEPT_ADD:'DEPT_ADD',DEPT_DELETE:'DEPT_DELETE',DEPT_ASSIGN:'DEPT_ASSIGN',
+  ISSUE_SUBMIT:'ISSUE_SUBMIT',
 };
-const LOG_LABELS_AR={LOGIN:'تسجيل دخول',LOGOUT:'تسجيل خروج',DATA_SAVE:'حفظ البيانات',DATA_RESET:'مسح البيانات',REPORT_SAVE:'حفظ تقرير',REPORT_DELETE:'حذف تقرير',REPORT_CLEAR:'حذف كل التقارير',FEE_SAVE:'حفظ الرسوم',FEE_RESET:'إعادة تعيين الرسوم',SCHOOL_ADD:'إضافة مدرسة',SCHOOL_REMOVE:'حذف مدرسة',SCHOOL_EDIT:'تعديل مدرسة',USER_ADD:'إضافة مستخدم',USER_DELETE:'حذف مستخدم',ROLE_CHANGE:'تغيير الدور',PW_CHANGE:'تغيير كلمة المرور',NAME_CHANGE:'تغيير الاسم',DEPT_ADD:'إضافة قسم',DEPT_DELETE:'حذف قسم',DEPT_ASSIGN:'تعيين أقسام'};
-const LOG_LABELS_EN={LOGIN:'Login',LOGOUT:'Logout',DATA_SAVE:'Data Saved',DATA_RESET:'Data Reset',REPORT_SAVE:'Report Saved',REPORT_DELETE:'Report Deleted',REPORT_CLEAR:'All Reports Cleared',FEE_SAVE:'Fees Saved',FEE_RESET:'Fees Reset',SCHOOL_ADD:'School Added',SCHOOL_REMOVE:'School Removed',SCHOOL_EDIT:'School Edited',USER_ADD:'User Added',USER_DELETE:'User Deleted',ROLE_CHANGE:'Role Changed',PW_CHANGE:'Password Changed',NAME_CHANGE:'Name Changed',DEPT_ADD:'Department Added',DEPT_DELETE:'Department Deleted',DEPT_ASSIGN:'Departments Assigned'};
-const LOG_COLORS={LOGIN:'#2A8C4A',LOGOUT:'#7a9aac',DATA_SAVE:'#4BBFB8',DATA_RESET:'#e05252',REPORT_SAVE:'#3b82f6',REPORT_DELETE:'#e05252',REPORT_CLEAR:'#e05252',FEE_SAVE:'#c9a227',FEE_RESET:'#7a9aac',SCHOOL_ADD:'#2A8C4A',SCHOOL_REMOVE:'#e05252',SCHOOL_EDIT:'#c9a227',USER_ADD:'#2A8C4A',USER_DELETE:'#e05252',ROLE_CHANGE:'#c9a227',PW_CHANGE:'#4BBFB8',NAME_CHANGE:'#4BBFB8',DEPT_ADD:'#2A8C4A',DEPT_DELETE:'#e05252',DEPT_ASSIGN:'#c9a227'};
+const LOG_LABELS_AR={LOGIN:'تسجيل دخول',LOGOUT:'تسجيل خروج',DATA_SAVE:'حفظ البيانات',DATA_RESET:'مسح البيانات',REPORT_SAVE:'حفظ تقرير',REPORT_DELETE:'حذف تقرير',REPORT_CLEAR:'حذف كل التقارير',FEE_SAVE:'حفظ الرسوم',FEE_RESET:'إعادة تعيين الرسوم',SCHOOL_ADD:'إضافة مدرسة',SCHOOL_REMOVE:'حذف مدرسة',SCHOOL_EDIT:'تعديل مدرسة',USER_ADD:'إضافة مستخدم',USER_DELETE:'حذف مستخدم',ROLE_CHANGE:'تغيير الدور',PW_CHANGE:'تغيير كلمة المرور',NAME_CHANGE:'تغيير الاسم',DEPT_ADD:'إضافة قسم',DEPT_DELETE:'حذف قسم',DEPT_ASSIGN:'تعيين أقسام',ISSUE_SUBMIT:'إرسال بلاغ'};
+const LOG_LABELS_EN={LOGIN:'Login',LOGOUT:'Logout',DATA_SAVE:'Data Saved',DATA_RESET:'Data Reset',REPORT_SAVE:'Report Saved',REPORT_DELETE:'Report Deleted',REPORT_CLEAR:'All Reports Cleared',FEE_SAVE:'Fees Saved',FEE_RESET:'Fees Reset',SCHOOL_ADD:'School Added',SCHOOL_REMOVE:'School Removed',SCHOOL_EDIT:'School Edited',USER_ADD:'User Added',USER_DELETE:'User Deleted',ROLE_CHANGE:'Role Changed',PW_CHANGE:'Password Changed',NAME_CHANGE:'Name Changed',DEPT_ADD:'Department Added',DEPT_DELETE:'Department Deleted',DEPT_ASSIGN:'Departments Assigned',ISSUE_SUBMIT:'Issue Submitted'};
+const LOG_COLORS={LOGIN:'#2A8C4A',LOGOUT:'#7a9aac',DATA_SAVE:'#4BBFB8',DATA_RESET:'#e05252',REPORT_SAVE:'#3b82f6',REPORT_DELETE:'#e05252',REPORT_CLEAR:'#e05252',FEE_SAVE:'#c9a227',FEE_RESET:'#7a9aac',SCHOOL_ADD:'#2A8C4A',SCHOOL_REMOVE:'#e05252',SCHOOL_EDIT:'#c9a227',USER_ADD:'#2A8C4A',USER_DELETE:'#e05252',ROLE_CHANGE:'#c9a227',PW_CHANGE:'#4BBFB8',NAME_CHANGE:'#4BBFB8',DEPT_ADD:'#2A8C4A',DEPT_DELETE:'#e05252',DEPT_ASSIGN:'#c9a227',ISSUE_SUBMIT:'#ec4899'};
 
 function loadLogs(){try{return JSON.parse(localStorage.getItem(K.LOGS))||[];}catch{return[];}}
 function saveLogs(logs){localStorage.setItem(K.LOGS,JSON.stringify(logs));}
@@ -1806,6 +1894,143 @@ function saveDeptAssign(){
   toast(lang==='en'?'Departments updated':'تم تحديث الأقسام');
 }
 
+/* ─── ISSUE / REPORT SYSTEM ──────────────────────── */
+function loadIssues(){try{return JSON.parse(localStorage.getItem(K.ISSUES))||[];}catch{return[];}}
+function saveIssues(issues){localStorage.setItem(K.ISSUES,JSON.stringify(issues));}
+
+function openReportModal(){
+  if(!auth.loggedIn){openLoginModal();return;}
+  document.getElementById('issue-title-inp').value='';
+  document.getElementById('issue-cat-inp').value='bug';
+  document.getElementById('issue-body-inp').value='';
+  document.getElementById('report-msg').style.display='none';
+  document.getElementById('report-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('issue-title-inp').focus(),80);
+}
+function closeReportModal(){document.getElementById('report-modal').classList.remove('open');}
+
+async function submitIssue(){
+  const title=document.getElementById('issue-title-inp').value.trim();
+  const cat=document.getElementById('issue-cat-inp').value;
+  const body=document.getElementById('issue-body-inp').value.trim();
+  const msgEl=document.getElementById('report-msg');
+  if(!title||!body){
+    msgEl.style.display='block';msgEl.className='settings-msg err';
+    msgEl.textContent=lang==='en'?'Please fill in the title and details.':'يرجى ملء العنوان والتفاصيل.';
+    return;
+  }
+  const CAT_ICONS={bug:'🐛',suggestion:'💡',access:'🔐',data:'📊',other:'📌'};
+  const CAT_LABELS_AR={bug:'خلل تقني',suggestion:'اقتراح',access:'صلاحيات',data:'بيانات',other:'أخرى'};
+  const CAT_LABELS_EN={bug:'Bug',suggestion:'Suggestion',access:'Access',data:'Data',other:'Other'};
+  const issues=loadIssues();
+  issues.unshift({
+    id:Date.now()+''+Math.random().toString(36).slice(2,6),
+    ts:Date.now(),
+    username:auth.username,
+    displayName:auth.displayName,
+    cat, title, body,
+    status:'open'
+  });
+  saveIssues(issues);
+  closeReportModal();
+  updateInboxBadge();
+  toast(lang==='en'?'Report sent ✅':'تم إرسال البلاغ ✅');
+  logAction('ISSUE_SUBMIT', title);
+}
+
+const ISSUE_CAT_ICON={bug:'🐛',suggestion:'💡',access:'🔐',data:'📊',other:'📌'};
+const ISSUE_CAT_AR={bug:'خلل تقني',suggestion:'اقتراح',access:'صلاحيات',data:'بيانات',other:'أخرى'};
+const ISSUE_CAT_EN={bug:'Bug',suggestion:'Suggestion',access:'Access',data:'Data',other:'Other'};
+const ISSUE_STATUS_COLOR={open:'var(--red)',reviewed:'var(--gold)',resolved:'var(--green)'};
+const ISSUE_STATUS_LABEL_AR={open:'مفتوح',reviewed:'قيد المراجعة',resolved:'تم الحل'};
+const ISSUE_STATUS_LABEL_EN={open:'Open',reviewed:'Under Review',resolved:'Resolved'};
+
+function updateInboxBadge(){
+  const issues=loadIssues();
+  const unread=issues.filter(i=>i.status==='open').length;
+  const badgeTopbar=document.getElementById('inbox-unread-badge');
+  const badgeTab=document.getElementById('inbox-tab-badge');
+  if(badgeTopbar){
+    badgeTopbar.textContent=unread;
+    badgeTopbar.style.display=unread>0?'flex':'none';
+  }
+  if(badgeTab){
+    badgeTab.textContent=unread;
+    badgeTab.style.display=unread>0?'inline-block':'none';
+  }
+}
+
+function renderInbox(){
+  const issues=loadIssues();
+  const filter=document.getElementById('inbox-filter').value;
+  const filtered=filter?issues.filter(i=>i.status===filter):issues;
+  const list=document.getElementById('inbox-list');
+  const empty=document.getElementById('empty-inbox');
+  if(!filtered.length){
+    list.innerHTML='';
+    empty.style.display='flex';
+    return;
+  }
+  empty.style.display='none';
+  list.innerHTML=filtered.map(issue=>{
+    const d=new Date(issue.ts);
+    const dateStr=d.toLocaleDateString(lang==='en'?'en-US':'ar-SA',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    const catIcon=ISSUE_CAT_ICON[issue.cat]||'📌';
+    const catLabel=lang==='en'?ISSUE_CAT_EN[issue.cat]:ISSUE_CAT_AR[issue.cat];
+    const statusColor=ISSUE_STATUS_COLOR[issue.status]||'var(--text2)';
+    const statusLabel=lang==='en'?ISSUE_STATUS_LABEL_EN[issue.status]:ISSUE_STATUS_LABEL_AR[issue.status];
+    return `<div class="issue-card ${issue.status}" data-id="${issue.id}">
+      <div class="issue-card-header">
+        <div class="issue-status-dot" style="background:${statusColor}"></div>
+        <div class="issue-title">${catIcon} ${issue.title}</div>
+        <span style="font-size:11px;padding:2px 9px;border-radius:12px;font-weight:700;background:${statusColor}22;color:${statusColor};border:1px solid ${statusColor}44;white-space:nowrap">${statusLabel}</span>
+      </div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px;white-space:pre-wrap;line-height:1.6">${issue.body}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:11px;background:var(--surface2);border-radius:5px;padding:2px 8px;color:var(--text2)">${catIcon} ${catLabel}</span>
+          <span style="font-size:11px;color:var(--text3)">👤 ${issue.displayName} (${issue.username})</span>
+          <span style="font-size:11px;color:var(--text3)">🕐 ${dateStr}</span>
+        </div>
+        <div style="display:flex;gap:6px">
+          ${issue.status!=='open'?`<button onclick="markIssueStatus('${issue.id}','open')" style="font-size:11px;padding:4px 10px;border-radius:7px;background:var(--red-bg);border:1px solid rgba(224,82,82,.3);color:var(--red);cursor:pointer;font-family:'Cairo',sans-serif">🔴 ${lang==='en'?'Mark Open':'فتح'}</button>`:''}
+          ${issue.status!=='reviewed'?`<button onclick="markIssueStatus('${issue.id}','reviewed')" style="font-size:11px;padding:4px 10px;border-radius:7px;background:var(--gold-bg);border:1px solid rgba(201,162,39,.3);color:var(--gold);cursor:pointer;font-family:'Cairo',sans-serif">🟡 ${lang==='en'?'Mark Reviewing':'مراجعة'}</button>`:''}
+          ${issue.status!=='resolved'?`<button onclick="markIssueStatus('${issue.id}','resolved')" style="font-size:11px;padding:4px 10px;border-radius:7px;background:var(--green-bg);border:1px solid rgba(42,140,74,.3);color:var(--green);cursor:pointer;font-family:'Cairo',sans-serif">🟢 ${lang==='en'?'Mark Resolved':'حل'}</button>`:''}
+          <button onclick="deleteIssue('${issue.id}')" style="font-size:11px;padding:4px 10px;border-radius:7px;background:var(--red-bg);border:1px solid rgba(224,82,82,.3);color:var(--red);cursor:pointer;font-family:'Cairo',sans-serif">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  updateInboxBadge();
+}
+
+function markIssueStatus(id, status){
+  const issues=loadIssues();
+  const idx=issues.findIndex(i=>i.id===id);
+  if(idx<0)return;
+  issues[idx].status=status;
+  saveIssues(issues);
+  renderInbox();
+  updateInboxBadge();
+}
+
+function deleteIssue(id){
+  const issues=loadIssues();
+  saveIssues(issues.filter(i=>i.id!==id));
+  renderInbox();
+  updateInboxBadge();
+}
+
+function clearResolved(){
+  const issues=loadIssues();
+  const remaining=issues.filter(i=>i.status!=='resolved');
+  if(remaining.length===issues.length){toast(lang==='en'?'No resolved reports to clear.':'لا توجد بلاغات محلولة.','err');return;}
+  saveIssues(remaining);
+  renderInbox();
+  updateInboxBadge();
+  toast(lang==='en'?'Resolved reports cleared.':'تم مسح البلاغات المحلولة.');
+}
+
 /* ─── I18N ────────────────────────────────────────── */
 const K_LANG = 'msc_lang_v1';
 let lang = localStorage.getItem(K_LANG) || 'ar';
@@ -1911,6 +2136,14 @@ const TRANSLATIONS = {
     labelDeptName: 'اسم القسم (عربي)', labelDeptNameEn: 'اسم القسم (إنجليزي)',
     labelDeptIcon: 'الأيقونة', labelDeptColor: 'اللون', btnAddDept: '➕ إضافة قسم',
     thDepts: 'الأقسام', deptAssignNote: 'تركها فارغة يعني صلاحية على جميع الأقسام',
+    tabInbox: 'صندوق البلاغات',
+    reportModalTitle: '📩 إرسال بلاغ', reportModalSub: 'سيصل بلاغك مباشرة إلى المدير الرئيسي',
+    labelIssueTitle: 'عنوان المشكلة', phIssueTitle: 'وصف مختصر للمشكلة',
+    labelIssueCategory: 'الفئة', labelIssueBody: 'التفاصيل', phIssueBody: 'اشرح المشكلة بالتفصيل…',
+    btnSubmitReport: '📩 إرسال البلاغ', emptyInbox: 'لا توجد بلاغات بعد.',
+    btnClearResolved: 'مسح المحلولة',
+    catBug: '🐛 خلل تقني', catSuggestion: '💡 اقتراح', catAccess: '🔐 صلاحيات',
+    catData: '📊 بيانات', catOther: '📌 أخرى',
   },
   en: {
     tabDashboard: 'Dashboard', tabEntry: 'Data Entry', tabAnalytics: 'Analytics',
@@ -2012,6 +2245,14 @@ const TRANSLATIONS = {
     labelDeptName: 'Department Name (Arabic)', labelDeptNameEn: 'Department Name (English)',
     labelDeptIcon: 'Icon', labelDeptColor: 'Color', btnAddDept: '➕ Add Department',
     thDepts: 'Departments', deptAssignNote: 'Leave empty to grant access to all departments',
+    tabInbox: 'Issue Inbox',
+    reportModalTitle: '📩 Report an Issue', reportModalSub: 'Your report goes directly to the head admin',
+    labelIssueTitle: 'Issue Title', phIssueTitle: 'Brief description of the issue',
+    labelIssueCategory: 'Category', labelIssueBody: 'Details', phIssueBody: 'Explain the issue in detail…',
+    btnSubmitReport: '📩 Submit Report', emptyInbox: 'No reports yet.',
+    btnClearResolved: 'Clear Resolved',
+    catBug: '🐛 Bug', catSuggestion: '💡 Suggestion', catAccess: '🔐 Access',
+    catData: '📊 Data', catOther: '📌 Other',
   }
 };
 
