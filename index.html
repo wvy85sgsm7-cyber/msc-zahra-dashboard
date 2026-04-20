@@ -6,6 +6,7 @@
 <title>نظام متابعة طلاب — المدارس المتقدمة</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -519,7 +520,7 @@ tr:hover td{background:var(--surface3)}
   <div class="topbar-actions">
     <!-- Auth section -->
     <div id="auth-guest-ui">
-      <button class="auth-login-btn" id="open-login-btn" data-i18n="loginBtn">🔐 تسجيل الدخول</button>
+      <button class="auth-login-btn" id="open-login-btn" data-i18n="loginBtn"><i data-lucide="lock" style="width:15px;height:15px;display:inline-block;vertical-align:middle"></i> تسجيل الدخول</button>
     </div>
     <div id="auth-user-ui" style="display:none" class="auth-user-badge">
       <div class="auth-avatar" id="auth-avatar">م</div>
@@ -532,25 +533,25 @@ tr:hover td{background:var(--surface3)}
       </div>
       <button class="auth-logout-btn" id="logout-btn" data-i18n="logoutBtn">خروج</button>
     </div>
-    <button class="tb-btn msg-btn" id="msg-open-btn" title="الرسائل" style="display:none;position:relative">💬<span class="report-btn-badge" id="msg-unread-badge" style="display:none;background:#3b82f6">0</span></button>
-    <button class="tb-btn report-btn" id="report-issue-btn" title="الإبلاغ عن مشكلة" style="display:none">📩<span class="report-btn-badge" id="inbox-unread-badge" style="display:none">0</span></button>
-    <button class="tb-btn" id="lang-btn" title="English / عربي">🌐 EN</button>
-    <button class="tb-btn" id="theme-btn" title="تبديل المظهر">🌙</button>
-    <button class="tb-btn" id="print-btn" title="طباعة">🖨️</button>
+    <button class="tb-btn msg-btn" id="msg-open-btn" title="الرسائل" style="display:none;position:relative"><i data-lucide="message-circle" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i><span class="report-btn-badge" id="msg-unread-badge" style="display:none;background:#3b82f6">0</span></button>
+    <button class="tb-btn report-btn" id="report-issue-btn" title="الإبلاغ عن مشكلة" style="display:none"><i data-lucide="flag" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i><span class="report-btn-badge" id="inbox-unread-badge" style="display:none">0</span></button>
+    <button class="tb-btn" id="lang-btn" title="English / عربي"><i data-lucide="globe" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i> EN</button>
+    <button class="tb-btn" id="theme-btn" title="تبديل المظهر"><i data-lucide="moon" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i></button>
+    <button class="tb-btn" id="print-btn" title="طباعة"><i data-lucide="printer" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i></button>
   </div>
 </header>
 
 <!-- TAB NAV -->
 <div class="main">
   <nav class="tabnav">
-    <button class="tab-btn active" data-tab="tab-dashboard" data-i18n="tabDashboard"><span class="tab-icon">📊</span> لوحة التحكم</button>
-    <button class="tab-btn" data-tab="tab-entry" data-i18n="tabEntry"><span class="tab-icon">✏️</span> إدخال البيانات <span class="tab-lock" id="entry-lock">🔒</span></button>
-    <button class="tab-btn" data-tab="tab-analytics" data-i18n="tabAnalytics"><span class="tab-icon">📈</span> التحليلات</button>
-    <button class="tab-btn" data-tab="tab-reports" data-i18n="tabReports"><span class="tab-icon">📋</span> التقارير <span id="rep-count" class="badge badge-teal" style="display:none;margin-right:2px"></span></button>
-    <button class="tab-btn" data-tab="tab-tuition" data-i18n="tabTuition"><span class="tab-icon">💰</span> مقارنة الرسوم</button>
-    <button class="tab-btn" data-tab="tab-settings" id="settings-tab-btn" data-i18n="tabSettings" style="display:none"><span class="tab-icon">⚙️</span> الإعدادات</button>
-    <button class="tab-btn" data-tab="tab-log" id="log-tab-btn" data-i18n="tabLog" style="display:none"><span class="tab-icon">📜</span> سجل النشاط</button>
-    <button class="tab-btn" data-tab="tab-inbox" id="inbox-tab-btn" style="display:none"><span class="tab-icon">📥</span> <span data-i18n="tabInbox">صندوق البلاغات</span> <span id="inbox-tab-badge" class="badge badge-red" style="display:none;margin-right:2px"></span></button>
+    <button class="tab-btn active" data-tab="tab-dashboard" data-i18n="tabDashboard"><span class="tab-icon"><i data-lucide="layout-dashboard" style="width:15px;height:15px;display:inline-block;vertical-align:middle"></i></span> لوحة التحكم</button>
+    <button class="tab-btn" data-tab="tab-entry" data-i18n="tabEntry"><span class="tab-icon"><i data-lucide="pencil-line" style="width:15px;height:15px;display:inline-block;vertical-align:middle"></i></span> إدخال البيانات <span class="tab-lock" id="entry-lock"><i data-lucide="lock" style="width:11px;height:11px;display:inline-block;vertical-align:middle;opacity:0.6"></i></span></button>
+    <button class="tab-btn" data-tab="tab-analytics" data-i18n="tabAnalytics"><span class="tab-icon"><i data-lucide="trending-up" style="width:15px;height:15px;display:inline-block;vertical-align:middle"></i></span> التحليلات</button>
+    <button class="tab-btn" data-tab="tab-reports" data-i18n="tabReports"><span class="tab-icon"><i data-lucide="clipboard-list" style="width:15px;height:15px;display:inline-block;vertical-align:middle"></i></span> التقارير <span id="rep-count" class="badge badge-teal" style="display:none;margin-right:2px"></span></button>
+    <button class="tab-btn" data-tab="tab-tuition" data-i18n="tabTuition"><span class="tab-icon"><i data-lucide="coins" style="width:15px;height:15px;display:inline-block;vertical-align:middle"></i></span> مقارنة الرسوم</button>
+    <button class="tab-btn" data-tab="tab-settings" id="settings-tab-btn" data-i18n="tabSettings" style="display:none"><span class="tab-icon"><i data-lucide="settings" style="width:15px;height:15px;display:inline-block;vertical-align:middle"></i></span> الإعدادات</button>
+    <button class="tab-btn" data-tab="tab-log" id="log-tab-btn" data-i18n="tabLog" style="display:none"><span class="tab-icon"><i data-lucide="scroll" style="width:15px;height:15px;display:inline-block;vertical-align:middle"></i></span> سجل النشاط</button>
+    <button class="tab-btn" data-tab="tab-inbox" id="inbox-tab-btn" style="display:none"><span class="tab-icon"><i data-lucide="inbox" style="width:15px;height:15px;display:inline-block;vertical-align:middle"></i></span> <span data-i18n="tabInbox">صندوق البلاغات</span> <span id="inbox-tab-badge" class="badge badge-red" style="display:none;margin-right:2px"></span></button>
   </nav>
 
   <!-- TAB 1: DASHBOARD -->
@@ -561,19 +562,19 @@ tr:hover td{background:var(--surface3)}
     </div>
     <div id="guest-banner-dash" class="guest-banner" style="display:none">
       <div class="guest-banner-text" data-i18n="guestBannerDash">أنت تتصفح بوضع <strong>العرض فقط</strong> — سجّل دخولك لتعديل البيانات وحفظ التقارير.</div>
-      <button class="guest-banner-btn" onclick="openLoginModal()" data-i18n="loginBtn">🔐 تسجيل الدخول</button>
+      <button class="guest-banner-btn" onclick="openLoginModal()" data-i18n="loginBtn"><i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> تسجيل الدخول</button>
     </div>
     <div class="kpi-grid">
-      <div class="kpi" style="--kpi-color:#4BBFB8"><div class="kpi-icon">🏫</div><div class="kpi-body"><div class="kpi-label" data-i18n="kpiBase">إجمالي الطلاب الأساسي</div><div class="kpi-value" id="kpi-base">0</div><div class="kpi-note" data-i18n="kpiBaseNote">قبل التعديلات</div></div></div>
-      <div class="kpi" style="--kpi-color:#2A8C4A"><div class="kpi-icon">➕</div><div class="kpi-body"><div class="kpi-label" data-i18n="kpiNew">المنضمون الجدد</div><div class="kpi-value" id="kpi-new">0</div><div class="kpi-note" data-i18n="kpiNewNote">طلاب مستجدون</div></div></div>
-      <div class="kpi" style="--kpi-color:#e05252"><div class="kpi-icon">➖</div><div class="kpi-body"><div class="kpi-label" data-i18n="kpiOut">المنسحبون</div><div class="kpi-value" id="kpi-out">0</div><div class="kpi-note" data-i18n="kpiOutNote">طلاب منسحبون</div></div></div>
-      <div class="kpi" style="--kpi-color:#c9a227"><div class="kpi-icon">✅</div><div class="kpi-body"><div class="kpi-label" data-i18n="kpiTotal">الإجمالي الحالي</div><div class="kpi-value" id="kpi-total">0</div><div class="kpi-note" data-i18n="kpiTotalNote">جميع الأقسام</div></div></div>
+      <div class="kpi" style="--kpi-color:#4BBFB8"><div class="kpi-icon"><i data-lucide="school" style="width:22px;height:22px;display:inline-block;vertical-align:middle"></i></div><div class="kpi-body"><div class="kpi-label" data-i18n="kpiBase">إجمالي الطلاب الأساسي</div><div class="kpi-value" id="kpi-base">0</div><div class="kpi-note" data-i18n="kpiBaseNote">قبل التعديلات</div></div></div>
+      <div class="kpi" style="--kpi-color:#2A8C4A"><div class="kpi-icon"><i data-lucide="plus" style="width:22px;height:22px;display:inline-block;vertical-align:middle"></i></div><div class="kpi-body"><div class="kpi-label" data-i18n="kpiNew">المنضمون الجدد</div><div class="kpi-value" id="kpi-new">0</div><div class="kpi-note" data-i18n="kpiNewNote">طلاب مستجدون</div></div></div>
+      <div class="kpi" style="--kpi-color:#e05252"><div class="kpi-icon"><i data-lucide="minus" style="width:22px;height:22px;display:inline-block;vertical-align:middle"></i></div><div class="kpi-body"><div class="kpi-label" data-i18n="kpiOut">المنسحبون</div><div class="kpi-value" id="kpi-out">0</div><div class="kpi-note" data-i18n="kpiOutNote">طلاب منسحبون</div></div></div>
+      <div class="kpi" style="--kpi-color:#c9a227"><div class="kpi-icon"><i data-lucide="check" style="width:22px;height:22px;display:inline-block;vertical-align:middle"></i></div><div class="kpi-body"><div class="kpi-label" data-i18n="kpiTotal">الإجمالي الحالي</div><div class="kpi-value" id="kpi-total">0</div><div class="kpi-note" data-i18n="kpiTotalNote">جميع الأقسام</div></div></div>
     </div>
     <div class="charts-row">
       <div class="card"><div class="card-title"><span class="ct-dot"></span> <span data-i18n="chartDist">توزيع الطلاب حسب الأقسام</span></div><div class="chart-wrap ch-280"><canvas id="barChart"></canvas></div></div>
       <div class="card"><div class="card-title"><span class="ct-dot"></span> <span data-i18n="chartRatios">نسب الانضمام والانسحاب</span></div><div class="chart-wrap ch-280"><canvas id="donutChart"></canvas></div></div>
     </div>
-    <div class="section-head"><span class="section-title" data-i18n="sectionDepts">🏫 نظرة عامة على الأقسام</span><div class="section-line"></div></div>
+    <div class="section-head"><span class="section-title" data-i18n="sectionDepts"><i data-lucide="school" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i> نظرة عامة على الأقسام</span><div class="section-line"></div></div>
     <div class="dept-grid" id="dept-overview"></div>
   </section>
 
@@ -582,19 +583,19 @@ tr:hover td{background:var(--surface3)}
     <!-- Locked view for guests -->
     <div id="entry-locked" style="display:none">
       <div class="locked-page">
-        <div class="locked-icon">🔒</div>
+        <div class="locked-icon"><i data-lucide="lock" style="width:56px;height:56px;display:inline-block;vertical-align:middle;opacity:0.5"></i></div>
         <div class="locked-title" data-i18n="lockedTitle">هذه الصفحة للمشرفين فقط</div>
         <div class="locked-sub" data-i18n="lockedSub">يجب تسجيل الدخول لتتمكن من إدخال بيانات الطلاب وحفظها.</div>
-        <button class="btn btn-brand" onclick="openLoginModal()" data-i18n="loginBtn">🔐 تسجيل الدخول</button>
+        <button class="btn btn-brand" onclick="openLoginModal()" data-i18n="loginBtn"><i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> تسجيل الدخول</button>
       </div>
     </div>
     <!-- Actual entry content -->
     <div id="entry-content">
       <div class="action-bar">
-        <span class="section-title" data-i18n="sectionEntry">✏️ إدخال بيانات الأقسام</span>
+        <span class="section-title" data-i18n="sectionEntry"><i data-lucide="pencil-line" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i> إدخال بيانات الأقسام</span>
         <div class="action-right">
-          <button class="btn btn-outline" id="reset-btn" data-i18n="btnReset">🔄 مسح</button>
-          <button class="btn btn-brand" id="save-btn" data-i18n="btnSave">💾 حفظ البيانات</button>
+          <button class="btn btn-outline" id="reset-btn" data-i18n="btnReset"><i data-lucide="rotate-ccw" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> مسح</button>
+          <button class="btn btn-brand" id="save-btn" data-i18n="btnSave"><i data-lucide="save" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> حفظ البيانات</button>
         </div>
       </div>
       <div class="entry-grid" id="entry-grid"></div>
@@ -627,18 +628,18 @@ tr:hover td{background:var(--surface3)}
   <!-- TAB 4: REPORTS -->
   <section class="page" id="tab-reports">
     <div class="action-bar">
-      <span class="section-title" data-i18n="sectionReports">📋 سجل التقارير</span>
+      <span class="section-title" data-i18n="sectionReports"><i data-lucide="clipboard-list" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i> سجل التقارير</span>
       <div class="action-right" id="reports-actions">
-        <button class="btn btn-outline" id="save-report-btn" data-i18n="btnSaveReport">➕ حفظ تقرير جديد</button>
-        <button class="btn btn-danger" id="clear-all-btn" data-i18n="btnClearAll">🗑️ حذف الكل</button>
+        <button class="btn btn-outline" id="save-report-btn" data-i18n="btnSaveReport"><i data-lucide="plus" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> حفظ تقرير جديد</button>
+        <button class="btn btn-danger" id="clear-all-btn" data-i18n="btnClearAll"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> حذف الكل</button>
       </div>
     </div>
     <div id="guest-banner-rep" class="guest-banner" style="display:none">
       <div class="guest-banner-text" data-i18n="guestBannerRep">أنت في وضع <strong>العرض فقط</strong> — لا يمكنك حفظ أو حذف التقارير.</div>
-      <button class="guest-banner-btn" onclick="openLoginModal()" data-i18n="loginBtn">🔐 تسجيل الدخول</button>
+      <button class="guest-banner-btn" onclick="openLoginModal()" data-i18n="loginBtn"><i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> تسجيل الدخول</button>
     </div>
     <div class="card" id="reports-card">
-      <div class="empty" id="empty-reports"><div class="empty-icon">📭</div><div class="empty-text" data-i18n="emptyReports">لا توجد تقارير محفوظة بعد.</div></div>
+      <div class="empty" id="empty-reports"><div class="empty-icon"><i data-lucide="inbox" style="width:40px;height:40px;opacity:0.35"></i></div><div class="empty-text" data-i18n="emptyReports">لا توجد تقارير محفوظة بعد.</div></div>
       <div class="table-wrap" id="rep-table-wrap" style="display:none">
         <table><thead><tr><th>#</th><th data-i18n="thRepName">اسم التقرير</th><th data-i18n="thRepDate">التاريخ</th><th data-i18n="thRepBase">الأساسي</th><th data-i18n="thRepNew">جدد</th><th data-i18n="thRepOut">منسحبون</th><th data-i18n="thRepTotal">الإجمالي</th><th data-i18n="thRepDepts">الأقسام</th><th id="del-col-hdr"></th></tr></thead>
         <tbody id="rep-tbody"></tbody></table>
@@ -649,25 +650,25 @@ tr:hover td{background:var(--surface3)}
   <!-- TAB 5: TUITION -->
   <section class="page" id="tab-tuition">
     <div class="action-bar">
-      <span class="section-title" data-i18n="sectionTuition">💰 مقارنة الرسوم الدراسية بمدارس جدة</span>
+      <span class="section-title" data-i18n="sectionTuition"><i data-lucide="coins" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i> مقارنة الرسوم الدراسية بمدارس جدة</span>
       <div class="action-right" id="tuition-actions">
-        <button class="btn btn-outline edit-action" id="reset-fees-btn" data-i18n="btnResetFees">🔄 إعادة تعيين</button>
-        <button class="btn btn-brand edit-action" id="save-fees-btn" data-i18n="btnSaveFees">💾 حفظ الرسوم</button>
+        <button class="btn btn-outline edit-action" id="reset-fees-btn" data-i18n="btnResetFees"><i data-lucide="rotate-ccw" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> إعادة تعيين</button>
+        <button class="btn btn-brand edit-action" id="save-fees-btn" data-i18n="btnSaveFees"><i data-lucide="save" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> حفظ الرسوم</button>
       </div>
     </div>
     <div id="guest-banner-tuition" class="guest-banner" style="display:none">
       <div class="guest-banner-text" data-i18n="guestBannerTuition">أنت في وضع <strong>العرض فقط</strong> — لا يمكنك تعديل بيانات الرسوم.</div>
-      <button class="guest-banner-btn" onclick="openLoginModal()" data-i18n="loginBtn">🔐 تسجيل الدخول</button>
+      <button class="guest-banner-btn" onclick="openLoginModal()" data-i18n="loginBtn"><i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> تسجيل الدخول</button>
     </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
-      <span class="badge badge-teal" data-i18n="badgeOwn">★ المدارس المتقدمة</span>
+      <span class="badge badge-teal" data-i18n="badgeOwn">المدارس المتقدمة</span>
       <span class="badge badge-green" data-i18n="badgeLow">▲ أقل من المتوسط</span>
       <span class="badge badge-gold" data-i18n="badgeMid">● ضمن المتوسط</span>
       <span class="badge badge-red" data-i18n="badgeHigh">▼ أعلى من المتوسط</span>
       <span style="font-size:11px;color:var(--text3);align-self:center" data-i18n="feesCurrency">الرسوم بالريال السعودي سنوياً</span>
     </div>
     <div id="fee-edit-wrap" style="display:none">
-      <div class="section-head" style="margin-bottom:16px"><span class="section-title" style="font-size:14px" data-i18n="sectionEditFees">⚙️ إدارة المدارس</span><div class="section-line"></div></div>
+      <div class="section-head" style="margin-bottom:16px"><span class="section-title" style="font-size:14px" data-i18n="sectionEditFees"><i data-lucide="settings" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> إدارة المدارس</span><div class="section-line"></div></div>
       <!-- Add school form -->
       <div class="add-school-strip" id="add-school-strip">
         <div class="smr-add-group">
@@ -701,18 +702,18 @@ tr:hover td{background:var(--surface3)}
           </label>
           <input class="smr-inp smr-fee-inp" id="new-fee-intl" type="number" min="0" step="500" placeholder="0"/>
         </div>
-        <button class="btn btn-brand" id="add-school-btn" style="white-space:nowrap;align-self:flex-end" data-i18n="btnAddSchool">➕ إضافة مدرسة</button>
+        <button class="btn btn-brand" id="add-school-btn" style="white-space:nowrap;align-self:flex-end" data-i18n="btnAddSchool"><i data-lucide="plus" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> إضافة مدرسة</button>
       </div>
       <!-- School list -->
       <div class="school-mgr" id="school-mgr-list"></div>
       <div style="margin-bottom:20px"></div>
     </div>
-    <button class="btn btn-outline edit-action" id="toggle-edit-btn" data-i18n="toggleEdit" style="margin-bottom:20px;font-size:13px">⚙️ إدارة المدارس</button>
+    <button class="btn btn-outline edit-action" id="toggle-edit-btn" data-i18n="toggleEdit" style="margin-bottom:20px;font-size:13px"><i data-lucide="settings" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> إدارة المدارس</button>
     <div class="card" style="margin-bottom:18px">
       <div class="card-title"><span class="ct-dot"></span> <span data-i18n="chartFeeComp">مقارنة الرسوم السنوية بين مدارس جدة</span></div>
       <div class="chart-wrap" style="height:350px"><canvas id="feeBarChart"></canvas></div>
     </div>
-    <div class="section-head"><span class="section-title" data-i18n="sectionFeeDetails">🏫 تفاصيل الرسوم لكل مدرسة</span><div class="section-line"></div></div>
+    <div class="section-head"><span class="section-title" data-i18n="sectionFeeDetails"><i data-lucide="school" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i> تفاصيل الرسوم لكل مدرسة</span><div class="section-line"></div></div>
     <div class="comp-grid" id="comp-cards-grid"></div>
     <div class="card" style="margin-top:8px">
       <div class="card-title"><span class="ct-dot"></span> <span data-i18n="chartPositioning">الموقع التنافسي — المدارس المتقدمة</span></div>
@@ -723,7 +724,7 @@ tr:hover td{background:var(--surface3)}
   <!-- TAB 6: SETTINGS (admin only) -->
   <section class="page" id="tab-settings">
     <div class="section-head" style="margin-bottom:22px">
-      <span class="section-title" data-i18n="sectionSettings">⚙️ إعدادات النظام</span>
+      <span class="section-title" data-i18n="sectionSettings"><i data-lucide="settings" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i> إعدادات النظام</span>
       <div class="section-line"></div>
       <span class="badge badge-teal" style="flex-shrink:0" data-i18n="adminOnly">للمشرفين فقط</span>
     </div>
@@ -732,7 +733,7 @@ tr:hover td{background:var(--surface3)}
 
       <!-- Change Password -->
       <div class="settings-card">
-        <div class="settings-card-title" data-i18n="titleChangePw">🔑 تغيير كلمة المرور</div>
+        <div class="settings-card-title" data-i18n="titleChangePw"><i data-lucide="key-round" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> تغيير كلمة المرور</div>
         <div class="settings-field">
           <label class="settings-label" data-i18n="labelCurPass">كلمة المرور الحالية</label>
           <input class="settings-inp" type="password" id="s-cur-pass" placeholder="أدخل كلمة المرور الحالية" data-i18n-ph="phCurPass"/>
@@ -745,13 +746,13 @@ tr:hover td{background:var(--surface3)}
           <label class="settings-label" data-i18n="labelConfPass">تأكيد كلمة المرور الجديدة</label>
           <input class="settings-inp" type="password" id="s-confirm-pass" placeholder="أعد إدخال كلمة المرور" data-i18n-ph="phConfPass"/>
         </div>
-        <button class="btn btn-brand" id="change-pass-btn" data-i18n="btnUpdatePw" style="width:100%;justify-content:center">💾 تحديث كلمة المرور</button>
+        <button class="btn btn-brand" id="change-pass-btn" data-i18n="btnUpdatePw" style="width:100%;justify-content:center"><i data-lucide="save" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> تحديث كلمة المرور</button>
         <div class="settings-msg" id="pass-msg"></div>
       </div>
 
       <!-- Update Display Name -->
       <div class="settings-card">
-        <div class="settings-card-title" data-i18n="titleAccount">👤 بيانات الحساب</div>
+        <div class="settings-card-title" data-i18n="titleAccount"><i data-lucide="user" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> بيانات الحساب</div>
         <div class="settings-field">
           <label class="settings-label" data-i18n="labelUsername">اسم المستخدم</label>
           <input class="settings-inp" type="text" id="s-username-display" readonly/>
@@ -760,7 +761,7 @@ tr:hover td{background:var(--surface3)}
           <label class="settings-label" data-i18n="labelDisplayName">الاسم المعروض</label>
           <input class="settings-inp" type="text" id="s-display-name" placeholder="الاسم الذي يظهر في النظام" data-i18n-ph="phDisplayName"/>
         </div>
-        <button class="btn btn-brand" id="update-name-btn" data-i18n="btnUpdateName" style="width:100%;justify-content:center">💾 تحديث الاسم</button>
+        <button class="btn btn-brand" id="update-name-btn" data-i18n="btnUpdateName" style="width:100%;justify-content:center"><i data-lucide="save" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> تحديث الاسم</button>
         <div class="settings-msg" id="name-msg"></div>
       </div>
 
@@ -768,7 +769,7 @@ tr:hover td{background:var(--surface3)}
 
     <!-- User Management (head admin only) -->
     <div class="settings-card" id="user-mgmt-section" style="margin-bottom:16px;display:none">
-      <div class="settings-card-title" data-i18n="titleUserMgmt">👥 إدارة المستخدمين</div>
+      <div class="settings-card-title" data-i18n="titleUserMgmt"><i data-lucide="users" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> إدارة المستخدمين</div>
       <div class="users-table-wrap">
         <table class="users-table">
           <thead><tr><th data-i18n="thUser">المستخدم</th><th data-i18n="thDisplayName">الاسم المعروض</th><th data-i18n="thActions">الإجراءات</th></tr></thead>
@@ -777,7 +778,7 @@ tr:hover td{background:var(--surface3)}
       </div>
       <!-- Add user form -->
       <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px" data-i18n="addUserTitle">➕ إضافة مستخدم جديد</div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px" data-i18n="addUserTitle"><i data-lucide="plus" style="width:13px;height:13px;display:inline-block;vertical-align:middle"></i> إضافة مستخدم جديد</div>
         <div class="add-user-form">
           <div>
             <label class="settings-label" data-i18n="labelUsername">اسم المستخدم</label>
@@ -792,7 +793,7 @@ tr:hover td{background:var(--surface3)}
             <input class="settings-inp" type="text" id="new-user-display" placeholder="الاسم" data-i18n-ph="phDisplayName"/>
           </div>
           <div style="display:flex;align-items:flex-end">
-            <button class="btn btn-brand" id="add-user-btn" data-i18n="btnAddUser" style="white-space:nowrap">➕ إضافة</button>
+            <button class="btn btn-brand" id="add-user-btn" data-i18n="btnAddUser" style="white-space:nowrap"><i data-lucide="plus" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> إضافة</button>
           </div>
         </div>
         <div class="settings-msg" id="add-user-msg"></div>
@@ -801,17 +802,17 @@ tr:hover td{background:var(--surface3)}
 
     <!-- Department Manager (head admin only) -->
     <div class="settings-card" id="dept-mgmt-section" style="display:none;margin-bottom:16px">
-      <div class="settings-card-title">🏛️ <span data-i18n="titleDeptMgmt">إدارة الأقسام</span></div>
+      <div class="settings-card-title"><i data-lucide="building-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> <span data-i18n="titleDeptMgmt">إدارة الأقسام</span></div>
       <div id="dept-mgr-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
       <!-- Add dept form -->
       <div style="border-top:1px solid var(--border);padding-top:14px">
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px" data-i18n="addDeptTitle">➕ إضافة قسم جديد</div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px" data-i18n="addDeptTitle"><i data-lucide="plus" style="width:13px;height:13px;display:inline-block;vertical-align:middle"></i> إضافة قسم جديد</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 80px 80px auto;gap:8px;align-items:flex-end;flex-wrap:wrap">
           <div><label class="settings-label" data-i18n="labelDeptName">اسم القسم (عربي)</label><input class="settings-inp" id="new-dept-name" data-i18n-ph="phDeptName" placeholder="اسم القسم"/></div>
           <div><label class="settings-label" data-i18n="labelDeptNameEn">اسم القسم (إنجليزي)</label><input class="settings-inp" id="new-dept-name-en" placeholder="Department name"/></div>
           <div><label class="settings-label" data-i18n="labelDeptIcon">الأيقونة</label><input class="settings-inp" id="new-dept-icon" placeholder="🏫" style="text-align:center"/></div>
           <div><label class="settings-label" data-i18n="labelDeptColor">اللون</label><input type="color" id="new-dept-color" value="#4BBFB8" style="width:100%;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);cursor:pointer"/></div>
-          <button class="btn btn-brand" id="add-dept-btn" style="white-space:nowrap" data-i18n="btnAddDept">➕ إضافة</button>
+          <button class="btn btn-brand" id="add-dept-btn" style="white-space:nowrap" data-i18n="btnAddDept"><i data-lucide="plus" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> إضافة</button>
         </div>
         <div class="settings-msg" id="add-dept-msg"></div>
       </div>
@@ -822,17 +823,17 @@ tr:hover td{background:var(--surface3)}
   <!-- TAB 7: ACTIVITY LOG -->
   <section class="page" id="tab-log">
     <div class="action-bar">
-      <span class="section-title">📜 <span data-i18n="sectionLog">سجل النشاط</span></span>
+      <span class="section-title"><i data-lucide="scroll" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i> <span data-i18n="sectionLog">سجل النشاط</span></span>
       <div class="action-right">
         <input class="log-search" id="log-search" type="text" data-i18n-ph="phLogSearch" placeholder="بحث في السجل…" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 13px;color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;outline:none;width:180px"/>
         <select id="log-filter" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;outline:none">
           <option value="">— كل الأنواع —</option>
         </select>
-        <button class="btn btn-danger" id="clear-log-btn" style="display:none">🗑️ <span data-i18n="btnClearLog">مسح السجل</span></button>
+        <button class="btn btn-danger" id="clear-log-btn" style="display:none"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> <span data-i18n="btnClearLog">مسح السجل</span></button>
       </div>
     </div>
     <div class="card" id="log-card">
-      <div class="empty" id="empty-log"><div class="empty-icon">📭</div><div class="empty-text" data-i18n="emptyLog">لا توجد أحداث مسجّلة بعد.</div></div>
+      <div class="empty" id="empty-log"><div class="empty-icon"><i data-lucide="inbox" style="width:40px;height:40px;opacity:0.35"></i></div><div class="empty-text" data-i18n="emptyLog">لا توجد أحداث مسجّلة بعد.</div></div>
       <div class="table-wrap" id="log-table-wrap" style="display:none">
         <table>
           <thead><tr>
@@ -851,18 +852,18 @@ tr:hover td{background:var(--surface3)}
   <!-- TAB: INBOX (head admin only) -->
   <section class="page" id="tab-inbox">
     <div class="action-bar">
-      <span class="section-title">📥 <span data-i18n="tabInbox">صندوق البلاغات</span></span>
+      <span class="section-title"><i data-lucide="inbox" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i> <span data-i18n="tabInbox">صندوق البلاغات</span></span>
       <div class="action-right">
         <select id="inbox-filter" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;outline:none">
           <option value="">— كل البلاغات —</option>
-          <option value="open">🔴 مفتوح</option>
-          <option value="reviewed">🟡 قيد المراجعة</option>
-          <option value="resolved">🟢 تم الحل</option>
+          <option value="open">● مفتوح</option>
+          <option value="reviewed">◐ قيد المراجعة</option>
+          <option value="resolved">○ تم الحل</option>
         </select>
-        <button class="btn btn-danger" id="clear-resolved-btn" style="font-size:13px">🗑️ <span data-i18n="btnClearResolved">مسح المحلولة</span></button>
+        <button class="btn btn-danger" id="clear-resolved-btn" style="font-size:13px"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> <span data-i18n="btnClearResolved">مسح المحلولة</span></button>
       </div>
     </div>
-    <div class="empty" id="empty-inbox" style="display:none"><div class="empty-icon">📭</div><div class="empty-text" data-i18n="emptyInbox">لا توجد بلاغات بعد.</div></div>
+    <div class="empty" id="empty-inbox" style="display:none"><div class="empty-icon"><i data-lucide="inbox" style="width:40px;height:40px;opacity:0.35"></i></div><div class="empty-text" data-i18n="emptyInbox">لا توجد بلاغات بعد.</div></div>
     <div id="inbox-list" style="display:flex;flex-direction:column;gap:12px"></div>
   </section>
 </div>
@@ -870,7 +871,7 @@ tr:hover td{background:var(--surface3)}
 <!-- REPORT ISSUE MODAL -->
 <div class="modal-overlay" id="report-modal">
   <div class="modal" style="max-width:480px">
-    <div class="login-school-name" style="font-size:15px;margin-bottom:4px" data-i18n="reportModalTitle">📩 إرسال بلاغ</div>
+    <div class="login-school-name" style="font-size:15px;margin-bottom:4px" data-i18n="reportModalTitle"><i data-lucide="send" style="width:15px;height:15px;display:inline-block;vertical-align:middle"></i> إرسال بلاغ</div>
     <div style="font-size:12px;color:var(--text2);margin-bottom:18px" data-i18n="reportModalSub">سيصل بلاغك مباشرة إلى المدير الرئيسي</div>
     <div style="margin-bottom:12px">
       <label class="input-label" data-i18n="labelIssueTitle">عنوان المشكلة</label>
@@ -879,11 +880,11 @@ tr:hover td{background:var(--surface3)}
     <div style="margin-bottom:12px">
       <label class="input-label" data-i18n="labelIssueCategory">الفئة</label>
       <select class="modal-inp" id="issue-cat-inp" style="cursor:pointer">
-        <option value="bug" data-i18n="catBug">🐛 خلل تقني</option>
-        <option value="suggestion" data-i18n="catSuggestion">💡 اقتراح</option>
-        <option value="access" data-i18n="catAccess">🔐 صلاحيات</option>
-        <option value="data" data-i18n="catData">📊 بيانات</option>
-        <option value="other" data-i18n="catOther">📌 أخرى</option>
+        <option value="bug" data-i18n="catBug">خلل تقني</option>
+        <option value="suggestion" data-i18n="catSuggestion">اقتراح</option>
+        <option value="access" data-i18n="catAccess">صلاحيات</option>
+        <option value="data" data-i18n="catData">بيانات</option>
+        <option value="other" data-i18n="catOther">أخرى</option>
       </select>
     </div>
     <div style="margin-bottom:18px">
@@ -893,7 +894,7 @@ tr:hover td{background:var(--surface3)}
     <div class="settings-msg" id="report-msg"></div>
     <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
       <button class="btn btn-outline" id="report-cancel-btn" data-i18n="btnCancel">إلغاء</button>
-      <button class="btn btn-brand" id="report-submit-btn" data-i18n="btnSubmitReport">📩 إرسال البلاغ</button>
+      <button class="btn btn-brand" id="report-submit-btn" data-i18n="btnSubmitReport"><i data-lucide="send" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> إرسال البلاغ</button>
     </div>
   </div>
 </div>
@@ -902,15 +903,15 @@ tr:hover td{background:var(--surface3)}
 <div class="modal-overlay" id="messages-modal">
   <div class="msg-panel">
     <div class="msg-panel-header">
-      <span class="msg-panel-title">💬 <span data-i18n="msgTitle">الرسائل</span></span>
-      <button class="msg-close-btn" id="msg-close-btn">✕</button>
+      <span class="msg-panel-title"><i data-lucide="message-circle" style="width:15px;height:15px;display:inline-block;vertical-align:middle"></i> <span data-i18n="msgTitle">الرسائل</span></span>
+      <button class="msg-close-btn" id="msg-close-btn"><i data-lucide="x" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i></button>
     </div>
     <div class="msg-body">
       <!-- Sidebar -->
       <div class="msg-sidebar">
         <div class="msg-sidebar-top">
           <div style="position:relative">
-            <button class="btn btn-brand" id="msg-new-btn" style="width:100%;font-size:12px;padding:7px 10px" data-i18n="msgNewBtn">✉️ محادثة جديدة</button>
+            <button class="btn btn-brand" id="msg-new-btn" style="width:100%;font-size:12px;padding:7px 10px" data-i18n="msgNewBtn"><i data-lucide="mail-plus" style="width:13px;height:13px;display:inline-block;vertical-align:middle"></i> محادثة جديدة</button>
             <div class="msg-picker" id="msg-picker"></div>
           </div>
         </div>
@@ -920,10 +921,10 @@ tr:hover td{background:var(--surface3)}
       <!-- Thread panel -->
       <div class="msg-thread-panel">
         <div class="msg-empty-state" id="msg-empty-state">
-          <div style="font-size:40px">🔒</div>
+          <div style="font-size:40px"><i data-lucide="lock" style="width:40px;height:40px;display:inline-block;vertical-align:middle;opacity:0.5"></i></div>
           <div style="font-size:15px;font-weight:800;color:var(--text)" data-i18n="msgSelectChat">اختر محادثة للبدء</div>
           <div style="max-width:320px;text-align:center;background:rgba(75,191,184,0.07);border:1px solid var(--border2);border-radius:12px;padding:14px 18px;margin-top:6px">
-            <div style="font-size:12px;font-weight:700;color:var(--brand-light);margin-bottom:6px" data-i18n="msgConfidentialTitle">🔐 سرية تامة</div>
+            <div style="font-size:12px;font-weight:700;color:var(--brand-light);margin-bottom:6px" data-i18n="msgConfidentialTitle"><i data-lucide="shield-check" style="width:12px;height:12px;display:inline-block;vertical-align:middle"></i> سرية تامة</div>
             <div style="font-size:12px;color:var(--text2);line-height:1.7" data-i18n="msgConfidentialBody">جميع المحادثات في هذا النظام سرية وخاصة. لا يمكن لأي مستخدم الاطلاع على محادثات الآخرين. يُرجى الالتزام بمبادئ السرية المهنية في جميع رسائلك.</div>
           </div>
         </div>
@@ -950,16 +951,16 @@ tr:hover td{background:var(--surface3)}
     </div>
     <div class="modal-err" id="login-err">اسم المستخدم أو كلمة المرور غير صحيحة</div>
     <label class="input-label" data-i18n="labelUsername">اسم المستخدم</label>
-    <div class="input-wrap"><input class="modal-inp" id="login-user" type="text" placeholder="أدخل اسم المستخدم" autocomplete="username" data-i18n-ph="phUsername"/><span class="input-icon">👤</span></div>
+    <div class="input-wrap"><input class="modal-inp" id="login-user" type="text" placeholder="أدخل اسم المستخدم" autocomplete="username" data-i18n-ph="phUsername"/><span class="input-icon"><i data-lucide="user" style="width:16px;height:16px;display:inline-block;vertical-align:middle;opacity:0.5"></i></span></div>
     <label class="input-label" data-i18n="labelPassword">كلمة المرور</label>
-    <div class="input-wrap"><input class="modal-inp" id="login-pass" type="password" placeholder="أدخل كلمة المرور" autocomplete="current-password" data-i18n-ph="phPassword"/><span class="input-icon">🔑</span></div>
+    <div class="input-wrap"><input class="modal-inp" id="login-pass" type="password" placeholder="أدخل كلمة المرور" autocomplete="current-password" data-i18n-ph="phPassword"/><span class="input-icon"><i data-lucide="key-round" style="width:16px;height:16px;display:inline-block;vertical-align:middle;opacity:0.5"></i></span></div>
     <div class="modal-actions" style="margin-bottom:16px">
       <button class="btn btn-outline" id="login-cancel-btn" data-i18n="btnCancel">إلغاء</button>
-      <button class="btn btn-brand" id="login-confirm-btn" data-i18n="btnLogin">🔐 دخول</button>
+      <button class="btn btn-brand" id="login-confirm-btn" data-i18n="btnLogin"><i data-lucide="lock" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> دخول</button>
     </div>
     <div class="login-divider"><div class="login-divider-line"></div><div class="login-divider-text" data-i18n="orDivider">أو</div><div class="login-divider-line"></div></div>
     <div class="guest-option" id="continue-guest-btn">
-      <div class="guest-option-text" data-i18n="continueGuest">👁️ المتابعة كزائر</div>
+      <div class="guest-option-text" data-i18n="continueGuest"><i data-lucide="eye" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> المتابعة كزائر</div>
       <span class="guest-option-badge" data-i18n="viewOnly">عرض فقط</span>
     </div>
   </div>
@@ -974,7 +975,7 @@ tr:hover td{background:var(--surface3)}
     <div style="font-size:11px;color:var(--text3);margin-bottom:14px" data-i18n="deptAssignNote">تركها فارغة يعني صلاحية على جميع الأقسام</div>
     <div style="display:flex;gap:10px;justify-content:flex-end">
       <button class="btn btn-outline" id="dept-assign-cancel" data-i18n="btnCancel">إلغاء</button>
-      <button class="btn btn-brand" id="dept-assign-confirm" data-i18n="btnSaveConfirm">✅ حفظ</button>
+      <button class="btn btn-brand" id="dept-assign-confirm" data-i18n="btnSaveConfirm"><i data-lucide="check" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> حفظ</button>
     </div>
   </div>
 </div>
@@ -982,13 +983,13 @@ tr:hover td{background:var(--surface3)}
 <!-- SAVE REPORT MODAL -->
 <div class="modal-overlay" id="save-modal">
   <div class="modal">
-    <div class="modal-ttl" data-i18n="saveRepTitle">💾 حفظ تقرير جديد</div>
+    <div class="modal-ttl" data-i18n="saveRepTitle"><i data-lucide="save" style="width:18px;height:18px;display:inline-block;vertical-align:middle"></i> حفظ تقرير جديد</div>
     <label style="font-size:12px;color:var(--text2);font-weight:600;display:block;margin-bottom:6px" data-i18n="saveRepLabel">اسم التقرير</label>
     <input class="modal-inp" id="rep-name-inp" type="text" placeholder="مثال: تقرير الفصل الأول ١٤٤٧..." data-i18n-ph="saveRepPh"/>
     <div class="modal-preview">الإجمالي الحالي: <strong id="modal-total-preview">0</strong> طالب</div>
     <div class="modal-actions">
       <button class="btn btn-outline" id="modal-cancel" data-i18n="btnCancel">إلغاء</button>
-      <button class="btn btn-brand" id="modal-confirm" data-i18n="btnSaveConfirm">✅ حفظ</button>
+      <button class="btn btn-brand" id="modal-confirm" data-i18n="btnSaveConfirm"><i data-lucide="check" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> حفظ</button>
     </div>
   </div>
 </div>
@@ -1175,6 +1176,7 @@ function applyAuthState(){
     if(msgBtnGuest) msgBtnGuest.style.display='none';
   }
   renderReports(); // re-render table with/without delete buttons
+  refreshIcons();
 }
 
 function openLoginModal(){
@@ -1235,7 +1237,7 @@ function updateLastSaved(){
 /* ─── THEME ───────────────────────────────────────── */
 function applyTheme(dark){
   isDark=dark;document.body.classList.toggle('light',!dark);
-  document.getElementById('theme-btn').textContent=dark?'🌙':'☀️';
+  document.getElementById('theme-btn').innerHTML=dark?'<i data-lucide="moon" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i>':'<i data-lucide="sun" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i>';refreshIcons();
   save(K.THEME,dark?'dark':'light');setTimeout(renderAllCharts,50);
 }
 
@@ -1345,7 +1347,7 @@ function renderCompCards(){
       const bw=Math.round((school.fees[st.key]/maxFee[st.key])*100);
       return `<div class="comp-fee-row"><span class="comp-fee-stage">${t(feeStageKeysC[st.key]||st.key)}</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:${bw}%;background:${school.own?'#4BBFB8':'#7a9aac'}"></div></div><span class="comp-fee-val">${fmt(school.fees[st.key])} ﷼</span></div>`;
     }).join('');
-    card.innerHTML=`<div class="comp-school-name">${school.own?'🏫 ':''} ${school.name}</div><div class="comp-type">${school.type}</div><div class="comp-fees">${feesHtml}</div><div class="comp-summary-row"><span class="comp-avg-lbl">${t('feeAvg')}</span><span class="comp-avg-val">${fmt(Math.round(avgSch))} ﷼</span></div><div class="comp-rank-band"><span class="badge ${rc}">${rt}</span></div>`;
+    card.innerHTML=`<div class="comp-school-name">${school.own?icon('school',14)+' ':''} ${school.name}</div><div class="comp-type">${school.type}</div><div class="comp-fees">${feesHtml}</div><div class="comp-summary-row"><span class="comp-avg-lbl">${t('feeAvg')}</span><span class="comp-avg-val">${fmt(Math.round(avgSch))} ﷼</span></div><div class="comp-rank-band"><span class="badge ${rc}">${rt}</span></div>`;
     grid.appendChild(card);
   });
   renderInsights(avgs);
@@ -1375,14 +1377,14 @@ function buildSchoolManager(){
     const stageKeys={kg:'labelKG',elem:'labelElem',mid:'labelMid',high:'labelHigh',intl:'labelIntl'};
     row.innerHTML=`
       <div class="school-mgr-header">
-        <span style="font-size:18px">${school.own?'🏫':'🏛️'}</span>
+        <span style="display:inline-flex;align-items:center">${school.own?icon('school',18):icon('building-2',18)}</span>
         <input class="smr-inp smr-name" data-field="name" value="${school.name}" placeholder="${t('phSchoolName')}"/>
         <input class="smr-inp smr-type" data-field="type" value="${school.type}" placeholder="${t('phSchoolType')}"/>
         <label class="own-toggle" title="${lang==='en'?'Mark as our school':'حدد كمدرستنا'}">
           <input type="radio" name="own-school" value="${school.id}" ${school.own?'checked':''}/>
           ${lang==='en'?'Our School':'مدرستنا'}
         </label>
-        ${!school.own?`<button class="btn" style="padding:5px 11px;font-size:12px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);flex-shrink:0" data-del="${school.id}">${lang==='en'?'🗑 Remove':'🗑 حذف'}</button>`:''}
+        ${!school.own?`<button class="btn" style="padding:5px 11px;font-size:12px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);flex-shrink:0" data-del="${school.id}">${lang==='en'?icon('trash-2',12)+' Remove':icon('trash-2',12)+' حذف'}</button>`:''}
       </div>
       <div class="smr-fees">
         ${FEE_STAGES.map(st=>{
@@ -1432,6 +1434,7 @@ function buildSchoolManager(){
       logAction(LOG_ACTIONS.SCHOOL_REMOVE,school.name);toast(lang==='en'?'School removed':'تم حذف المدرسة','err');
     });
   });
+  refreshIcons();
 }
 
 function toggleSchoolIntl(checkbox, schoolId){
@@ -1480,7 +1483,7 @@ function renderReports(){
     const pills=DEPTS.map(dep=>`<span class="pill" style="background:${dep.color}22;color:${dep.color}">${dep.icon}${lang==='en'?dep.shortEn:dep.short}:${r.depts[dep.id]?.total||0}</span>`).join('');
     const growth=r.grand-(r.sumBase||0);const gc2=growth>0?'#2A8C4A':growth<0?'#e05252':'var(--text3)';
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td><span class="badge badge-gray">${reports.length-i}</span></td><td><strong>${r.name}</strong></td><td style="color:var(--text2)">${dstr} · ${tstr}</td><td>${fmt(r.sumBase||0)}</td><td style="color:#2AB5A0">+${fmt(r.sumNew||0)}</td><td style="color:#e05252">-${fmt(r.sumOut||0)}</td><td><strong style="font-size:16px">${fmt(r.grand)}</strong><span style="font-size:11px;color:${gc2};display:block">${growth>=0?'+':''}${growth}</span></td><td style="max-width:220px">${pills}</td><td>${auth.loggedIn?`<button class="btn btn-danger" style="padding:5px 11px;font-size:12px" data-id="${r.id}">🗑️</button>`:''}</td>`;
+    tr.innerHTML=`<td><span class="badge badge-gray">${reports.length-i}</span></td><td><strong>${r.name}</strong></td><td style="color:var(--text2)">${dstr} · ${tstr}</td><td>${fmt(r.sumBase||0)}</td><td style="color:#2AB5A0">+${fmt(r.sumNew||0)}</td><td style="color:#e05252">-${fmt(r.sumOut||0)}</td><td><strong style="font-size:16px">${fmt(r.grand)}</strong><span style="font-size:11px;color:${gc2};display:block">${growth>=0?'+':''}${growth}</span></td><td style="max-width:220px">${pills}</td><td>${auth.loggedIn?`<button class="btn btn-danger" style="padding:5px 11px;font-size:12px" data-id="${r.id}">${icon('trash-2',12)}</button>`:''}</td>`;
 
     tbody.appendChild(tr);
   });
@@ -1509,6 +1512,7 @@ function updateDashboard(){
     card.innerHTML=`<div class="dept-hdr"><span class="dept-name">${dep.icon} ${lang==='en'?dep.nameEn:dep.name}</span><span class="dept-tag" style="background:${dep.color}">${pct}%</span></div><div class="dept-total-row"><span class="dept-total-lbl">${t('kpiTotal')}</span><span class="dept-total-num">${fmt(total)}</span></div><div class="d-progress"><div class="d-progress-bar" style="width:${barW}%;background:${dep.color}"></div></div><div class="dept-stats"><div class="dept-stat"><div class="dept-stat-num">${fmt(d.base||0)}</div><div class="dept-stat-lbl">${t('fsBase')}</div></div><div class="dept-stat"><div class="dept-stat-num" style="color:#2AB5A0">+${fmt(d.newS||0)}</div><div class="dept-stat-lbl">${t('kpiNew')}</div></div><div class="dept-stat"><div class="dept-stat-num" style="color:#e05252">-${fmt(d.out||0)}</div><div class="dept-stat-lbl">${t('kpiOut')}</div></div></div>`;
     grid.appendChild(card);
   });
+  refreshIcons();
 }
 
 /* ─── ENTRY GRID ──────────────────────────────────── */
@@ -1559,7 +1563,7 @@ function doSaveReport(){
 /* ─── TOAST ───────────────────────────────────────── */
 function toast(msg,type='ok'){
   const area=document.getElementById('toast-area');const el=document.createElement('div');
-  el.className='toast '+type;el.innerHTML='<span style="font-size:16px">'+( type==='ok'?'✅':'🗑️')+'</span>'+msg;
+  el.className='toast '+type;el.innerHTML=(type==='ok'?icon('check',16):icon('trash-2',16))+msg;
   area.appendChild(el);
   setTimeout(()=>{el.style.opacity='0';el.style.transform='translateY(8px)';el.style.transition='all 0.3s';setTimeout(()=>el.remove(),300);},3000);
 }
@@ -1595,7 +1599,7 @@ async function init(){
   // Theme
   isDark=load(K.THEME,'dark')!=='light';
   document.body.classList.toggle('light',!isDark);
-  document.getElementById('theme-btn').textContent=isDark?'🌙':'☀️';
+  document.getElementById('theme-btn').innerHTML=isDark?'<i data-lucide="moon" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i>':'<i data-lucide="sun" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i>';
 
   updateClock();setInterval(updateClock,30000);
   updateLastSaved();
@@ -1725,11 +1729,12 @@ async function init(){
     if(!auth.loggedIn)return;
     const wrap=document.getElementById('fee-edit-wrap');const btn=document.getElementById('toggle-edit-btn');
     const open=wrap.style.display==='none';wrap.style.display=open?'block':'none';
-    btn.textContent=open?(lang==='en'?'⬆️ Hide Manager':'⬆️ إخفاء المدير'):t('toggleEdit');
+    btn.innerHTML=open?(lang==='en'?'Hide Manager':'إخفاء المدير'):t('toggleEdit');
   });
 
   lang = localStorage.getItem(K_LANG) || 'ar';
   applyLang();
+  refreshIcons();
 }
 
 /* ─── ACTIVITY LOG ────────────────────────────────── */
@@ -1805,7 +1810,7 @@ function renderLog(){
     const timeStr=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
     const label=lang==='en'?(LOG_LABELS_EN[l.action]||l.action):(LOG_LABELS_AR[l.action]||l.action);
     const color=LOG_COLORS[l.action]||'var(--text2)';
-    const roleBadge=l.role==='head'?`<span style="font-size:10px;color:#c9a227">★</span> `:'';
+    const roleBadge=l.role==='head'?`<span style="color:#c9a227">${icon('star',10)}</span> `:'';
     return `<tr>
       <td><span class="badge badge-gray" style="font-size:10px">${filtered.length-i}</span></td>
       <td style="color:var(--text2);font-size:12px;white-space:nowrap">${dateStr}<br/><span style="color:var(--text3)">${timeStr}</span></td>
@@ -1814,6 +1819,7 @@ function renderLog(){
       <td style="font-size:12px;color:var(--text2);max-width:220px">${l.details||'—'}</td>
     </tr>`;
   }).join('');
+  refreshIcons();
 }
 
 /* ─── SETTINGS ────────────────────────────────────── */
@@ -1835,7 +1841,7 @@ function renderUsersTable(){
     const userDepts=(u.depts&&u.depts.length>0)
       ?u.depts.map(id=>{const d=orgDepts.find(x=>x.id===id);return d?`<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:${d.color}22;color:${d.color};border:1px solid ${d.color}44">${d.nameEn||d.name}</span>`:''}).join(' ')
       :`<span style="font-size:10px;color:var(--text3)">${lang==='en'?'All':'الكل'}</span>`;
-    const assignBtn=auth.role==='head'?`<button class="btn" style="padding:2px 7px;font-size:10px;border:1px solid var(--border)" onclick="openDeptAssign('${u.username}')">${lang==='en'?'✏️ Edit':'✏️ تعديل'}</button>`:'';
+    const assignBtn=auth.role==='head'?`<button class="btn" style="padding:2px 7px;font-size:10px;border:1px solid var(--border)" onclick="openDeptAssign('${u.username}')">${lang==='en'?icon('pencil',11)+' Edit':icon('pencil',11)+' تعديل'}</button>`:'';
     // Password reveal: head admin can see non-head passwords only
     const canSeePass=auth.role==='head'&&!isHead;
     const passDisplay=canSeePass?`<span id="pw-wrap-${u.username}" style="display:inline-flex;align-items:center;gap:5px">
@@ -1907,7 +1913,7 @@ async function changePassword(){
   document.getElementById('s-new-pass').value='';
   document.getElementById('s-confirm-pass').value='';
   msg.style.color='var(--brand-light)';
-  msg.textContent='✅ '+t('toastPwUpdated');msg.style.display='block';
+  msg.innerHTML=icon('check',12)+' '+t('toastPwUpdated');msg.style.display='block';
   logAction(LOG_ACTIONS.PW_CHANGE);toast(t('toastPwUpdated'));
 }
 
@@ -1926,7 +1932,7 @@ function updateDisplayName(){
   document.getElementById('auth-avatar').textContent=name.charAt(0)||'م';
   msg.style.color='var(--brand-light)';
   msg.style.color='var(--brand-light)';
-  msg.textContent='✅ '+t('toastNameUpdated');msg.style.display='block';
+  msg.innerHTML=icon('check',12)+' '+t('toastNameUpdated');msg.style.display='block';
   logAction(LOG_ACTIONS.NAME_CHANGE,name);toast(t('toastNameUpdated'));
 }
 
@@ -1948,7 +1954,7 @@ async function addUser(){
   document.getElementById('new-user-display').value='';
   msg.style.color='var(--brand-light)';
   msg.style.color='var(--brand-light)';
-  msg.textContent='✅ '+t('toastUserAdded');msg.style.display='block';
+  msg.innerHTML=icon('check',12)+' '+t('toastUserAdded');msg.style.display='block';
   logAction(LOG_ACTIONS.USER_ADD,username);renderUsersTable();
   toast(t('toastUserAdded'));
 }
@@ -1976,7 +1982,8 @@ async function doLogin(){
   auth={loggedIn:true,username:user.username,displayName:user.displayName,role:user.role||'admin'};
   saveSession(user);closeLoginModal();applyAuthState();
   logAction(LOG_ACTIONS.LOGIN);
-  toast(t('toastWelcome')+' '+user.displayName+' 👋');
+  toast(t('toastWelcome')+' '+user.displayName+'');
+  refreshIcons();
 }
 
 /* ─── DEPARTMENT MANAGER (internal / settings only) ── */
@@ -1995,10 +2002,11 @@ function buildDeptManager(){
       <span style="width:18px;height:18px;border-radius:4px;background:${d.color};display:inline-block;border:1px solid var(--border)"></span>
       ${isDefault
         ? `<span style="font-size:10px;color:var(--text3);padding:3px 8px;border:1px solid var(--border);border-radius:5px">${lang==='en'?'Default':'افتراضي'}</span>`
-        : `<button class="btn" style="padding:4px 11px;font-size:12px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)" data-del-dept="${d.id}">${lang==='en'?'🗑 Remove':'🗑 حذف'}</button>`}`;
+        : `<button class="btn" style="padding:4px 11px;font-size:12px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)" data-del-dept="${d.id}">${lang==='en'?icon('trash-2',12)+' Remove':icon('trash-2',12)+' حذف'}</button>`}`;
     row.querySelector('[data-del-dept]')?.addEventListener('click',()=>deleteDept(d.id));
     list.appendChild(row);
   });
+  refreshIcons();
 }
 
 function addDept(){
@@ -2015,7 +2023,7 @@ function addDept(){
   document.getElementById('new-dept-name').value='';
   document.getElementById('new-dept-name-en').value='';
   document.getElementById('new-dept-icon').value='';
-  msg.style.color='var(--brand-light)';msg.textContent='✅ '+(lang==='en'?'Department added':'تمت إضافة القسم');msg.style.display='block';
+  msg.style.color='var(--brand-light)';msg.innerHTML=icon('check',12)+' '+(lang==='en'?'Department added':'تمت إضافة القسم');msg.style.display='block';
   logAction('DEPT_ADD',name);toast(lang==='en'?'Department added':'تمت إضافة القسم');
 }
 
@@ -2096,7 +2104,7 @@ async function submitIssue(){
     msgEl.textContent=lang==='en'?'Please fill in the title and details.':'يرجى ملء العنوان والتفاصيل.';
     return;
   }
-  const CAT_ICONS={bug:'🐛',suggestion:'💡',access:'🔐',data:'📊',other:'📌'};
+  const CAT_ICONS={bug:icon('bug',13),suggestion:icon('lightbulb',13),access:icon('lock',13),data:icon('database',13),other:icon('bookmark',13)};
   const CAT_LABELS_AR={bug:'خلل تقني',suggestion:'اقتراح',access:'صلاحيات',data:'بيانات',other:'أخرى'};
   const CAT_LABELS_EN={bug:'Bug',suggestion:'Suggestion',access:'Access',data:'Data',other:'Other'};
   const issues=loadIssues();
@@ -2111,11 +2119,11 @@ async function submitIssue(){
   saveIssues(issues);
   closeReportModal();
   updateInboxBadge();
-  toast(lang==='en'?'Report sent ✅':'تم إرسال البلاغ ✅');
+  toast(lang==='en'?'Report sent':'تم إرسال البلاغ');
   logAction('ISSUE_SUBMIT', title);
 }
 
-const ISSUE_CAT_ICON={bug:'🐛',suggestion:'💡',access:'🔐',data:'📊',other:'📌'};
+const ISSUE_CAT_ICON={bug:icon('bug',13),suggestion:icon('lightbulb',13),access:icon('lock',13),data:icon('database',13),other:icon('bookmark',13)};
 const ISSUE_CAT_AR={bug:'خلل تقني',suggestion:'اقتراح',access:'صلاحيات',data:'بيانات',other:'أخرى'};
 const ISSUE_CAT_EN={bug:'Bug',suggestion:'Suggestion',access:'Access',data:'Data',other:'Other'};
 const ISSUE_STATUS_COLOR={open:'var(--red)',reviewed:'var(--gold)',resolved:'var(--green)'};
@@ -2152,7 +2160,7 @@ function renderInbox(){
   list.innerHTML=filtered.map(issue=>{
     const d=new Date(issue.ts);
     const dateStr=d.toLocaleDateString(lang==='en'?'en-US':'ar-SA',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-    const catIcon=ISSUE_CAT_ICON[issue.cat]||'📌';
+    const catIcon=ISSUE_CAT_ICON[issue.cat]||icon('bookmark',13);
     const catLabel=lang==='en'?ISSUE_CAT_EN[issue.cat]:ISSUE_CAT_AR[issue.cat];
     const statusColor=ISSUE_STATUS_COLOR[issue.status]||'var(--text2)';
     const statusLabel=lang==='en'?ISSUE_STATUS_LABEL_EN[issue.status]:ISSUE_STATUS_LABEL_AR[issue.status];
@@ -2166,19 +2174,20 @@ function renderInbox(){
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
         <div style="display:flex;align-items:center;gap:10px">
           <span style="font-size:11px;background:var(--surface2);border-radius:5px;padding:2px 8px;color:var(--text2)">${catIcon} ${catLabel}</span>
-          <span style="font-size:11px;color:var(--text3)">👤 ${issue.displayName} (${issue.username})</span>
-          <span style="font-size:11px;color:var(--text3)">🕐 ${dateStr}</span>
+          <span style="font-size:11px;color:var(--text3)">${icon('user',11)} ${issue.displayName} (${issue.username})</span>
+          <span style="font-size:11px;color:var(--text3)">${icon('clock',11)} ${dateStr}</span>
         </div>
         <div style="display:flex;gap:6px">
-          ${issue.status!=='open'?`<button onclick="markIssueStatus('${issue.id}','open')" style="font-size:11px;padding:4px 10px;border-radius:7px;background:var(--red-bg);border:1px solid rgba(224,82,82,.3);color:var(--red);cursor:pointer;font-family:'Cairo',sans-serif">🔴 ${lang==='en'?'Mark Open':'فتح'}</button>`:''}
-          ${issue.status!=='reviewed'?`<button onclick="markIssueStatus('${issue.id}','reviewed')" style="font-size:11px;padding:4px 10px;border-radius:7px;background:var(--gold-bg);border:1px solid rgba(201,162,39,.3);color:var(--gold);cursor:pointer;font-family:'Cairo',sans-serif">🟡 ${lang==='en'?'Mark Reviewing':'مراجعة'}</button>`:''}
-          ${issue.status!=='resolved'?`<button onclick="markIssueStatus('${issue.id}','resolved')" style="font-size:11px;padding:4px 10px;border-radius:7px;background:var(--green-bg);border:1px solid rgba(42,140,74,.3);color:var(--green);cursor:pointer;font-family:'Cairo',sans-serif">🟢 ${lang==='en'?'Mark Resolved':'حل'}</button>`:''}
-          <button onclick="deleteIssue('${issue.id}')" style="font-size:11px;padding:4px 10px;border-radius:7px;background:var(--red-bg);border:1px solid rgba(224,82,82,.3);color:var(--red);cursor:pointer;font-family:'Cairo',sans-serif">🗑️</button>
+          ${issue.status!=='open'?`<button onclick="markIssueStatus('${issue.id}','open')" style="font-size:11px;padding:4px 10px;border-radius:7px;background:var(--red-bg);border:1px solid rgba(224,82,82,.3);color:var(--red);cursor:pointer;font-family:'Cairo',sans-serif">${icon('circle',10)} ${lang==='en'?'Mark Open':'فتح'}</button>`:''}
+          ${issue.status!=='reviewed'?`<button onclick="markIssueStatus('${issue.id}','reviewed')" style="font-size:11px;padding:4px 10px;border-radius:7px;background:var(--gold-bg);border:1px solid rgba(201,162,39,.3);color:var(--gold);cursor:pointer;font-family:'Cairo',sans-serif">${icon('clock',10)} ${lang==='en'?'Mark Reviewing':'مراجعة'}</button>`:''}
+          ${issue.status!=='resolved'?`<button onclick="markIssueStatus('${issue.id}','resolved')" style="font-size:11px;padding:4px 10px;border-radius:7px;background:var(--green-bg);border:1px solid rgba(42,140,74,.3);color:var(--green);cursor:pointer;font-family:'Cairo',sans-serif">${icon('check-circle',10)} ${lang==='en'?'Mark Resolved':'حل'}</button>`:''}
+          <button onclick="deleteIssue('${issue.id}')" style="font-size:11px;padding:4px 10px;border-radius:7px;background:var(--red-bg);border:1px solid rgba(224,82,82,.3);color:var(--red);cursor:pointer;font-family:'Cairo',sans-serif">${icon('trash-2',11)}</button>
         </div>
       </div>
     </div>`;
   }).join('');
   updateInboxBadge();
+  refreshIcons();
 }
 
 function markIssueStatus(id, status){
@@ -2267,6 +2276,7 @@ function renderMsgSidebar(){
       ${t.unread>0?`<div class="msg-unread-dot">${t.unread}</div>`:''}
     </div>`;
   }).join('');
+  refreshIcons();
 }
 
 
@@ -2280,7 +2290,7 @@ function openUserThread(otherUser,otherDisplay){
   document.getElementById('msg-empty-state').style.display='none';
   const active=document.getElementById('msg-thread-active');
   active.style.display='flex';
-  document.getElementById('msg-thread-hdr').innerHTML=`<span>💬</span> ${otherDisplay}`;
+  document.getElementById('msg-thread-hdr').innerHTML=`${icon('message-circle',14)} ${otherDisplay}`;refreshIcons();
   document.getElementById('msg-input-row').style.display='flex';
   const inp=document.getElementById('msg-inp');
   inp.dataset.to=otherUser;inp.dataset.toDisplay=otherDisplay;
@@ -2294,10 +2304,10 @@ function renderThreadMsgs(otherUser){
   const msgs=loadMessages().filter(m=>(m.from===auth.username&&m.to===otherUser)||(m.from===otherUser&&m.to===auth.username)).sort((a,b)=>a.ts-b.ts);
   const cont=document.getElementById('msg-messages');
   const confNote=`<div class="msg-empty-state" style="padding:24px 20px">
-    <div style="font-size:30px">🔒</div>
+    <div style="font-size:30px">${icon('lock',30)}</div>
     <div style="font-size:13px;font-weight:800;color:var(--text)">${lang==='en'?'Start the conversation':'ابدأ المحادثة'}</div>
     <div style="max-width:300px;text-align:center;background:rgba(75,191,184,0.07);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;margin-top:4px">
-      <div style="font-size:11px;font-weight:700;color:var(--brand-light);margin-bottom:5px">${lang==='en'?'🔐 Full Confidentiality':'🔐 سرية تامة'}</div>
+      <div style="font-size:11px;font-weight:700;color:var(--brand-light);margin-bottom:5px">${icon('shield-check',11)} ${lang==='en'?'Full Confidentiality':'سرية تامة'}</div>
       <div style="font-size:11px;color:var(--text2);line-height:1.65">${lang==='en'?'This conversation is private and fully confidential. No other user can access your messages. Please maintain professional discretion in all communications.':'هذه المحادثة خاصة وسرية تماماً. لا يمكن لأي مستخدم آخر الاطلاع على رسائلك. يُرجى الالتزام بمبادئ السرية المهنية.'}</div>
     </div>
   </div>`;
@@ -2347,7 +2357,7 @@ function showMsgNewPicker(){
     const sd=u.displayName.replace(/'/g,"\\'");
     return `<div onclick="openUserThread('${su}','${sd}');document.getElementById('msg-picker').style.display='none'" style="padding:9px 12px;cursor:pointer;border-radius:7px;font-size:13px;display:flex;align-items:center;gap:9px;transition:background var(--tr)" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
       <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--brand-light),var(--brand-green));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">${u.displayName.charAt(0)}</div>
-      <div><div style="font-weight:700;color:var(--text)">${u.displayName}</div><div style="font-size:11px;color:var(--text3)">@${u.username}${u.role==='head'?' 👑':''}</div></div>
+      <div><div style="font-weight:700;color:var(--text)">${u.displayName}</div><div style="font-size:11px;color:var(--text3)">@${u.username}${u.role==='head'?' ♦':''}</div></div>
     </div>`;
   }).join('');
   picker.style.display='block';
@@ -2361,60 +2371,60 @@ const TRANSLATIONS = {
   ar: {
     tabDashboard: 'لوحة التحكم', tabEntry: 'إدخال البيانات', tabAnalytics: 'التحليلات',
     tabReports: 'التقارير', tabTuition: 'مقارنة الرسوم', tabSettings: 'الإعدادات',
-    loginBtn: '🔐 تسجيل الدخول', logoutBtn: 'خروج', adminRole: 'مدير النظام',
+    loginBtn: 'تسجيل الدخول', logoutBtn: 'خروج', adminRole: 'مدير النظام',
     kpiBase: 'إجمالي الطلاب الأساسي', kpiBaseNote: 'قبل التعديلات',
     kpiNew: 'المنضمون الجدد', kpiNewNote: 'طلاب مستجدون',
     kpiOut: 'المنسحبون', kpiOutNote: 'طلاب منسحبون',
     kpiTotal: 'الإجمالي الحالي', kpiTotalNote: 'جميع الأقسام',
     chartDist: 'توزيع الطلاب حسب الأقسام', chartRatios: 'نسب الانضمام والانسحاب',
-    sectionDepts: '🏫 نظرة عامة على الأقسام',
+    sectionDepts: 'نظرة عامة على الأقسام',
     chartDetailedComp: 'مقارنة تفصيلية بين الأقسام',
     chartDistCurrent: 'توزيع الإجمالي الحالي',
     chartTrend: 'منحنى تطور الأعداد عبر التقارير',
     chartFeeComp: 'مقارنة الرسوم السنوية بين مدارس جدة',
     chartPositioning: 'الموقع التنافسي — المدارس المتقدمة',
-    sectionEntry: '✏️ إدخال بيانات الأقسام',
-    btnReset: '🔄 مسح', btnSave: '💾 حفظ البيانات',
+    sectionEntry: 'إدخال بيانات الأقسام',
+    btnReset: 'مسح', btnSave: 'حفظ البيانات',
     fsBase: 'الإجمالي الأساسي', fsNew: 'المنضمون الجدد', fsOut: 'المنسحبون',
     fsGrandLbl: 'المجموع الكلي الحالي', fsGrandSub: 'جميع الأقسام مجتمعة',
     lockedTitle: 'هذه الصفحة للمشرفين فقط',
     lockedSub: 'يجب تسجيل الدخول لتتمكن من إدخال بيانات الطلاب وحفظها.',
     entryLabelBase: 'الطلاب الأساسيون', entryLabelNew: 'المنضمون الجدد',
     entryLabelOut: 'المنسحبون', entryLabelTotal: 'الإجمالي',
-    sectionReports: '📋 سجل التقارير', btnSaveReport: '➕ حفظ تقرير جديد',
-    btnClearAll: '🗑️ حذف الكل', emptyReports: 'لا توجد تقارير محفوظة بعد.',
+    sectionReports: 'سجل التقارير', btnSaveReport: 'حفظ تقرير جديد',
+    btnClearAll: 'حذف الكل', emptyReports: 'لا توجد تقارير محفوظة بعد.',
     thRepName: 'اسم التقرير', thRepDate: 'التاريخ', thRepBase: 'الأساسي',
     thRepNew: 'جدد', thRepOut: 'منسحبون', thRepTotal: 'الإجمالي', thRepDepts: 'الأقسام',
-    sectionTuition: '💰 مقارنة الرسوم الدراسية بمدارس جدة',
-    btnResetFees: '🔄 إعادة تعيين', btnSaveFees: '💾 حفظ الرسوم',
-    badgeOwn: '★ المدارس المتقدمة', badgeLow: '▲ أقل من المتوسط',
+    sectionTuition: 'مقارنة الرسوم الدراسية بمدارس جدة',
+    btnResetFees: 'إعادة تعيين', btnSaveFees: 'حفظ الرسوم',
+    badgeOwn: 'المدارس المتقدمة', badgeLow: '▲ أقل من المتوسط',
     badgeMid: '● ضمن المتوسط', badgeHigh: '▼ أعلى من المتوسط',
     feesCurrency: 'الرسوم بالريال السعودي سنوياً',
-    sectionEditFees: '⚙️ تعديل الرسوم', toggleEdit: '⚙️ تعديل بيانات الرسوم',
-    sectionFeeDetails: '🏫 تفاصيل الرسوم لكل مدرسة',
+    sectionEditFees: 'تعديل الرسوم', toggleEdit: 'تعديل بيانات الرسوم',
+    sectionFeeDetails: 'تفاصيل الرسوم لكل مدرسة',
     feeElem: 'ابتدائي', feeMid: 'متوسط', feeHigh: 'ثانوي', feeIntl: 'عالمي',
     feeAvg: 'متوسط الرسوم', feeLegendElem: 'ابتدائي', feeLegendMid: 'متوسط',
     feeLegendHigh: 'ثانوي', feeLegendIntl: 'عالمي',
     insightTitle: 'الموقع التنافسي', insightAvgLabel: 'متوسط السوق',
-    sectionSettings: '⚙️ إعدادات النظام', adminOnly: 'للمشرفين فقط',
-    titleChangePw: '🔑 تغيير كلمة المرور',
+    sectionSettings: 'إعدادات النظام', adminOnly: 'للمشرفين فقط',
+    titleChangePw: 'تغيير كلمة المرور',
     labelCurPass: 'كلمة المرور الحالية', phCurPass: 'أدخل كلمة المرور الحالية',
     labelNewPass: 'كلمة المرور الجديدة', phNewPass: 'كلمة المرور الجديدة',
     labelConfPass: 'تأكيد كلمة المرور الجديدة', phConfPass: 'أعد إدخال كلمة المرور',
-    btnUpdatePw: '💾 تحديث كلمة المرور',
-    titleAccount: '👤 بيانات الحساب', labelUsername: 'اسم المستخدم',
+    btnUpdatePw: 'تحديث كلمة المرور',
+    titleAccount: 'بيانات الحساب', labelUsername: 'اسم المستخدم',
     phUsername: 'اسم المستخدم', labelDisplayName: 'الاسم المعروض',
-    phDisplayName: 'الاسم الذي يظهر في النظام', btnUpdateName: '💾 تحديث الاسم',
-    titleUserMgmt: '👥 إدارة المستخدمين', thUser: 'المستخدم',
+    phDisplayName: 'الاسم الذي يظهر في النظام', btnUpdateName: 'تحديث الاسم',
+    titleUserMgmt: 'إدارة المستخدمين', thUser: 'المستخدم',
     thDisplayName: 'الاسم المعروض', thActions: 'الإجراءات',
-    addUserTitle: '➕ إضافة مستخدم جديد', labelPassword: 'كلمة المرور',
-    phPassword: 'كلمة المرور', btnAddUser: '➕ إضافة',
+    addUserTitle: 'إضافة مستخدم جديد', labelPassword: 'كلمة المرور',
+    phPassword: 'كلمة المرور', btnAddUser: 'إضافة',
     loginSchoolName: 'شركة المدارس المتقدمة',
     loginSchoolSub: 'نظام متابعة الطلاب — فرع الزهراء',
-    btnCancel: 'إلغاء', btnLogin: '🔐 دخول',
-    orDivider: 'أو', continueGuest: '👁️ المتابعة كزائر', viewOnly: 'عرض فقط',
-    btnSaveConfirm: '✅ حفظ',
-    saveRepTitle: '💾 حفظ تقرير جديد', saveRepLabel: 'اسم التقرير',
+    btnCancel: 'إلغاء', btnLogin: 'دخول',
+    orDivider: 'أو', continueGuest: 'المتابعة كزائر', viewOnly: 'عرض فقط',
+    btnSaveConfirm: 'حفظ',
+    saveRepTitle: 'حفظ تقرير جديد', saveRepLabel: 'اسم التقرير',
     saveRepPh: 'مثال: الفصل الأول 1446',
     guestBannerDash: 'أنت تتصفح بوضع <strong>العرض فقط</strong> — سجّل دخولك لتعديل البيانات وحفظ التقارير.',
     guestBannerRep: 'أنت في وضع <strong>العرض فقط</strong> — لا يمكنك حفظ أو حذف التقارير.',
@@ -2423,8 +2433,8 @@ const TRANSLATIONS = {
     d1: 'قسم البنين الأهلي الابتدائي', d2: 'قسم البنين الأهلي المتوسط والثانوي',
     d3: 'قسم البنين العالمي', d4: 'قسم البنات الأهلي', d5: 'قسم البنات العالمي',
     d1short: 'ب.أ.ا', d2short: 'ب.أ.م', d3short: 'ب.ع', d4short: 'بت.أ', d5short: 'بت.ع',
-    deleteBtnLabel: '🗑 حذف', currentAccLabel: 'الحساب الحالي',
-    toastSaved: 'تم حفظ البيانات بنجاح ✅', toastCleared: 'تم مسح البيانات',
+    deleteBtnLabel: 'حذف', currentAccLabel: 'الحساب الحالي',
+    toastSaved: 'تم حفظ البيانات بنجاح', toastCleared: 'تم مسح البيانات',
     toastRepSaved: 'تم حفظ التقرير', toastRepDeleted: 'تم حذف التقرير',
     toastAllDeleted: 'تم حذف الكل', toastFeesSaved: 'تم حفظ بيانات الرسوم',
     toastFeesReset: 'تم إعادة التعيين', toastPwUpdated: 'تم تحديث كلمة المرور',
@@ -2449,85 +2459,85 @@ const TRANSLATIONS = {
     labelKG: 'روضة', labelElem: 'ابتدائي', labelMid: 'متوسط', labelHigh: 'ثانوي', labelIntl: 'دولي',
     labelSchoolName: 'اسم المدرسة', labelSchoolType: 'النوع / المنهج',
     phSchoolName: 'اسم المدرسة', phSchoolType: 'أهلي — منهج وطني',
-    btnAddSchool: '➕ إضافة مدرسة', sectionEditFees: '⚙️ إدارة المدارس',
-    toggleEdit: '⚙️ إدارة المدارس',
+    btnAddSchool: 'إضافة مدرسة', sectionEditFees: 'إدارة المدارس',
+    toggleEdit: 'إدارة المدارس',
     tabLog: 'سجل النشاط', sectionLog: 'سجل النشاط', btnClearLog: 'مسح السجل',
     emptyLog: 'لا توجد أحداث مسجّلة بعد.', phLogSearch: 'بحث في السجل…',
     thLogTime: 'الوقت', thLogUser: 'المستخدم', thLogAction: 'الحدث', thLogDetails: 'التفاصيل',
-    titleDeptMgmt: '🏛️ إدارة الأقسام', addDeptTitle: '➕ إضافة قسم جديد',
+    titleDeptMgmt: 'إدارة الأقسام', addDeptTitle: 'إضافة قسم جديد',
     labelDeptName: 'اسم القسم (عربي)', labelDeptNameEn: 'اسم القسم (إنجليزي)',
-    labelDeptIcon: 'الأيقونة', labelDeptColor: 'اللون', btnAddDept: '➕ إضافة قسم',
+    labelDeptIcon: 'الأيقونة', labelDeptColor: 'اللون', btnAddDept: 'إضافة قسم',
     thDepts: 'الأقسام', deptAssignNote: 'تركها فارغة يعني صلاحية على جميع الأقسام',
     tabInbox: 'صندوق البلاغات',
-    reportModalTitle: '📩 إرسال بلاغ', reportModalSub: 'سيصل بلاغك مباشرة إلى المدير الرئيسي',
+    reportModalTitle: 'إرسال بلاغ', reportModalSub: 'سيصل بلاغك مباشرة إلى المدير الرئيسي',
     labelIssueTitle: 'عنوان المشكلة', phIssueTitle: 'وصف مختصر للمشكلة',
     labelIssueCategory: 'الفئة', labelIssueBody: 'التفاصيل', phIssueBody: 'اشرح المشكلة بالتفصيل…',
-    btnSubmitReport: '📩 إرسال البلاغ', emptyInbox: 'لا توجد بلاغات بعد.',
+    btnSubmitReport: 'إرسال البلاغ', emptyInbox: 'لا توجد بلاغات بعد.',
     btnClearResolved: 'مسح المحلولة',
-    catBug: '🐛 خلل تقني', catSuggestion: '💡 اقتراح', catAccess: '🔐 صلاحيات',
-    catData: '📊 بيانات', catOther: '📌 أخرى',
-    msgTitle: 'الرسائل', msgNewBtn: '✉️ محادثة جديدة', msgAllConvos: 'كل المحادثات',
+    catBug: 'خلل تقني', catSuggestion: 'اقتراح', catAccess: 'صلاحيات',
+    catData: 'بيانات', catOther: 'أخرى',
+    msgTitle: 'الرسائل', msgNewBtn: 'محادثة جديدة', msgAllConvos: 'كل المحادثات',
     msgMyChats: 'محادثاتي', msgSelectChat: 'اختر محادثة للبدء', msgSend: 'إرسال ←', msgAllConvos: '',
-    msgConfidentialTitle: '🔐 سرية تامة',
+    msgConfidentialTitle: 'سرية تامة',
     msgConfidentialBody: 'جميع المحادثات في هذا النظام سرية وخاصة. لا يمكن لأي مستخدم الاطلاع على محادثات الآخرين. يُرجى الالتزام بمبادئ السرية المهنية في جميع رسائلك.',
   },
   en: {
     tabDashboard: 'Dashboard', tabEntry: 'Data Entry', tabAnalytics: 'Analytics',
     tabReports: 'Reports', tabTuition: 'Tuition Comparison', tabSettings: 'Settings',
-    loginBtn: '🔐 Sign In', logoutBtn: 'Sign Out', adminRole: 'System Admin',
+    loginBtn: 'Sign In', logoutBtn: 'Sign Out', adminRole: 'System Admin',
     kpiBase: 'Base Student Count', kpiBaseNote: 'Before adjustments',
     kpiNew: 'New Joiners', kpiNewNote: 'Newly enrolled',
     kpiOut: 'Withdrawals', kpiOutNote: 'Students withdrawn',
     kpiTotal: 'Current Total', kpiTotalNote: 'All departments',
     chartDist: 'Student Distribution by Department', chartRatios: 'Enrollment vs Withdrawal Ratio',
-    sectionDepts: '🏫 Department Overview',
+    sectionDepts: 'Department Overview',
     chartDetailedComp: 'Detailed Department Comparison',
     chartDistCurrent: 'Current Total Distribution',
     chartTrend: 'Student Count Trend Over Reports',
     chartFeeComp: 'Annual Tuition Comparison — Jeddah Schools',
     chartPositioning: 'Competitive Position — Al-Mutaqadimah Schools',
-    sectionEntry: '✏️ Department Data Entry',
-    btnReset: '🔄 Reset', btnSave: '💾 Save Data',
+    sectionEntry: 'Department Data Entry',
+    btnReset: 'Reset', btnSave: 'Save Data',
     fsBase: 'Base Total', fsNew: 'New Joiners', fsOut: 'Withdrawals',
     fsGrandLbl: 'Grand Total', fsGrandSub: 'All departments combined',
     lockedTitle: 'Admin Access Only',
     lockedSub: 'You must sign in to enter and save student data.',
     entryLabelBase: 'Base Students', entryLabelNew: 'New Joiners',
     entryLabelOut: 'Withdrawals', entryLabelTotal: 'Total',
-    sectionReports: '📋 Reports History', btnSaveReport: '➕ Save New Report',
-    btnClearAll: '🗑️ Delete All', emptyReports: 'No saved reports yet.',
+    sectionReports: 'Reports History', btnSaveReport: 'Save New Report',
+    btnClearAll: 'Delete All', emptyReports: 'No saved reports yet.',
     thRepName: 'Report Name', thRepDate: 'Date', thRepBase: 'Base',
     thRepNew: 'New', thRepOut: 'Withdrawn', thRepTotal: 'Total', thRepDepts: 'Departments',
-    sectionTuition: '💰 Tuition Comparison — Jeddah Schools',
-    btnResetFees: '🔄 Reset Fees', btnSaveFees: '💾 Save Fees',
-    badgeOwn: '★ Al-Mutaqadimah Schools', badgeLow: '▲ Below Average',
+    sectionTuition: 'Tuition Comparison — Jeddah Schools',
+    btnResetFees: 'Reset Fees', btnSaveFees: 'Save Fees',
+    badgeOwn: 'Al-Mutaqadimah Schools', badgeLow: '▲ Below Average',
     badgeMid: '● Within Average', badgeHigh: '▼ Above Average',
     feesCurrency: 'Annual fees in Saudi Riyals (SAR)',
-    sectionEditFees: '⚙️ Edit Fees', toggleEdit: '⚙️ Edit Fee Data',
-    sectionFeeDetails: '🏫 Fee Details per School',
+    sectionEditFees: 'Edit Fees', toggleEdit: 'Edit Fee Data',
+    sectionFeeDetails: 'Fee Details per School',
     feeElem: 'Elementary', feeMid: 'Middle', feeHigh: 'High School', feeIntl: 'International',
     feeAvg: 'Average Fee', feeLegendElem: 'Elementary', feeLegendMid: 'Middle',
     feeLegendHigh: 'High School', feeLegendIntl: 'International',
     insightTitle: 'Competitive Position', insightAvgLabel: 'Market Average',
-    sectionSettings: '⚙️ System Settings', adminOnly: 'Admins Only',
-    titleChangePw: '🔑 Change Password',
+    sectionSettings: 'System Settings', adminOnly: 'Admins Only',
+    titleChangePw: 'Change Password',
     labelCurPass: 'Current Password', phCurPass: 'Enter current password',
     labelNewPass: 'New Password', phNewPass: 'New password',
     labelConfPass: 'Confirm New Password', phConfPass: 'Re-enter new password',
-    btnUpdatePw: '💾 Update Password',
-    titleAccount: '👤 Account Details', labelUsername: 'Username',
+    btnUpdatePw: 'Update Password',
+    titleAccount: 'Account Details', labelUsername: 'Username',
     phUsername: 'Username', labelDisplayName: 'Display Name',
-    phDisplayName: 'Name shown in the system', btnUpdateName: '💾 Update Name',
-    titleUserMgmt: '👥 User Management', thUser: 'Username',
+    phDisplayName: 'Name shown in the system', btnUpdateName: 'Update Name',
+    titleUserMgmt: 'User Management', thUser: 'Username',
     thDisplayName: 'Display Name', thActions: 'Actions',
-    addUserTitle: '➕ Add New User', labelPassword: 'Password',
-    phPassword: 'Password', btnAddUser: '➕ Add',
+    addUserTitle: 'Add New User', labelPassword: 'Password',
+    phPassword: 'Password', btnAddUser: 'Add',
     loginSchoolName: 'Al-Mutaqadimah Schools Co.',
     loginSchoolSub: 'Student Tracking System — Al-Zahra Branch',
-    btnCancel: 'Cancel', btnLogin: '🔐 Sign In',
-    orDivider: 'or', continueGuest: '👁️ Continue as Guest', viewOnly: 'View Only',
-    btnSaveConfirm: '✅ Save',
-    saveRepTitle: '💾 Save New Report', saveRepLabel: 'Report Name',
+    btnCancel: 'Cancel', btnLogin: 'Sign In',
+    orDivider: 'or', continueGuest: 'Continue as Guest', viewOnly: 'View Only',
+    btnSaveConfirm: 'Save',
+    saveRepTitle: 'Save New Report', saveRepLabel: 'Report Name',
     saveRepPh: 'e.g. Semester 1 — 2025',
     guestBannerDash: 'You are browsing in <strong>View Only</strong> mode — sign in to edit data and save reports.',
     guestBannerRep: 'You are in <strong>View Only</strong> mode — you cannot save or delete reports.',
@@ -2536,8 +2546,8 @@ const TRANSLATIONS = {
     d1: 'Boys National Elementary', d2: 'Boys National Middle/High',
     d3: 'Boys International', d4: 'Girls National', d5: 'Girls International',
     d1short: 'BNE', d2short: 'BNM', d3short: 'BI', d4short: 'GN', d5short: 'GI',
-    deleteBtnLabel: '🗑 Delete', currentAccLabel: 'Current Account',
-    toastSaved: 'Data saved successfully ✅', toastCleared: 'Data cleared',
+    deleteBtnLabel: 'Delete', currentAccLabel: 'Current Account',
+    toastSaved: 'Data saved successfully', toastCleared: 'Data cleared',
     toastRepSaved: 'Report saved', toastRepDeleted: 'Report deleted',
     toastAllDeleted: 'All deleted', toastFeesSaved: 'Fee data saved',
     toastFeesReset: 'Fees reset', toastPwUpdated: 'Password updated',
@@ -2562,26 +2572,26 @@ const TRANSLATIONS = {
     labelKG: 'KG', labelElem: 'Elementary', labelMid: 'Middle School', labelHigh: 'High School', labelIntl: 'International',
     labelSchoolName: 'School Name', labelSchoolType: 'Type / Curriculum',
     phSchoolName: 'School name', phSchoolType: 'National — National Curriculum',
-    btnAddSchool: '➕ Add School', sectionEditFees: '⚙️ School Manager',
-    toggleEdit: '⚙️ Manage Schools',
+    btnAddSchool: 'Add School', sectionEditFees: 'School Manager',
+    toggleEdit: 'Manage Schools',
     tabLog: 'Activity Log', sectionLog: 'Activity Log', btnClearLog: 'Clear Log',
     emptyLog: 'No activity recorded yet.', phLogSearch: 'Search log…',
     thLogTime: 'Time', thLogUser: 'User', thLogAction: 'Event', thLogDetails: 'Details',
-    titleDeptMgmt: '🏛️ Department Manager', addDeptTitle: '➕ Add New Department',
+    titleDeptMgmt: 'Department Manager', addDeptTitle: 'Add New Department',
     labelDeptName: 'Department Name (Arabic)', labelDeptNameEn: 'Department Name (English)',
-    labelDeptIcon: 'Icon', labelDeptColor: 'Color', btnAddDept: '➕ Add Department',
+    labelDeptIcon: 'Icon', labelDeptColor: 'Color', btnAddDept: 'Add Department',
     thDepts: 'Departments', deptAssignNote: 'Leave empty to grant access to all departments',
     tabInbox: 'Issue Inbox',
-    reportModalTitle: '📩 Report an Issue', reportModalSub: 'Your report goes directly to the head admin',
+    reportModalTitle: 'Report an Issue', reportModalSub: 'Your report goes directly to the head admin',
     labelIssueTitle: 'Issue Title', phIssueTitle: 'Brief description of the issue',
     labelIssueCategory: 'Category', labelIssueBody: 'Details', phIssueBody: 'Explain the issue in detail…',
-    btnSubmitReport: '📩 Submit Report', emptyInbox: 'No reports yet.',
+    btnSubmitReport: 'Submit Report', emptyInbox: 'No reports yet.',
     btnClearResolved: 'Clear Resolved',
-    catBug: '🐛 Bug', catSuggestion: '💡 Suggestion', catAccess: '🔐 Access',
-    catData: '📊 Data', catOther: '📌 Other',
-    msgTitle: 'Messages', msgNewBtn: '✉️ New Chat', msgAllConvos: 'All Conversations',
+    catBug: 'Bug', catSuggestion: 'Suggestion', catAccess: 'Access',
+    catData: 'Data', catOther: 'Other',
+    msgTitle: 'Messages', msgNewBtn: 'New Chat', msgAllConvos: 'All Conversations',
     msgMyChats: 'My Chats', msgSelectChat: 'Select a chat to start', msgSend: 'Send →',
-    msgConfidentialTitle: '🔐 Full Confidentiality',
+    msgConfidentialTitle: 'Full Confidentiality',
     msgConfidentialBody: 'All conversations in this system are private and fully confidential. No other user can access your messages. Please maintain professional discretion in all communications.',
   }
 };
@@ -2616,7 +2626,7 @@ function applyLang(){
   });
 
   const langBtn=document.getElementById('lang-btn');
-  if(langBtn){ langBtn.title=isEn?'عربي':'English'; langBtn.textContent=isEn?'🌐 AR':'🌐 EN'; }
+  if(langBtn){ langBtn.title=isEn?'عربي':'English'; langBtn.innerHTML='<i data-lucide="globe" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i> '+(isEn?'AR':'EN'); refreshIcons(); }
 
   if(typeof updateDashboard==='function') updateDashboard();
   if(typeof buildEntryGrid==='function') buildEntryGrid();
@@ -2624,6 +2634,12 @@ function applyLang(){
   if(typeof renderCompCards==='function') renderCompCards();
   if(typeof renderAllCharts==='function') setTimeout(renderAllCharts, 60);
 }
+
+/* ─── LUCIDE ICONS ─────────────────────────────────── */
+function icon(name,size=15,cls=''){
+  return `<i data-lucide="${name}" style="width:${size}px;height:${size}px;display:inline-block;vertical-align:middle;flex-shrink:0" class="${cls}"></i>`;
+}
+function refreshIcons(){if(window.lucide)lucide.createIcons();}
 
 document.addEventListener('DOMContentLoaded',init);
 </script>
