@@ -694,8 +694,11 @@ tr:hover td{background:var(--surface3)}
           <label data-i18n="labelHigh">ثانوي</label>
           <input class="smr-inp smr-fee-inp" id="new-fee-high" type="number" min="0" step="500" placeholder="0"/>
         </div>
-        <div class="smr-add-group" style="min-width:80px;max-width:90px">
-          <label data-i18n="labelIntl">دولي</label>
+        <div class="smr-add-group" style="min-width:80px;max-width:110px">
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
+            <input type="checkbox" id="new-intl-toggle" checked onchange="document.getElementById('new-fee-intl').style.display=this.checked?'':'none'" style="accent-color:var(--brand-light);width:13px;height:13px"/>
+            <span data-i18n="labelIntl">دولي</span>
+          </label>
           <input class="smr-inp smr-fee-inp" id="new-fee-intl" type="number" min="0" step="500" placeholder="0"/>
         </div>
         <button class="btn btn-brand" id="add-school-btn" style="white-space:nowrap;align-self:flex-end" data-i18n="btnAddSchool">➕ إضافة مدرسة</button>
@@ -1382,7 +1385,19 @@ function buildSchoolManager(){
         ${!school.own?`<button class="btn" style="padding:5px 11px;font-size:12px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);flex-shrink:0" data-del="${school.id}">${lang==='en'?'🗑 Remove':'🗑 حذف'}</button>`:''}
       </div>
       <div class="smr-fees">
-        ${FEE_STAGES.map(st=>`<div class="smr-fee-col"><label>${t(stageKeys[st.key]||st.key)}</label><input class="smr-fee-inp" type="number" min="0" step="500" data-stage="${st.key}" value="${school.fees[st.key]||0}"/></div>`).join('')}
+        ${FEE_STAGES.map(st=>{
+          if(st.key==='intl'){
+            const hasIntl=(school.fees.intl||0)>0;
+            return `<div class="smr-fee-col">
+              <label style="display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer">
+                <input type="checkbox" ${hasIntl?'checked':''} onchange="toggleSchoolIntl(this,'${school.id}')" style="accent-color:var(--brand-light);width:12px;height:12px"/>
+                <span>${t(stageKeys[st.key]||st.key)}</span>
+              </label>
+              <input class="smr-fee-inp" type="number" min="0" step="500" data-stage="${st.key}" value="${school.fees[st.key]||0}" style="${hasIntl?'':'display:none'}" placeholder="0"/>
+            </div>`;
+          }
+          return `<div class="smr-fee-col"><label>${t(stageKeys[st.key]||st.key)}</label><input class="smr-fee-inp" type="number" min="0" step="500" data-stage="${st.key}" value="${school.fees[st.key]||0}"/></div>`;
+        }).join('')}
       </div>`;
     list.appendChild(row);
 
@@ -1419,6 +1434,14 @@ function buildSchoolManager(){
   });
 }
 
+function toggleSchoolIntl(checkbox, schoolId){
+  const row=document.querySelector(`[data-sid="${schoolId}"]`);
+  const inp=row?.querySelector('input[data-stage="intl"]');
+  if(!inp)return;
+  inp.style.display=checkbox.checked?'':'none';
+  if(!checkbox.checked) inp.value='0';
+}
+
 function addSchool(){
   const name=document.getElementById('new-school-name').value.trim();
   const type=document.getElementById('new-school-type').value.trim();
@@ -1431,11 +1454,12 @@ function addSchool(){
       elem:parseInt(document.getElementById('new-fee-elem').value)||0,
       mid:parseInt(document.getElementById('new-fee-mid').value)||0,
       high:parseInt(document.getElementById('new-fee-high').value)||0,
-      intl:parseInt(document.getElementById('new-fee-intl').value)||0
+      intl:document.getElementById('new-intl-toggle').checked?(parseInt(document.getElementById('new-fee-intl').value)||0):0
     }
   });
-  // clear form
+  // clear form and reset toggle
   ['new-school-name','new-school-type','new-fee-kg','new-fee-elem','new-fee-mid','new-fee-high','new-fee-intl'].forEach(id=>{document.getElementById(id).value='';});
+  const tog=document.getElementById('new-intl-toggle');tog.checked=true;document.getElementById('new-fee-intl').style.display='';
   buildSchoolManager();renderCompCards();setTimeout(renderFeeBar,50);
   logAction(LOG_ACTIONS.SCHOOL_ADD,name);toast(lang==='en'?'School added':'تمت إضافة المدرسة');
 }
