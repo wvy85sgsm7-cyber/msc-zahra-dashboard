@@ -1812,22 +1812,42 @@ function renderUsersTable(){
       ?u.depts.map(id=>{const d=orgDepts.find(x=>x.id===id);return d?`<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:${d.color}22;color:${d.color};border:1px solid ${d.color}44">${d.nameEn||d.name}</span>`:''}).join(' ')
       :`<span style="font-size:10px;color:var(--text3)">${lang==='en'?'All':'الكل'}</span>`;
     const assignBtn=auth.role==='head'?`<button class="btn" style="padding:2px 7px;font-size:10px;border:1px solid var(--border)" onclick="openDeptAssign('${u.username}')">${lang==='en'?'✏️ Edit':'✏️ تعديل'}</button>`:'';
+    // Password reveal: head admin can see non-head passwords only
+    const canSeePass=auth.role==='head'&&!isHead;
+    const passDisplay=canSeePass?`<span id="pw-wrap-${u.username}" style="display:inline-flex;align-items:center;gap:5px">
+      <span id="pw-val-${u.username}" style="font-family:monospace;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:2px 8px;letter-spacing:1px;display:none">${u.passPlain||`<span style='color:var(--text3);font-size:10px'>${lang==='en'?'set before this feature':'قبل هذه الميزة'}</span>`}</span>
+      <button onclick="togglePassReveal('${u.username}')" style="padding:2px 8px;font-size:11px;border-radius:6px;background:rgba(75,191,184,.1);border:1px solid var(--border2);color:var(--brand-light);cursor:pointer;font-family:'Cairo',sans-serif" id="pw-eye-${u.username}">👁 ${lang==='en'?'Show':'عرض'}</button>
+    </span>`:(!isHead&&!canSeePass?'—':'');
     return `<tr>
       <td><code style="font-family:monospace;font-size:13px">${u.username}</code>${isMe?` <span style="font-size:10px;color:var(--text3)">(${lang==='en'?'you':'أنت'})</span>`:''}</td>
       <td>${u.displayName||''}</td>
       <td>${roleBadge}</td>
+      <td>${passDisplay}</td>
       <td style="max-width:180px">${userDepts} ${assignBtn}</td>
       <td style="display:flex;gap:5px;flex-wrap:wrap">${demoteBtn}${deleteBtn}${isMe?`<span style="font-size:11px;color:var(--text3)">${t('currentAccLabel')}</span>`:''}</td>
     </tr>`;
   }).join('');
-  // Update table header to include Role and Depts columns
+  // Always rebuild thead fresh to avoid duplicate columns across re-renders
   const thead=tbody.closest('table').querySelector('thead tr');
-  if(thead&&thead.children.length<4){
-    const thRole=document.createElement('th');thRole.textContent=lang==='en'?'Role':'الدور';
-    thead.insertBefore(thRole,thead.children[2]);
-    const thDepts=document.createElement('th');thDepts.setAttribute('data-i18n','thDepts');thDepts.textContent=lang==='en'?'Departments':'الأقسام';
-    thead.insertBefore(thDepts,thead.children[3]);
+  if(thead){
+    const isHeadViewer=auth.role==='head';
+    thead.innerHTML=`
+      <th data-i18n="thUser">${lang==='en'?'Username':'المستخدم'}</th>
+      <th data-i18n="thDisplayName">${lang==='en'?'Display Name':'الاسم المعروض'}</th>
+      <th>${lang==='en'?'Role':'الدور'}</th>
+      ${isHeadViewer?`<th>${lang==='en'?'Password':'كلمة المرور'}</th>`:''}
+      <th data-i18n="thDepts">${lang==='en'?'Departments':'الأقسام'}</th>
+      <th data-i18n="thActions">${lang==='en'?'Actions':'الإجراءات'}</th>`;
   }
+}
+
+function togglePassReveal(username){
+  const val=document.getElementById('pw-val-'+username);
+  const btn=document.getElementById('pw-eye-'+username);
+  if(!val||!btn)return;
+  const showing=val.style.display!=='none';
+  val.style.display=showing?'none':'inline';
+  btn.textContent=showing?(lang==='en'?'👁 Show':'👁 عرض'):(lang==='en'?'🙈 Hide':'🙈 إخفاء');
 }
 
 function toggleUserRole(username){
@@ -1857,6 +1877,7 @@ async function changePassword(){
   const idx=users.findIndex(u=>u.username===auth.username);
   if(idx===-1||users[idx].passHash!==curHash){msg.textContent=t('errPwWrong');msg.style.display='block';return;}
   users[idx].passHash=await sha256(newPass);
+  users[idx].passPlain=newPass;
   localStorage.setItem(K.USERS,JSON.stringify(users));
   document.getElementById('s-cur-pass').value='';
   document.getElementById('s-new-pass').value='';
@@ -1896,7 +1917,7 @@ async function addUser(){
   const users=loadUsers()||[];
   if(users.find(u=>u.username===username)){msg.textContent=t('errUsernameExists');msg.style.display='block';return;}
   const passHash=await sha256(pass);
-  users.push({username,passHash,displayName:display,role:'admin',depts:[]});
+  users.push({username,passHash,passPlain:pass,displayName:display,role:'admin',depts:[]});
   localStorage.setItem(K.USERS,JSON.stringify(users));
   document.getElementById('new-user-username').value='';
   document.getElementById('new-user-pass').value='';
