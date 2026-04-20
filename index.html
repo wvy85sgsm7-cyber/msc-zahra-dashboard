@@ -1816,7 +1816,7 @@ function renderUsersTable(){
     const canSeePass=auth.role==='head'&&!isHead;
     const passDisplay=canSeePass?`<span id="pw-wrap-${u.username}" style="display:inline-flex;align-items:center;gap:5px">
       <span id="pw-val-${u.username}" style="font-family:monospace;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:2px 8px;letter-spacing:1px;display:none">${u.passPlain||`<span style='color:var(--text3);font-size:10px'>${lang==='en'?'set before this feature':'قبل هذه الميزة'}</span>`}</span>
-      <button onclick="togglePassReveal('${u.username}')" style="padding:2px 8px;font-size:11px;border-radius:6px;background:rgba(75,191,184,.1);border:1px solid var(--border2);color:var(--brand-light);cursor:pointer;font-family:'Cairo',sans-serif" id="pw-eye-${u.username}">👁 ${lang==='en'?'Show':'عرض'}</button>
+      <button onclick="togglePassReveal('${u.username}')" style="padding:2px 8px;font-size:11px;border-radius:6px;background:rgba(75,191,184,.1);border:1px solid var(--border2);color:var(--brand-light);cursor:pointer;font-family:'Cairo',sans-serif" id="pw-eye-${u.username}">${lang==='en'?'Show':'عرض'}</button>
     </span>`:(!isHead&&!canSeePass?'—':'');
     return `<tr>
       <td><code style="font-family:monospace;font-size:13px">${u.username}</code>${isMe?` <span style="font-size:10px;color:var(--text3)">(${lang==='en'?'you':'أنت'})</span>`:''}</td>
@@ -1847,7 +1847,7 @@ function togglePassReveal(username){
   if(!val||!btn)return;
   const showing=val.style.display!=='none';
   val.style.display=showing?'none':'inline';
-  btn.textContent=showing?(lang==='en'?'👁 Show':'👁 عرض'):(lang==='en'?'👁 Hide':'👁 إخفاء');
+  btn.textContent=showing?(lang==='en'?'Show':'عرض'):(lang==='en'?'Hide':'إخفاء');
 }
 
 function toggleUserRole(username){
