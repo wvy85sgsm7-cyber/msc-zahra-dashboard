@@ -475,7 +475,7 @@ tr:hover td{background:var(--surface3)}
   .tabnav{top:60px;padding:10px 14px 0;gap:1px}
   .topbar-logo{height:46px;width:46px}
   .topbar-logo img{height:40px;width:40px}
-  .topbar-center,.topbar-sub{display:none}
+  .topbar-center{display:none}
   .auth-username,.auth-role{display:none}
   .page{padding:20px 16px}
   .tab-btn{padding:9px 13px 11px;font-size:12.5px}
@@ -494,10 +494,16 @@ tr:hover td{background:var(--surface3)}
   .tabnav{top:54px;padding:7px 8px 0;gap:0}
   .topbar-logo{height:40px;width:40px}
   .topbar-logo img{height:34px;width:34px}
-  .topbar-title{font-size:12.5px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar-title{font-size:12px;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar-sub{font-size:10px}
   .tb-btn{min-width:34px;height:34px;padding:0 6px;font-size:12px;border-radius:8px}
   .auth-avatar{width:30px;height:30px;font-size:12px}
   .auth-logout-btn{padding:4px 9px;font-size:11px}
+
+  /* Guest banner — compact single row */
+  .guest-banner{padding:10px 14px;gap:8px;flex-wrap:nowrap;align-items:center}
+  .guest-banner-text{font-size:12px;flex:1}
+  .guest-banner-btn{padding:7px 13px;font-size:12px;white-space:nowrap;flex-shrink:0}
 
   /* Tabs */
   .tab-btn{padding:8px 10px 10px;font-size:11.5px;gap:4px;border-radius:8px 8px 0 0}
@@ -517,10 +523,11 @@ tr:hover td{background:var(--surface3)}
   .kpi-label{font-size:10px}
   .kpi-note{font-size:10px}
 
-  /* Dept cards */
-  .dept-grid{grid-template-columns:1fr}
-  .dept-total-num{font-size:22px}
-  .dept-stat-num{font-size:14px}
+  /* Dept cards — 2 per row like desktop */
+  .dept-grid{grid-template-columns:1fr 1fr}
+  .dept-total-num{font-size:20px}
+  .dept-stat-num{font-size:13px}
+  .dept-name{font-size:12px}
 
   /* Footer strip */
   .footer-strip{flex-direction:column;padding:14px 16px;gap:10px;align-items:stretch}
@@ -2739,13 +2746,17 @@ function applyLang(){
       if(lock) el.appendChild(lock);
       if(badge) el.appendChild(badge);
     } else {
-      if(el.children.length>0){
-        // Element has child nodes (icons/SVGs) — preserve them, only update text nodes
-        let found=false;
-        for(const n of el.childNodes){
-          if(n.nodeType===3){n.textContent=' '+val;found=true;}
+      // If translation contains HTML (e.g. <strong>), always use innerHTML
+      const valHasHtml=/<[a-z]/i.test(val);
+      if(!valHasHtml && el.querySelector('i[data-lucide],svg')){
+        // Plain-text value + element has a Lucide icon child → preserve icon, update text only
+        const tNodes=[...el.childNodes].filter(n=>n.nodeType===3);
+        if(tNodes.length>0){
+          tNodes[tNodes.length-1].textContent=' '+val;
+          tNodes.slice(0,-1).forEach(n=>n.textContent='');
+        } else {
+          el.appendChild(document.createTextNode(' '+val));
         }
-        if(!found) el.appendChild(document.createTextNode(' '+val));
       } else {
         el.innerHTML=val;
       }
