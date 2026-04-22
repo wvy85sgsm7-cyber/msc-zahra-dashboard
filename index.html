@@ -1292,7 +1292,8 @@ function applyAuthState(){
     const deptMgmtSec=document.getElementById('dept-mgmt-section');
     if(deptMgmtSec) deptMgmtSec.style.display=isHead?'':'none';
     const cloudSyncSec=document.getElementById('cloud-sync-section');
-    if(cloudSyncSec){cloudSyncSec.style.display=isHead?'':'none';if(isHead)buildSyncCard();}
+    const isOwner=auth.username==='alyamani';
+    if(cloudSyncSec){cloudSyncSec.style.display=isOwner?'':'none';if(isOwner)buildSyncCard();}
     // Messages button (all logged-in) + report button + inbox tab (head only)
     const msgBtn=document.getElementById('msg-open-btn');
     if(msgBtn) msgBtn.style.display='flex';
