@@ -782,7 +782,7 @@ tr:hover td{background:var(--surface3)}
         <div class="add-user-form">
           <div>
             <label class="settings-label" data-i18n="labelUsername">اسم المستخدم</label>
-            <input class="settings-inp" type="text" id="new-user-username" placeholder="اسم المستخدم" data-i18n-ph="phUsername"/>
+            <input class="settings-inp" type="text" id="new-user-username" placeholder="اسم المستخدم" autocapitalize="none" autocorrect="off" spellcheck="false" data-i18n-ph="phUsername"/>
           </div>
           <div>
             <label class="settings-label" data-i18n="labelPassword">كلمة المرور</label>
@@ -951,7 +951,7 @@ tr:hover td{background:var(--surface3)}
     </div>
     <div class="modal-err" id="login-err">اسم المستخدم أو كلمة المرور غير صحيحة</div>
     <label class="input-label" data-i18n="labelUsername">اسم المستخدم</label>
-    <div class="input-wrap"><input class="modal-inp" id="login-user" type="text" placeholder="أدخل اسم المستخدم" autocomplete="username" data-i18n-ph="phUsername"/><span class="input-icon"><i data-lucide="user" style="width:16px;height:16px;display:inline-block;vertical-align:middle;opacity:0.5"></i></span></div>
+    <div class="input-wrap"><input class="modal-inp" id="login-user" type="text" placeholder="أدخل اسم المستخدم" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" data-i18n-ph="phUsername"/><span class="input-icon"><i data-lucide="user" style="width:16px;height:16px;display:inline-block;vertical-align:middle;opacity:0.5"></i></span></div>
     <label class="input-label" data-i18n="labelPassword">كلمة المرور</label>
     <div class="input-wrap"><input class="modal-inp" id="login-pass" type="password" placeholder="أدخل كلمة المرور" autocomplete="current-password" data-i18n-ph="phPassword"/><span class="input-icon"><i data-lucide="key-round" style="width:16px;height:16px;display:inline-block;vertical-align:middle;opacity:0.5"></i></span></div>
     <div class="modal-actions" style="margin-bottom:16px">
@@ -1073,7 +1073,7 @@ async function ensureDefaultUser(){
 
 async function attemptLogin(username,password){
   const users=loadUsers()||[];
-  const user=users.find(u=>u.username===username.trim());
+  const user=users.find(u=>u.username===username.trim().toLowerCase());
   if(!user) return false;
   const h=await sha256(password);
   return h===user.passHash ? user : false;
@@ -1978,7 +1978,7 @@ function deleteUser(username){
 }
 
 async function doLogin(){
-  const username=document.getElementById('login-user').value.trim();
+  const username=document.getElementById('login-user').value.trim().toLowerCase();
   const password=document.getElementById('login-pass').value;
   const errEl=document.getElementById('login-err');
   errEl.style.display='none';
