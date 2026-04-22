@@ -10,6 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -941,6 +943,32 @@ tr:hover td{background:var(--surface3)}
       </div>
     </div>
 
+    <!-- Cloud Sync (head admin only) -->
+    <div class="settings-card" id="cloud-sync-section" style="display:none;margin-bottom:16px">
+      <div class="settings-card-title"><i data-lucide="cloud" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> مزامنة السحابة</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.7">اربط النظام بـ Firebase لمزامنة البيانات تلقائياً بين الأجهزة في الوقت الفعلي.</p>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <span id="sync-dot" style="width:10px;height:10px;border-radius:50%;background:var(--red,#ef4444);flex-shrink:0;display:inline-block;transition:background 0.4s,transform 0.3s"></span>
+        <span id="sync-status-text" style="font-size:13px;color:var(--text2)">غير متصل</span>
+      </div>
+      <div class="settings-field">
+        <label class="settings-label">Firebase Config (JSON)</label>
+        <textarea id="firebase-cfg-input" class="settings-inp" rows="5" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"https://YOUR-PROJECT-default-rtdb.firebaseio.com","projectId":"...","storageBucket":"...","messagingSenderId":"...","appId":"..."}' style="resize:vertical;font-family:monospace;font-size:11px;direction:ltr;text-align:left;line-height:1.6"></textarea>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button class="btn btn-brand" id="sync-connect-btn" style="flex:1;justify-content:center"><i data-lucide="cloud-upload" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> اتصال بالسحابة</button>
+        <button class="btn btn-danger" id="sync-disconnect-btn" style="flex:1;justify-content:center;display:none"><i data-lucide="cloud-off" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> قطع الاتصال</button>
+      </div>
+      <div class="settings-msg" id="sync-msg"></div>
+      <div id="sync-actions" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px">إجراءات يدوية:</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" id="sync-pull-btn" style="font-size:13px;background:var(--surface2);border:1px solid var(--border2)"><i data-lucide="download" style="width:13px;height:13px;display:inline-block;vertical-align:middle"></i> سحب من السحابة</button>
+          <button class="btn" id="sync-push-btn" style="font-size:13px;background:var(--surface2);border:1px solid var(--border2)"><i data-lucide="upload" style="width:13px;height:13px;display:inline-block;vertical-align:middle"></i> رفع إلى السحابة</button>
+        </div>
+      </div>
+    </div>
+
   </section>
 
   <!-- TAB 7: ACTIVITY LOG -->
@@ -1141,7 +1169,7 @@ const DEFAULT_ORG_DEPTS=[
   {id:'d5',name:'قسم البنات العالمي',nameEn:'Girls International',icon:'',color:'#5BB85D'},
 ];
 let orgDepts=load('msc_depts_v1', DEFAULT_ORG_DEPTS);
-function saveOrgDepts(){localStorage.setItem('msc_depts_v1',JSON.stringify(orgDepts));}
+function saveOrgDepts(){localStorage.setItem(K.DEPTS,JSON.stringify(orgDepts));cloudSave(K.DEPTS,orgDepts);}
 
 /* ─── TUITION DATA ────────────────────────────────── */
 const DEFAULT_FEES=[
@@ -1179,7 +1207,7 @@ async function ensureDefaultUser(){
   let users=loadUsers();
   if(!users){
     users=[{username:'alyamani',passHash:'bf4bcedaacc966a99376cf0ee1b5b23f291e2ed3f79df3f09386435d685ca650',displayName:'اليماني',role:'head',depts:[]}];
-    localStorage.setItem(K.USERS,JSON.stringify(users));
+    saveUsers(users);
   } else {
     // Migrate: ensure alyamani always has head role
     let changed=false;
@@ -1189,7 +1217,7 @@ async function ensureDefaultUser(){
       if(!u.depts){u=Object.assign({},u,{depts:[]});changed=true;}
       return u;
     });
-    if(changed) localStorage.setItem(K.USERS,JSON.stringify(users));
+    if(changed) saveUsers(users);
   }
   return users;
 }
@@ -1262,6 +1290,8 @@ function applyAuthState(){
     if(userMgmtSec) userMgmtSec.style.display=isHead?'':'none';
     const deptMgmtSec=document.getElementById('dept-mgmt-section');
     if(deptMgmtSec) deptMgmtSec.style.display=isHead?'':'none';
+    const cloudSyncSec=document.getElementById('cloud-sync-section');
+    if(cloudSyncSec){cloudSyncSec.style.display=isHead?'':'none';if(isHead)buildSyncCard();}
     // Messages button (all logged-in) + report button + inbox tab (head only)
     const msgBtn=document.getElementById('msg-open-btn');
     if(msgBtn) msgBtn.style.display='flex';
@@ -1320,7 +1350,8 @@ let isDark=true;
 const charts={};
 
 function load(key,def){try{return JSON.parse(localStorage.getItem(key))||def;}catch{return def;}}
-function save(key,val){localStorage.setItem(key,JSON.stringify(val));}
+function save(key,val){localStorage.setItem(key,JSON.stringify(val));cloudSave(key,val);}
+function saveUsers(u){localStorage.setItem(K.USERS,JSON.stringify(u));cloudSave(K.USERS,u);}
 
 function defaultData(){const d={};DEPTS.forEach(dep=>{d[dep.id]={base:0,newS:0,out:0};});return d;}
 function deptTotal(dep){const d=data[dep.id];return Math.max(0,(d.base||0)+(d.newS||0)-(d.out||0));}
@@ -1734,6 +1765,9 @@ async function init(){
   applyAuthState();
   setTimeout(renderAllCharts,100);
 
+  // Auto-connect Firebase if config saved
+  setTimeout(tryAutoConnectFirebase, 800);
+
   // Show login modal on first load if not logged in
   if(!auth.loggedIn) setTimeout(openLoginModal, 400);
 
@@ -2011,7 +2045,7 @@ function toggleUserRole(username){
   if(u.username==='alyamani'){toast(lang==='en'?'Cannot change head admin role':'لا يمكن تغيير دور المدير الرئيسي','err');return;}
   const newRole=u.role==='head'?'admin':'head';
   u.role=newRole;
-  localStorage.setItem(K.USERS,JSON.stringify(users));
+  saveUsers(users);
   logAction(LOG_ACTIONS.ROLE_CHANGE,username+' → '+newRole);renderUsersTable();
   toast(lang==='en'?'Role updated':'تم تحديث الدور');
 }
@@ -2031,7 +2065,7 @@ async function changePassword(){
   if(idx===-1||users[idx].passHash!==curHash){msg.textContent=t('errPwWrong');msg.style.display='block';return;}
   users[idx].passHash=await sha256(newPass);
   users[idx].passPlain=newPass;
-  localStorage.setItem(K.USERS,JSON.stringify(users));
+  saveUsers(users);
   document.getElementById('s-cur-pass').value='';
   document.getElementById('s-new-pass').value='';
   document.getElementById('s-confirm-pass').value='';
@@ -2048,7 +2082,7 @@ function updateDisplayName(){
   const idx=users.findIndex(u=>u.username===auth.username);
   if(idx===-1)return;
   users[idx].displayName=name;
-  localStorage.setItem(K.USERS,JSON.stringify(users));
+  saveUsers(users);
   auth.displayName=name;
   saveSession({username:auth.username,displayName:name});
   document.getElementById('auth-username-label').textContent=name;
@@ -2072,7 +2106,7 @@ async function addUser(){
   try{
     const passHash=await sha256(pass);
     users.push({username,passHash,passPlain:pass,displayName:display,role:'admin',depts:[]});
-    localStorage.setItem(K.USERS,JSON.stringify(users));
+    saveUsers(users);
     document.getElementById('new-user-username').value='';
     document.getElementById('new-user-pass').value='';
     document.getElementById('new-user-display').value='';
@@ -2095,7 +2129,7 @@ function deleteUser(username){
   const target=users.find(u=>u.username===username);
   if(target?.role==='head'){toast(lang==='en'?'Cannot delete another head admin':'لا يمكن حذف مدير رئيسي','err');return;}
   if(!confirm(t('confirmDelUser')+username+'؟'))return;
-  localStorage.setItem(K.USERS,JSON.stringify(users.filter(u=>u.username!==username)));
+  saveUsers(users.filter(u=>u.username!==username));
   logAction(LOG_ACTIONS.USER_DELETE,username);renderUsersTable();
   toast(t('toastUserDeleted'),'err');
 }
@@ -2166,7 +2200,7 @@ function deleteDept(id){
   // Remove from all user dept assignments
   const users=loadUsers()||[];
   users.forEach(u=>{if(u.depts)u.depts=u.depts.filter(x=>x!==id);});
-  localStorage.setItem(K.USERS,JSON.stringify(users));
+  saveUsers(users);
   buildDeptManager();
   logAction('DEPT_DELETE',d.name);toast(lang==='en'?'Department removed':'تم حذف القسم','err');
 }
@@ -2201,7 +2235,7 @@ function saveDeptAssign(){
   const checked=[...document.querySelectorAll('#dept-assign-checkboxes input:checked')].map(i=>i.value);
   // If all depts checked, store empty array (means "all")
   u.depts=checked.length===DEPTS.length?[]:checked;
-  localStorage.setItem(K.USERS,JSON.stringify(users));
+  saveUsers(users);
   closeDeptAssignModal();
   renderUsersTable();
   logAction('DEPT_ASSIGN',_deptAssignTarget+' → '+(u.depts.length?u.depts.join(','):'all'));
@@ -2210,7 +2244,7 @@ function saveDeptAssign(){
 
 /* ─── ISSUE / REPORT SYSTEM ──────────────────────── */
 function loadIssues(){try{return JSON.parse(localStorage.getItem(K.ISSUES))||[];}catch{return[];}}
-function saveIssues(issues){localStorage.setItem(K.ISSUES,JSON.stringify(issues));}
+function saveIssues(issues){localStorage.setItem(K.ISSUES,JSON.stringify(issues));cloudSave(K.ISSUES,issues);}
 
 function openReportModal(){
   if(!auth.loggedIn){openLoginModal();return;}
@@ -2348,7 +2382,7 @@ function clearResolved(){
 
 /* ─── MESSAGING SYSTEM ───────────────────────────── */
 function loadMessages(){try{return JSON.parse(localStorage.getItem(K.MESSAGES))||[];}catch{return[];}}
-function saveMessages(msgs){localStorage.setItem(K.MESSAGES,JSON.stringify(msgs));}
+function saveMessages(msgs){localStorage.setItem(K.MESSAGES,JSON.stringify(msgs));cloudSave(K.MESSAGES,msgs);}
 
 let _msgThread=null;   // username of the person currently in thread
 
@@ -2776,6 +2810,181 @@ function applyLang(){
   if(typeof renderReports==='function') renderReports();
   if(typeof renderCompCards==='function') renderCompCards();
   if(typeof renderAllCharts==='function') setTimeout(renderAllCharts, 60);
+}
+
+/* ─── FIREBASE CLOUD SYNC ─────────────────────────── */
+const FB_CFG_KEY='msc_firebase_cfg_v1';
+const SYNC_KEYS=[K.DATA,K.REPORTS,K.FEES,K.USERS,K.ISSUES,K.MESSAGES,K.DEPTS];
+let fbApp=null,fbDb=null,fbListeners={};
+let _cloudUpdateInProgress=false;
+
+function cloudSave(key,val){
+  if(!fbDb||!SYNC_KEYS.includes(key)||_cloudUpdateInProgress)return;
+  try{fbDb.ref('msc-zahra/'+key).set(val);}catch(e){console.warn('cloudSave err:',e);}
+}
+
+async function connectFirebase(configStr){
+  const msgEl=document.getElementById('sync-msg');
+  const dotEl=document.getElementById('sync-dot');
+  const statusEl=document.getElementById('sync-status-text');
+  const setMsg=(txt,ok)=>{if(msgEl){msgEl.style.color=ok?'var(--brand-light)':'var(--red,#ef4444)';msgEl.textContent=txt;msgEl.style.display='block';}};
+  try{
+    const cfg=JSON.parse(configStr.trim());
+    if(!cfg.databaseURL&&!cfg.projectId)throw new Error('يرجى تضمين databaseURL في الإعداد');
+    disconnectFirebase(false);
+    if(firebase.apps.length){
+      // Re-init with same app name
+      try{await firebase.app('[DEFAULT]').delete();}catch{}
+    }
+    fbApp=firebase.initializeApp(cfg);
+    fbDb=firebase.database(fbApp);
+    // Test connectivity
+    await fbDb.ref('.info/connected').once('value');
+    localStorage.setItem(FB_CFG_KEY,JSON.stringify(cfg));
+    // Update UI
+    if(dotEl){dotEl.style.background='var(--brand-light,#4BBFB8)';}
+    if(statusEl)statusEl.textContent='متصل — جارٍ المزامنة الأولية...';
+    const connectBtn=document.getElementById('sync-connect-btn');
+    const disconnectBtn=document.getElementById('sync-disconnect-btn');
+    const actionsEl=document.getElementById('sync-actions');
+    if(connectBtn)connectBtn.style.display='none';
+    if(disconnectBtn)disconnectBtn.style.display='';
+    if(actionsEl)actionsEl.style.display='';
+    setMsg('تم الاتصال بنجاح. جارٍ جلب البيانات...', true);
+    // Pull cloud data first, then start listeners
+    await pullFromCloud();
+    startFirebaseListeners();
+    if(statusEl)statusEl.textContent='متصل — مزامنة فعّالة';
+    setMsg('متصل — البيانات محدّثة من السحابة', true);
+    toast('تم الاتصال بـ Firebase والمزامنة الأولية');
+  }catch(e){
+    fbApp=null;fbDb=null;
+    if(dotEl)dotEl.style.background='var(--red,#ef4444)';
+    if(statusEl)statusEl.textContent='فشل الاتصال';
+    setMsg('خطأ: '+(e.message||String(e)), false);
+    console.error('Firebase connect error:',e);
+  }
+}
+
+function disconnectFirebase(showMsg=true){
+  Object.values(fbListeners).forEach(ref=>{try{ref.off();}catch{}});
+  fbListeners={};
+  if(fbDb){try{fbDb.goOffline();}catch{}}
+  if(fbApp){try{fbApp.delete().catch(()=>{});}catch{}}
+  fbApp=null;fbDb=null;
+  const dotEl=document.getElementById('sync-dot');
+  const statusEl=document.getElementById('sync-status-text');
+  const connectBtn=document.getElementById('sync-connect-btn');
+  const disconnectBtn=document.getElementById('sync-disconnect-btn');
+  const actionsEl=document.getElementById('sync-actions');
+  if(dotEl)dotEl.style.background='var(--red,#ef4444)';
+  if(statusEl)statusEl.textContent='غير متصل';
+  if(connectBtn)connectBtn.style.display='';
+  if(disconnectBtn)disconnectBtn.style.display='none';
+  if(actionsEl)actionsEl.style.display='none';
+  if(showMsg)toast('تم قطع الاتصال عن Firebase');
+}
+
+function startFirebaseListeners(){
+  if(!fbDb)return;
+  SYNC_KEYS.forEach(key=>{
+    const ref=fbDb.ref('msc-zahra/'+key);
+    fbListeners[key]=ref;
+    ref.on('value',snapshot=>{
+      if(_cloudUpdateInProgress)return;
+      const val=snapshot.val();
+      if(val===null||val===undefined)return;
+      handleCloudUpdate(key,val);
+    },e=>console.warn('FB listener err ('+key+'):',e));
+  });
+}
+
+function handleCloudUpdate(key,val){
+  localStorage.setItem(key,JSON.stringify(val));
+  if(key===K.DATA){data=val;if(typeof buildEntryGrid==='function')buildEntryGrid();if(typeof updateDashboard==='function')updateDashboard();if(typeof renderBar==='function')renderBar();if(typeof renderDonut==='function')renderDonut();}
+  else if(key===K.REPORTS){reports=val;if(typeof renderReports==='function')renderReports();if(typeof renderLine==='function')renderLine();}
+  else if(key===K.FEES){fees=val;if(typeof buildFeeEditGrid==='function')buildFeeEditGrid();if(typeof renderCompCards==='function')renderCompCards();if(typeof renderFeeBar==='function')renderFeeBar();}
+  else if(key===K.DEPTS){orgDepts=val;if(typeof buildEntryGrid==='function')buildEntryGrid();if(typeof updateDashboard==='function')updateDashboard();}
+  else if(key===K.ISSUES){if(typeof renderInbox==='function')renderInbox();}
+  else if(key===K.MESSAGES){if(typeof updateMsgBadge==='function')updateMsgBadge();}
+  // Pulse the sync dot
+  const dot=document.getElementById('sync-dot');
+  if(dot&&fbDb){dot.style.transform='scale(1.6)';setTimeout(()=>{dot.style.transform='';},350);}
+}
+
+async function pullFromCloud(){
+  if(!fbDb)return;
+  _cloudUpdateInProgress=true;
+  try{
+    for(const key of SYNC_KEYS){
+      const snap=await fbDb.ref('msc-zahra/'+key).once('value');
+      const val=snap.val();
+      if(val!==null&&val!==undefined) handleCloudUpdate(key,val);
+    }
+  }finally{_cloudUpdateInProgress=false;}
+}
+
+async function pushToCloud(){
+  if(!fbDb){toast('لا يوجد اتصال بـ Firebase','err');return;}
+  _cloudUpdateInProgress=true;
+  try{
+    const snapData={
+      [K.DATA]:load(K.DATA,defaultData()),
+      [K.REPORTS]:load(K.REPORTS,[]),
+      [K.FEES]:load(K.FEES,DEFAULT_FEES),
+      [K.USERS]:JSON.parse(localStorage.getItem(K.USERS)||'[]'),
+      [K.ISSUES]:load(K.ISSUES,[]),
+      [K.MESSAGES]:load(K.MESSAGES,[]),
+      [K.DEPTS]:load(K.DEPTS,DEFAULT_ORG_DEPTS)
+    };
+    await Promise.all(SYNC_KEYS.map(key=>fbDb.ref('msc-zahra/'+key).set(snapData[key])));
+    toast('تم رفع جميع البيانات إلى السحابة');
+  }catch(e){
+    toast('فشل الرفع: '+(e.message||String(e)),'err');
+    console.error('pushToCloud err:',e);
+  }finally{_cloudUpdateInProgress=false;}
+}
+
+async function tryAutoConnectFirebase(){
+  if(typeof firebase==='undefined')return;
+  const cfgStr=localStorage.getItem(FB_CFG_KEY);
+  if(!cfgStr)return;
+  const inputEl=document.getElementById('firebase-cfg-input');
+  if(inputEl)inputEl.value=cfgStr;
+  try{await connectFirebase(cfgStr);}
+  catch(e){console.warn('Auto Firebase connect failed:',e);}
+}
+
+function buildSyncCard(){
+  const connectBtn=document.getElementById('sync-connect-btn');
+  const disconnectBtn=document.getElementById('sync-disconnect-btn');
+  const actionsEl=document.getElementById('sync-actions');
+  if(!connectBtn)return;
+  connectBtn.onclick=async()=>{
+    const cfg=document.getElementById('firebase-cfg-input').value;
+    if(!cfg.trim()){const m=document.getElementById('sync-msg');if(m){m.style.color='var(--red,#ef4444)';m.textContent='أدخل إعدادات Firebase أولاً';m.style.display='block';}return;}
+    await connectFirebase(cfg);
+  };
+  disconnectBtn.onclick=()=>{
+    disconnectFirebase();
+    localStorage.removeItem(FB_CFG_KEY);
+    const m=document.getElementById('sync-msg');
+    if(m){m.style.color='var(--text2)';m.textContent='تم قطع الاتصال وحذف الإعداد المحفوظ';m.style.display='block';}
+  };
+  const pullBtn=document.getElementById('sync-pull-btn');
+  const pushBtn=document.getElementById('sync-push-btn');
+  if(pullBtn)pullBtn.onclick=pullFromCloud;
+  if(pushBtn)pushBtn.onclick=pushToCloud;
+  // If already connected (auto-reconnected), update UI
+  if(fbDb){
+    const dotEl=document.getElementById('sync-dot');
+    const statusEl=document.getElementById('sync-status-text');
+    if(dotEl)dotEl.style.background='var(--brand-light,#4BBFB8)';
+    if(statusEl)statusEl.textContent='متصل — مزامنة فعّالة';
+    if(connectBtn)connectBtn.style.display='none';
+    if(disconnectBtn)disconnectBtn.style.display='';
+    if(actionsEl)actionsEl.style.display='';
+  }
 }
 
 /* ─── LUCIDE ICONS ─────────────────────────────────── */
