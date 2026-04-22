@@ -12,6 +12,7 @@
 <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -2838,6 +2839,8 @@ async function connectFirebase(configStr){
     }
     fbApp=firebase.initializeApp(cfg);
     fbDb=firebase.database(fbApp);
+    // Sign in anonymously so database rules (auth != null) are satisfied
+    await firebase.auth(fbApp).signInAnonymously();
     // Test connectivity
     await fbDb.ref('.info/connected').once('value');
     localStorage.setItem(FB_CFG_KEY,JSON.stringify(cfg));
