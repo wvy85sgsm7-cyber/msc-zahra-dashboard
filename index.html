@@ -310,7 +310,7 @@ tr:hover td{background:var(--surface3)}
 .comp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
   padding:20px;position:relative;overflow:hidden;transition:all var(--tr)}
 .comp-card.highlight{border-color:var(--brand-light);background:var(--surface3)}
-.comp-card.highlight::before{content:'★ مدارستنا';position:absolute;top:12px;left:14px;
+.comp-card.highlight::before{content:'مدارستنا';position:absolute;top:12px;left:14px;
   font-size:10px;font-weight:800;color:var(--brand-light);background:rgba(75,191,184,0.12);
   border:1px solid var(--border-hi);padding:2px 8px;border-radius:20px}
 .comp-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
@@ -663,7 +663,7 @@ tr:hover td{background:var(--surface3)}
     <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
       <span class="badge badge-teal" data-i18n="badgeOwn">المدارس المتقدمة</span>
       <span class="badge badge-green" data-i18n="badgeLow">▲ أقل من المتوسط</span>
-      <span class="badge badge-gold" data-i18n="badgeMid">● ضمن المتوسط</span>
+      <span class="badge badge-gold" data-i18n="badgeMid">ضمن المتوسط</span>
       <span class="badge badge-red" data-i18n="badgeHigh">▼ أعلى من المتوسط</span>
       <span style="font-size:11px;color:var(--text3);align-self:center" data-i18n="feesCurrency">الرسوم بالريال السعودي سنوياً</span>
     </div>
@@ -810,7 +810,7 @@ tr:hover td{background:var(--surface3)}
         <div style="display:grid;grid-template-columns:1fr 1fr 80px 80px auto;gap:8px;align-items:flex-end;flex-wrap:wrap">
           <div><label class="settings-label" data-i18n="labelDeptName">اسم القسم (عربي)</label><input class="settings-inp" id="new-dept-name" data-i18n-ph="phDeptName" placeholder="اسم القسم"/></div>
           <div><label class="settings-label" data-i18n="labelDeptNameEn">اسم القسم (إنجليزي)</label><input class="settings-inp" id="new-dept-name-en" placeholder="Department name"/></div>
-          <div><label class="settings-label" data-i18n="labelDeptIcon">الأيقونة</label><input class="settings-inp" id="new-dept-icon" placeholder="🏫" style="text-align:center"/></div>
+          <div><label class="settings-label" data-i18n="labelDeptIcon">الأيقونة</label><input class="settings-inp" id="new-dept-icon" placeholder="-" style="text-align:center"/></div>
           <div><label class="settings-label" data-i18n="labelDeptColor">اللون</label><input type="color" id="new-dept-color" value="#4BBFB8" style="width:100%;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);cursor:pointer"/></div>
           <button class="btn btn-brand" id="add-dept-btn" style="white-space:nowrap" data-i18n="btnAddDept"><i data-lucide="plus" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> إضافة</button>
         </div>
@@ -856,8 +856,8 @@ tr:hover td{background:var(--surface3)}
       <div class="action-right">
         <select id="inbox-filter" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 11px;color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;outline:none">
           <option value="">— كل البلاغات —</option>
-          <option value="open">● مفتوح</option>
-          <option value="reviewed">◐ قيد المراجعة</option>
+          <option value="open">مفتوح</option>
+          <option value="reviewed">قيد المراجعة</option>
           <option value="resolved">○ تم الحل</option>
         </select>
         <button class="btn btn-danger" id="clear-resolved-btn" style="font-size:13px"><i data-lucide="trash-2" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> <span data-i18n="btnClearResolved">مسح المحلولة</span></button>
@@ -1002,20 +1002,20 @@ tr:hover td{background:var(--surface3)}
 /* ─── DEPARTMENTS ─────────────────────────────────── */
 /* Student-tracking departments — fixed, never shown in dept manager */
 const DEPTS=[
-  {id:'d1',name:'قسم البنين الأهلي الابتدائي',nameEn:'Boys National Elementary',short:'ب.أ.ا',shortEn:'BNE',icon:'🏫',color:'#1A8C8C'},
-  {id:'d2',name:'قسم البنين الأهلي المتوسط والثانوي',nameEn:'Boys National Middle/High',short:'ب.أ.م',shortEn:'BNM',icon:'📚',color:'#0B6E8C'},
-  {id:'d3',name:'قسم البنين العالمي',nameEn:'Boys International',short:'ب.ع',shortEn:'BI',icon:'🌐',color:'#2AB5A0'},
-  {id:'d4',name:'قسم البنات الأهلي',nameEn:'Girls National',short:'بت.أ',shortEn:'GN',icon:'🎀',color:'#3A9E6E'},
-  {id:'d5',name:'قسم البنات العالمي',nameEn:'Girls International',short:'بت.ع',shortEn:'GI',icon:'🌸',color:'#5BB85D'},
+  {id:'d1',name:'قسم البنين الأهلي الابتدائي',nameEn:'Boys National Elementary',short:'ب.أ.ا',shortEn:'BNE',icon:'',color:'#1A8C8C'},
+  {id:'d2',name:'قسم البنين الأهلي المتوسط والثانوي',nameEn:'Boys National Middle/High',short:'ب.أ.م',shortEn:'BNM',icon:'',color:'#0B6E8C'},
+  {id:'d3',name:'قسم البنين العالمي',nameEn:'Boys International',short:'ب.ع',shortEn:'BI',icon:'',color:'#2AB5A0'},
+  {id:'d4',name:'قسم البنات الأهلي',nameEn:'Girls National',short:'بت.أ',shortEn:'GN',icon:'',color:'#3A9E6E'},
+  {id:'d5',name:'قسم البنات العالمي',nameEn:'Girls International',short:'بت.ع',shortEn:'GI',icon:'',color:'#5BB85D'},
 ];
 
 /* Organisational departments — internal only, for user assignment in settings */
 const DEFAULT_ORG_DEPTS=[
-  {id:'d1',name:'قسم البنين الأهلي الابتدائي',nameEn:'Boys National Elementary',icon:'🏫',color:'#1A8C8C'},
-  {id:'d2',name:'قسم البنين الأهلي المتوسط والثانوي',nameEn:'Boys National Middle/High',icon:'📚',color:'#0B6E8C'},
-  {id:'d3',name:'قسم البنين العالمي',nameEn:'Boys International',icon:'🌐',color:'#2AB5A0'},
-  {id:'d4',name:'قسم البنات الأهلي',nameEn:'Girls National',icon:'🎀',color:'#3A9E6E'},
-  {id:'d5',name:'قسم البنات العالمي',nameEn:'Girls International',icon:'🌸',color:'#5BB85D'},
+  {id:'d1',name:'قسم البنين الأهلي الابتدائي',nameEn:'Boys National Elementary',icon:'',color:'#1A8C8C'},
+  {id:'d2',name:'قسم البنين الأهلي المتوسط والثانوي',nameEn:'Boys National Middle/High',icon:'',color:'#0B6E8C'},
+  {id:'d3',name:'قسم البنين العالمي',nameEn:'Boys International',icon:'',color:'#2AB5A0'},
+  {id:'d4',name:'قسم البنات الأهلي',nameEn:'Girls National',icon:'',color:'#3A9E6E'},
+  {id:'d5',name:'قسم البنات العالمي',nameEn:'Girls International',icon:'',color:'#5BB85D'},
 ];
 let orgDepts=load('msc_depts_v1', DEFAULT_ORG_DEPTS);
 function saveOrgDepts(){localStorage.setItem('msc_depts_v1',JSON.stringify(orgDepts));}
@@ -2018,7 +2018,7 @@ function buildDeptManager(){
 function addDept(){
   const name=document.getElementById('new-dept-name').value.trim();
   const nameEn=document.getElementById('new-dept-name-en').value.trim();
-  const icon=document.getElementById('new-dept-icon').value.trim()||'🏫';
+  const icon=document.getElementById('new-dept-icon').value.trim()||'';
   const color=document.getElementById('new-dept-color').value||'#4BBFB8';
   const msg=document.getElementById('add-dept-msg');
   if(!name){msg.textContent=lang==='en'?'Enter department name':'أدخل اسم القسم';msg.style.display='block';return;}
@@ -2363,7 +2363,7 @@ function showMsgNewPicker(){
     const sd=u.displayName.replace(/'/g,"\\'");
     return `<div onclick="openUserThread('${su}','${sd}');document.getElementById('msg-picker').style.display='none'" style="padding:9px 12px;cursor:pointer;border-radius:7px;font-size:13px;display:flex;align-items:center;gap:9px;transition:background var(--tr)" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
       <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--brand-light),var(--brand-green));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">${u.displayName.charAt(0)}</div>
-      <div><div style="font-weight:700;color:var(--text)">${u.displayName}</div><div style="font-size:11px;color:var(--text3)">@${u.username}${u.role==='head'?' ♦':''}</div></div>
+      <div><div style="font-weight:700;color:var(--text)">${u.displayName}</div><div style="font-size:11px;color:var(--text3)">@${u.username}${u.role==='head'?' (Head)':''}</div></div>
     </div>`;
   }).join('');
   picker.style.display='block';
@@ -2404,7 +2404,7 @@ const TRANSLATIONS = {
     sectionTuition: 'مقارنة الرسوم الدراسية بمدارس جدة',
     btnResetFees: 'إعادة تعيين', btnSaveFees: 'حفظ الرسوم',
     badgeOwn: 'المدارس المتقدمة', badgeLow: '▲ أقل من المتوسط',
-    badgeMid: '● ضمن المتوسط', badgeHigh: '▼ أعلى من المتوسط',
+    badgeMid: 'ضمن المتوسط', badgeHigh: '▼ أعلى من المتوسط',
     feesCurrency: 'الرسوم بالريال السعودي سنوياً',
     sectionEditFees: 'تعديل الرسوم', toggleEdit: 'تعديل بيانات الرسوم',
     sectionFeeDetails: 'تفاصيل الرسوم لكل مدرسة',
@@ -2517,7 +2517,7 @@ const TRANSLATIONS = {
     sectionTuition: 'Tuition Comparison — Jeddah Schools',
     btnResetFees: 'Reset Fees', btnSaveFees: 'Save Fees',
     badgeOwn: 'Al-Mutaqadimah Schools', badgeLow: '▲ Below Average',
-    badgeMid: '● Within Average', badgeHigh: '▼ Above Average',
+    badgeMid: 'Within Average', badgeHigh: '▼ Above Average',
     feesCurrency: 'Annual fees in Saudi Riyals (SAR)',
     sectionEditFees: 'Edit Fees', toggleEdit: 'Edit Fee Data',
     sectionFeeDetails: 'Fee Details per School',
