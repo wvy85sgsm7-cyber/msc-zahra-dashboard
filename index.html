@@ -1946,17 +1946,23 @@ async function addUser(){
   if(pass.length<4){msg.textContent=t('errPwShort');msg.style.display='block';return;}
   const users=loadUsers()||[];
   if(users.find(u=>u.username===username)){msg.textContent=t('errUsernameExists');msg.style.display='block';return;}
-  const passHash=await sha256(pass);
-  users.push({username,passHash,passPlain:pass,displayName:display,role:'admin',depts:[]});
-  localStorage.setItem(K.USERS,JSON.stringify(users));
-  document.getElementById('new-user-username').value='';
-  document.getElementById('new-user-pass').value='';
-  document.getElementById('new-user-display').value='';
-  msg.style.color='var(--brand-light)';
-  msg.style.color='var(--brand-light)';
-  msg.innerHTML=icon('check',12)+' '+t('toastUserAdded');msg.style.display='block';
-  logAction(LOG_ACTIONS.USER_ADD,username);renderUsersTable();
-  toast(t('toastUserAdded'));
+  try{
+    const passHash=await sha256(pass);
+    users.push({username,passHash,passPlain:pass,displayName:display,role:'admin',depts:[]});
+    localStorage.setItem(K.USERS,JSON.stringify(users));
+    document.getElementById('new-user-username').value='';
+    document.getElementById('new-user-pass').value='';
+    document.getElementById('new-user-display').value='';
+    msg.style.color='var(--brand-light)';
+    msg.innerHTML=icon('check',12)+' '+t('toastUserAdded');msg.style.display='block';
+    logAction(LOG_ACTIONS.USER_ADD,username);renderUsersTable();refreshIcons();
+    toast(t('toastUserAdded'));
+  }catch(e){
+    msg.style.color='var(--red,#ef4444)';
+    msg.textContent=(lang==='en'?'Error saving user: ':'خطأ في حفظ المستخدم: ')+(e.message||String(e));
+    msg.style.display='block';
+    console.error('addUser error:',e);
+  }
 }
 
 function deleteUser(username){
@@ -2617,7 +2623,16 @@ function applyLang(){
       if(lock) el.appendChild(lock);
       if(badge) el.appendChild(badge);
     } else {
-      el.innerHTML=val;
+      if(el.children.length>0){
+        // Element has child nodes (icons/SVGs) — preserve them, only update text nodes
+        let found=false;
+        for(const n of el.childNodes){
+          if(n.nodeType===3){n.textContent=' '+val;found=true;}
+        }
+        if(!found) el.appendChild(document.createTextNode(' '+val));
+      } else {
+        el.innerHTML=val;
+      }
     }
   });
 
@@ -2626,7 +2641,8 @@ function applyLang(){
   });
 
   const langBtn=document.getElementById('lang-btn');
-  if(langBtn){ langBtn.title=isEn?'عربي':'English'; langBtn.innerHTML='<i data-lucide="globe" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i> '+(isEn?'AR':'EN'); refreshIcons(); }
+  if(langBtn){ langBtn.title=isEn?'عربي':'English'; langBtn.innerHTML='<i data-lucide="globe" style="width:16px;height:16px;display:inline-block;vertical-align:middle"></i> '+(isEn?'AR':'EN'); }
+  refreshIcons();
 
   if(typeof updateDashboard==='function') updateDashboard();
   if(typeof buildEntryGrid==='function') buildEntryGrid();
