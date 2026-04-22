@@ -2831,8 +2831,13 @@ async function connectFirebase(configStr){
   const statusEl=document.getElementById('sync-status-text');
   const setMsg=(txt,ok)=>{if(msgEl){msgEl.style.color=ok?'var(--brand-light)':'var(--red,#ef4444)';msgEl.textContent=txt;msgEl.style.display='block';}};
   try{
-    const cfg=JSON.parse(configStr.trim());
-    if(!cfg.databaseURL&&!cfg.projectId)throw new Error('يرجى تضمين databaseURL في الإعداد');
+    // Accept both JSON {"key":"val"} and JS object {key:"val"} formats
+    let cfg;
+    const s=configStr.trim().replace(/;$/,'');
+    try{cfg=JSON.parse(s);}
+    catch{try{cfg=Function('"use strict";return ('+s+')')();}
+    catch(e2){throw new Error('تنسيق الإعداد غير صحيح — '+e2.message);}}
+    if(!cfg||!cfg.databaseURL)throw new Error('يرجى تضمين databaseURL في الإعداد');
     disconnectFirebase(false);
     if(firebase.apps.length){
       // Re-init with same app name
