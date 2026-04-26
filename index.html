@@ -1167,18 +1167,20 @@ function saveOrgDepts(){localStorage.setItem(K.DEPTS,JSON.stringify(orgDepts));c
 
 /* ─── TUITION DATA ────────────────────────────────── */
 const DEFAULT_FEES=[
-  {id:'own',name:'المدارس المتقدمة — الزهراء',own:true,type:'وزاري وأمريكي',fees:{kg:17000,elem:22000,mid:26000,high:30000}},
-  {id:'s_forsan_ar',name:'دار الفرسان — المسار الوزاري',own:false,type:'وزاري — منهج عربي',fees:{kg:16000,elem:19000,mid:20000,high:22000}},
-  {id:'s_forsan_am',name:'دار الفرسان — الدبلوما الأمريكية',own:false,type:'دولي — دبلوما أمريكية',fees:{kg:24500,elem:26000,mid:28000,high:30000}},
-  {id:'s_nahda',name:'مدارس النهضة',own:false,type:'وزاري',fees:{kg:0,elem:18000,mid:19500,high:0}},
-  {id:'s_abhar',name:'مدارس ابحر',own:false,type:'وزاري',fees:{kg:0,elem:20000,mid:22000,high:0}},
-  {id:'s_nuaim',name:'مدارس النعيم',own:false,type:'وزاري',fees:{kg:0,elem:0,mid:0,high:25500}},
+  {id:'own',name:'المدارس المتقدمة',own:true,type:'أهلي وعالمي',fees:{kg:18000,elem:22000,mid:26000,high:30000,intl:48000}},
+  {id:'s2',name:'مدارس الأجيال الدولية',own:false,type:'دولي — منهج بريطاني',fees:{kg:52000,elem:58000,mid:65000,high:72000,intl:80000}},
+  {id:'s3',name:'مدارس جيمس (GEMS)',own:false,type:'دولي — منهج أمريكي',fees:{kg:62000,elem:68000,mid:75000,high:85000,intl:95000}},
+  {id:'s4',name:'مدارس المعرفة الدولية',own:false,type:'دولي — منهج أمريكي',fees:{kg:38000,elem:42000,mid:50000,high:56000,intl:65000}},
+  {id:'s5',name:'AISJ — المدرسة الأمريكية الدولية',own:false,type:'دولي — منهج أمريكي',fees:{kg:50000,elem:55000,mid:65000,high:75000,intl:75000}},
+  {id:'s6',name:'BISJ — المدرسة البريطانية الدولية',own:false,type:'دولي — منهج بريطاني',fees:{kg:45000,elem:50000,mid:60000,high:68000,intl:68000}},
+  {id:'s7',name:'MIS — مدارس منارات الدولية',own:false,type:'دولي — منهج متنوع',fees:{kg:28000,elem:32000,mid:40000,high:47000,intl:47000}},
+  {id:'s8',name:'مدارس ابن خلدون الدولية',own:false,type:'دولي — منهج IB',fees:{kg:40000,elem:45000,mid:52000,high:60000,intl:70000}},
 ];
 const FEE_STAGES=[{key:'kg',label:'روضة'},{key:'elem',label:'ابتدائي'},{key:'mid',label:'متوسط'},{key:'high',label:'ثانوي'}];
 
 /* ─── STORAGE KEYS ────────────────────────────────── */
 const K={DATA:'msc_data_v3',REPORTS:'msc_reports_v3',THEME:'msc_theme_v3',
-  SAVED:'msc_last_saved',FEES:'msc_fees_v5',USERS:'msc_users_v3',SESSION:'msc_sess_v2',LOGS:'msc_logs_v1',DEPTS:'msc_depts_v1',ISSUES:'msc_issues_v1',MESSAGES:'msc_msgs_v1'};
+  SAVED:'msc_last_saved',FEES:'msc_fees_v4',USERS:'msc_users_v3',SESSION:'msc_sess_v2',LOGS:'msc_logs_v1',DEPTS:'msc_depts_v1',ISSUES:'msc_issues_v1',MESSAGES:'msc_msgs_v1'};
 
 /* ─── AUTH ────────────────────────────────────────── */
 // Default user stored if none exist
@@ -1337,17 +1339,6 @@ function closeLoginModal(){document.getElementById('login-modal').classList.remo
 /* ─── STATE ───────────────────────────────────────── */
 let data=load(K.DATA,defaultData());
 let reports=load(K.REPORTS,[]);
-// Migrate from v4: preserve own-school custom prices, replace fake competitor data
-(function migrateFees(){
-  const old=JSON.parse(localStorage.getItem('msc_fees_v4')||'null');
-  if(!old)return; // nothing to migrate
-  const ownOld=old.find(s=>s.own);
-  if(ownOld){
-    const def=DEFAULT_FEES.find(s=>s.own);
-    if(def) def.fees=ownOld.fees; // keep custom own-school prices
-  }
-  localStorage.removeItem('msc_fees_v4');
-})();
 let fees=load(K.FEES,DEFAULT_FEES);
 orgDepts=load(K.DEPTS,DEFAULT_ORG_DEPTS);
 let isDark=true;
