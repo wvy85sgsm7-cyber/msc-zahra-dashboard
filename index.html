@@ -821,13 +821,6 @@ tr:hover td{background:var(--surface3)}
           <label data-i18n="labelHigh">ثانوي</label>
           <input class="smr-inp smr-fee-inp" id="new-fee-high" type="number" min="0" step="500" placeholder="0"/>
         </div>
-        <div class="smr-add-group" style="min-width:80px;max-width:110px">
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
-            <input type="checkbox" id="new-intl-toggle" checked onchange="document.getElementById('new-fee-intl').style.display=this.checked?'':'none'" style="accent-color:var(--brand-light);width:13px;height:13px"/>
-            <span data-i18n="labelIntl">دولي</span>
-          </label>
-          <input class="smr-inp smr-fee-inp" id="new-fee-intl" type="number" min="0" step="500" placeholder="0"/>
-        </div>
         <button class="btn btn-brand" id="add-school-btn" style="white-space:nowrap;align-self:flex-end" data-i18n="btnAddSchool"><i data-lucide="plus" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> إضافة مدرسة</button>
       </div>
       <!-- School list -->
@@ -1183,7 +1176,7 @@ const DEFAULT_FEES=[
   {id:'s7',name:'MIS — مدارس منارات الدولية',own:false,type:'دولي — منهج متنوع',fees:{kg:28000,elem:32000,mid:40000,high:47000,intl:47000}},
   {id:'s8',name:'مدارس ابن خلدون الدولية',own:false,type:'دولي — منهج IB',fees:{kg:40000,elem:45000,mid:52000,high:60000,intl:70000}},
 ];
-const FEE_STAGES=[{key:'kg',label:'روضة'},{key:'elem',label:'ابتدائي'},{key:'mid',label:'متوسط'},{key:'high',label:'ثانوي'},{key:'intl',label:'عالمي'}];
+const FEE_STAGES=[{key:'kg',label:'روضة'},{key:'elem',label:'ابتدائي'},{key:'mid',label:'متوسط'},{key:'high',label:'ثانوي'}];
 
 /* ─── STORAGE KEYS ────────────────────────────────── */
 const K={DATA:'msc_data_v3',REPORTS:'msc_reports_v3',THEME:'msc_theme_v3',
@@ -1543,19 +1536,7 @@ function buildSchoolManager(){
         ${!school.own?`<button class="btn" style="padding:5px 11px;font-size:12px;background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);flex-shrink:0" data-del="${school.id}">${lang==='en'?icon('trash-2',12)+' Remove':icon('trash-2',12)+' حذف'}</button>`:''}
       </div>
       <div class="smr-fees">
-        ${FEE_STAGES.map(st=>{
-          if(st.key==='intl'){
-            const hasIntl=(school.fees.intl||0)>0;
-            return `<div class="smr-fee-col">
-              <label style="display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer">
-                <input type="checkbox" ${hasIntl?'checked':''} onchange="toggleSchoolIntl(this,'${school.id}')" style="accent-color:var(--brand-light);width:12px;height:12px"/>
-                <span>${t(stageKeys[st.key]||st.key)}</span>
-              </label>
-              <input class="smr-fee-inp" type="number" min="0" step="500" data-stage="${st.key}" value="${school.fees[st.key]||0}" style="${hasIntl?'':'display:none'}" placeholder="0"/>
-            </div>`;
-          }
-          return `<div class="smr-fee-col"><label>${t(stageKeys[st.key]||st.key)}</label><input class="smr-fee-inp" type="number" min="0" step="500" data-stage="${st.key}" value="${school.fees[st.key]||0}"/></div>`;
-        }).join('')}
+        ${FEE_STAGES.map(st=>`<div class="smr-fee-col"><label>${t(stageKeys[st.key]||st.key)}</label><input class="smr-fee-inp" type="number" min="0" step="500" data-stage="${st.key}" value="${school.fees[st.key]||0}"/></div>`).join('')}
       </div>`;
     list.appendChild(row);
 
@@ -1612,13 +1593,11 @@ function addSchool(){
       kg:parseInt(document.getElementById('new-fee-kg').value)||0,
       elem:parseInt(document.getElementById('new-fee-elem').value)||0,
       mid:parseInt(document.getElementById('new-fee-mid').value)||0,
-      high:parseInt(document.getElementById('new-fee-high').value)||0,
-      intl:document.getElementById('new-intl-toggle').checked?(parseInt(document.getElementById('new-fee-intl').value)||0):0
+      high:parseInt(document.getElementById('new-fee-high').value)||0
     }
   });
-  // clear form and reset toggle
-  ['new-school-name','new-school-type','new-fee-kg','new-fee-elem','new-fee-mid','new-fee-high','new-fee-intl'].forEach(id=>{document.getElementById(id).value='';});
-  const tog=document.getElementById('new-intl-toggle');tog.checked=true;document.getElementById('new-fee-intl').style.display='';
+  // clear form
+  ['new-school-name','new-school-type','new-fee-kg','new-fee-elem','new-fee-mid','new-fee-high'].forEach(id=>{document.getElementById(id).value='';})
   buildSchoolManager();renderCompCards();setTimeout(renderFeeBar,50);
   logAction(LOG_ACTIONS.SCHOOL_ADD,name);toast(lang==='en'?'School added':'تمت إضافة المدرسة');
 }
