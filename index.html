@@ -2824,23 +2824,16 @@ async function jbFetch(url,opts={}){
 }
 
 async function findOrCreateBin(apiKey){
-  // Search existing bins for one named msc-zahra-dashboard
-  const listRes=await fetch('https://api.jsonbin.io/v3/b',{headers:{'X-Master-Key':apiKey}});
-  if(!listRes.ok){
-    if(listRes.status===401)throw new Error('مفتاح API غير صحيح — تحقق منه وأعد المحاولة');
-    throw new Error('HTTP '+listRes.status);
-  }
-  const listJson=await listRes.json();
-  const bins=listJson.result||[];
-  const found=bins.find(b=>(b.snippetMeta?.name||b.metadata?.name)==='msc-zahra-dashboard');
-  if(found)return found.snippetMeta?.id||found.metadata?.id||found._id;
-  // Not found — create a new bin with current data
+  // Create a new private bin
   const createRes=await fetch('https://api.jsonbin.io/v3/b',{
     method:'POST',
     headers:{'Content-Type':'application/json','X-Master-Key':apiKey,'X-Bin-Name':'msc-zahra-dashboard','X-Bin-Private':'true'},
     body:JSON.stringify(buildSyncPayload())
   });
-  if(!createRes.ok)throw new Error('فشل إنشاء قاعدة البيانات: HTTP '+createRes.status);
+  if(!createRes.ok){
+    if(createRes.status===401)throw new Error('مفتاح API غير صحيح');
+    throw new Error('فشل إنشاء قاعدة البيانات: HTTP '+createRes.status);
+  }
   const cj=await createRes.json();
   return cj.metadata?.id;
 }
@@ -2865,9 +2858,10 @@ async function connectSync(apiKey){
   const status=document.getElementById('sync-status-text');
   if(dot)dot.style.background='#f59e0b';
   if(status)status.textContent='جارٍ الاتصال...';
-  setMsg('جارٍ البحث عن قاعدة البيانات...', true);
+  setMsg('جارٍ الاتصال بقاعدة البيانات...', true);
   try{
-    const binId=await findOrCreateBin(apiKey.trim());
+    // Use known bin ID if key matches default, otherwise create new bin
+    const binId=apiKey.trim()===JB_DEFAULT.apiKey?JB_DEFAULT.binId:await findOrCreateBin(apiKey.trim());
     if(!binId)throw new Error('لم يتم الحصول على معرّف البيانات');
     jbCfg={apiKey:apiKey.trim(),binId};
     localStorage.setItem(JB_CFG_KEY,JSON.stringify(jbCfg));
