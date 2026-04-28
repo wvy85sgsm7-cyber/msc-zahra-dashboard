@@ -2792,6 +2792,7 @@ function applyLang(){
 
 /* ─── JSONBIN CLOUD SYNC ──────────────────────────── */
 const JB_CFG_KEY='msc_jsonbin_cfg_v1';
+const JB_DEFAULT={apiKey:'$2a$10$zfqXWQICgVXKMKkE8q/PouXNbsNTkoQaarUQ9xHEPkR7Qrwv6le2W',binId:'69f1030c36566621a80167a9'};
 const SYNC_KEYS=[K.DATA,K.REPORTS,K.FEES,K.USERS,K.ISSUES,K.MESSAGES,K.DEPTS];
 let jbCfg=null; // {apiKey, binId}
 let _cloudUpdateInProgress=false;
@@ -2937,15 +2938,14 @@ async function pushToCloud(showToast=true){
 }
 
 async function tryAutoConnectFirebase(){
-  const cfgStr=localStorage.getItem(JB_CFG_KEY);
-  if(!cfgStr)return;
+  // Use hardcoded config — no setup needed
+  jbCfg=JB_DEFAULT;
   try{
-    jbCfg=JSON.parse(cfgStr);
-    const inputEl=document.getElementById('firebase-cfg-input');
-    if(inputEl)inputEl.value=jbCfg.apiKey;
     await pullFromCloud();
     startSyncPolling();
     setSyncUI(true);
+    const inputEl=document.getElementById('firebase-cfg-input');
+    if(inputEl)inputEl.value=jbCfg.apiKey;
   }catch(e){jbCfg=null;console.warn('Auto sync connect failed:',e);}
 }
 
