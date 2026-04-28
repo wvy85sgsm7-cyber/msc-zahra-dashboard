@@ -10,9 +10,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -940,14 +937,14 @@ tr:hover td{background:var(--surface3)}
     <!-- Cloud Sync (head admin only) -->
     <div class="settings-card" id="cloud-sync-section" style="display:none;margin-bottom:16px">
       <div class="settings-card-title"><i data-lucide="cloud" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> مزامنة السحابة</div>
-      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.7">اربط النظام بـ Firebase لمزامنة البيانات تلقائياً بين الأجهزة في الوقت الفعلي.</p>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.7">اربط النظام بـ JSONBin لمزامنة البيانات تلقائياً بين جميع الأجهزة. أنشئ حساباً مجانياً على <strong>jsonbin.io</strong> ثم انسخ مفتاح API.</p>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
         <span id="sync-dot" style="width:10px;height:10px;border-radius:50%;background:var(--red,#ef4444);flex-shrink:0;display:inline-block;transition:background 0.4s,transform 0.3s"></span>
         <span id="sync-status-text" style="font-size:13px;color:var(--text2)">غير متصل</span>
       </div>
       <div class="settings-field">
-        <label class="settings-label">Firebase Config (JSON)</label>
-        <textarea id="firebase-cfg-input" class="settings-inp" rows="5" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"https://YOUR-PROJECT-default-rtdb.firebaseio.com","projectId":"...","storageBucket":"...","messagingSenderId":"...","appId":"..."}' style="resize:vertical;font-family:monospace;font-size:11px;direction:ltr;text-align:left;line-height:1.6"></textarea>
+        <label class="settings-label">مفتاح API — من jsonbin.io</label>
+        <input id="firebase-cfg-input" class="settings-inp" type="password" placeholder="$2b$10$..." style="direction:ltr;font-family:monospace;font-size:13px"/>
       </div>
       <div style="display:flex;gap:10px;margin-top:10px">
         <button class="btn btn-brand" id="sync-connect-btn" style="flex:1;justify-content:center"><i data-lucide="cloud-upload" style="width:14px;height:14px;display:inline-block;vertical-align:middle"></i> اتصال بالسحابة</button>
@@ -2793,98 +2790,114 @@ function applyLang(){
   if(typeof renderAllCharts==='function') setTimeout(renderAllCharts, 60);
 }
 
-/* ─── FIREBASE CLOUD SYNC ─────────────────────────── */
-const FB_CFG_KEY='msc_firebase_cfg_v1';
+/* ─── JSONBIN CLOUD SYNC ──────────────────────────── */
+const JB_CFG_KEY='msc_jsonbin_cfg_v1';
 const SYNC_KEYS=[K.DATA,K.REPORTS,K.FEES,K.USERS,K.ISSUES,K.MESSAGES,K.DEPTS];
-let fbApp=null,fbDb=null,fbListeners={};
+let jbCfg=null; // {apiKey, binId}
 let _cloudUpdateInProgress=false;
+let jbSaveTimer=null,jbPollTimer=null;
 
 function cloudSave(key,val){
-  if(!fbDb||!SYNC_KEYS.includes(key)||_cloudUpdateInProgress)return;
-  try{fbDb.ref('msc-zahra/'+key).set(val);}catch(e){console.warn('cloudSave err:',e);}
+  if(!jbCfg||!SYNC_KEYS.includes(key)||_cloudUpdateInProgress)return;
+  if(jbSaveTimer)clearTimeout(jbSaveTimer);
+  jbSaveTimer=setTimeout(()=>pushToCloud(false),3000);
 }
 
-async function connectFirebase(configStr){
-  const msgEl=document.getElementById('sync-msg');
-  const dotEl=document.getElementById('sync-dot');
-  const statusEl=document.getElementById('sync-status-text');
-  const setMsg=(txt,ok)=>{if(msgEl){msgEl.style.color=ok?'var(--brand-light)':'var(--red,#ef4444)';msgEl.textContent=txt;msgEl.style.display='block';}};
-  try{
-    // Accept both JSON {"key":"val"} and JS object {key:"val"} formats
-    let cfg;
-    const s=configStr.trim().replace(/;$/,'');
-    try{cfg=JSON.parse(s);}
-    catch{try{cfg=Function('"use strict";return ('+s+')')();}
-    catch(e2){throw new Error('تنسيق الإعداد غير صحيح — '+e2.message);}}
-    if(!cfg||!cfg.databaseURL)throw new Error('يرجى تضمين databaseURL في الإعداد');
-    disconnectFirebase(false);
-    if(firebase.apps.length){
-      // Re-init with same app name
-      try{await firebase.app('[DEFAULT]').delete();}catch{}
-    }
-    fbApp=firebase.initializeApp(cfg);
-    fbDb=firebase.database(fbApp);
-    // Sign in anonymously so database rules (auth != null) are satisfied
-    await firebase.auth(fbApp).signInAnonymously();
-    // Test connectivity
-    await fbDb.ref('.info/connected').once('value');
-    localStorage.setItem(FB_CFG_KEY,JSON.stringify(cfg));
-    // Update UI
-    if(dotEl){dotEl.style.background='var(--brand-light,#4BBFB8)';}
-    if(statusEl)statusEl.textContent='متصل — جارٍ المزامنة الأولية...';
-    const connectBtn=document.getElementById('sync-connect-btn');
-    const disconnectBtn=document.getElementById('sync-disconnect-btn');
-    const actionsEl=document.getElementById('sync-actions');
-    if(connectBtn)connectBtn.style.display='none';
-    if(disconnectBtn)disconnectBtn.style.display='';
-    if(actionsEl)actionsEl.style.display='';
-    setMsg('تم الاتصال بنجاح. جارٍ جلب البيانات...', true);
-    // Pull cloud data first, then start listeners
-    await pullFromCloud();
-    startFirebaseListeners();
-    if(statusEl)statusEl.textContent='متصل — مزامنة فعّالة';
-    setMsg('متصل — البيانات محدّثة من السحابة', true);
-    toast('تم الاتصال بـ Firebase والمزامنة الأولية');
-  }catch(e){
-    fbApp=null;fbDb=null;
-    if(dotEl)dotEl.style.background='var(--red,#ef4444)';
-    if(statusEl)statusEl.textContent='فشل الاتصال';
-    setMsg('خطأ: '+(e.message||String(e)), false);
-    console.error('Firebase connect error:',e);
+function buildSyncPayload(){
+  const p={};
+  SYNC_KEYS.forEach(key=>{try{p[key]=JSON.parse(localStorage.getItem(key)||'null');}catch{}});
+  return p;
+}
+
+async function jbFetch(url,opts={}){
+  if(!jbCfg)throw new Error('غير متصل');
+  const headers={'X-Master-Key':jbCfg.apiKey,...(opts.headers||{})};
+  if(opts.body)headers['Content-Type']='application/json';
+  const res=await fetch(url,{...opts,headers});
+  if(!res.ok){
+    if(res.status===401)throw new Error('مفتاح API غير صحيح');
+    if(res.status===404)throw new Error('لم يتم العثور على البيانات');
+    throw new Error('HTTP '+res.status);
   }
+  return res.json();
 }
 
-function disconnectFirebase(showMsg=true){
-  Object.values(fbListeners).forEach(ref=>{try{ref.off();}catch{}});
-  fbListeners={};
-  if(fbDb){try{fbDb.goOffline();}catch{}}
-  if(fbApp){try{fbApp.delete().catch(()=>{});}catch{}}
-  fbApp=null;fbDb=null;
-  const dotEl=document.getElementById('sync-dot');
-  const statusEl=document.getElementById('sync-status-text');
+async function findOrCreateBin(apiKey){
+  // Search existing bins for one named msc-zahra-dashboard
+  const listRes=await fetch('https://api.jsonbin.io/v3/b',{headers:{'X-Master-Key':apiKey}});
+  if(!listRes.ok){
+    if(listRes.status===401)throw new Error('مفتاح API غير صحيح — تحقق منه وأعد المحاولة');
+    throw new Error('HTTP '+listRes.status);
+  }
+  const listJson=await listRes.json();
+  const bins=listJson.result||[];
+  const found=bins.find(b=>(b.snippetMeta?.name||b.metadata?.name)==='msc-zahra-dashboard');
+  if(found)return found.snippetMeta?.id||found.metadata?.id||found._id;
+  // Not found — create a new bin with current data
+  const createRes=await fetch('https://api.jsonbin.io/v3/b',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','X-Master-Key':apiKey,'X-Bin-Name':'msc-zahra-dashboard','X-Bin-Private':'true'},
+    body:JSON.stringify(buildSyncPayload())
+  });
+  if(!createRes.ok)throw new Error('فشل إنشاء قاعدة البيانات: HTTP '+createRes.status);
+  const cj=await createRes.json();
+  return cj.metadata?.id;
+}
+
+function setSyncUI(connected){
+  const dot=document.getElementById('sync-dot');
+  const status=document.getElementById('sync-status-text');
   const connectBtn=document.getElementById('sync-connect-btn');
   const disconnectBtn=document.getElementById('sync-disconnect-btn');
   const actionsEl=document.getElementById('sync-actions');
-  if(dotEl)dotEl.style.background='var(--red,#ef4444)';
-  if(statusEl)statusEl.textContent='غير متصل';
-  if(connectBtn)connectBtn.style.display='';
-  if(disconnectBtn)disconnectBtn.style.display='none';
-  if(actionsEl)actionsEl.style.display='none';
-  if(showMsg)toast('تم قطع الاتصال عن Firebase');
+  if(dot)dot.style.background=connected?'var(--brand-light,#4BBFB8)':'var(--red,#ef4444)';
+  if(status)status.textContent=connected?'متصل — مزامنة فعّالة':'غير متصل';
+  if(connectBtn)connectBtn.style.display=connected?'none':'';
+  if(disconnectBtn)disconnectBtn.style.display=connected?'':'none';
+  if(actionsEl)actionsEl.style.display=connected?'':'none';
 }
 
-function startFirebaseListeners(){
-  if(!fbDb)return;
-  SYNC_KEYS.forEach(key=>{
-    const ref=fbDb.ref('msc-zahra/'+key);
-    fbListeners[key]=ref;
-    ref.on('value',snapshot=>{
-      if(_cloudUpdateInProgress)return;
-      const val=snapshot.val();
-      if(val===null||val===undefined)return;
-      handleCloudUpdate(key,val);
-    },e=>console.warn('FB listener err ('+key+'):',e));
-  });
+async function connectSync(apiKey){
+  const msgEl=document.getElementById('sync-msg');
+  const setMsg=(txt,ok)=>{if(msgEl){msgEl.style.color=ok?'var(--brand-light)':'var(--red,#ef4444)';msgEl.textContent=txt;msgEl.style.display='block';}};
+  const dot=document.getElementById('sync-dot');
+  const status=document.getElementById('sync-status-text');
+  if(dot)dot.style.background='#f59e0b';
+  if(status)status.textContent='جارٍ الاتصال...';
+  setMsg('جارٍ البحث عن قاعدة البيانات...', true);
+  try{
+    const binId=await findOrCreateBin(apiKey.trim());
+    if(!binId)throw new Error('لم يتم الحصول على معرّف البيانات');
+    jbCfg={apiKey:apiKey.trim(),binId};
+    localStorage.setItem(JB_CFG_KEY,JSON.stringify(jbCfg));
+    setSyncUI(true);
+    setMsg('جارٍ تحميل البيانات من السحابة...', true);
+    await pullFromCloud();
+    startSyncPolling();
+    setMsg('متصل — البيانات متزامنة على جميع الأجهزة', true);
+    toast('تم الاتصال والمزامنة بنجاح');
+  }catch(e){
+    jbCfg=null;
+    setSyncUI(false);
+    setMsg('خطأ: '+(e.message||String(e)), false);
+    console.error('connectSync error:',e);
+  }
+}
+
+function disconnectSync(showMsg=true){
+  if(jbPollTimer){clearInterval(jbPollTimer);jbPollTimer=null;}
+  if(jbSaveTimer){clearTimeout(jbSaveTimer);jbSaveTimer=null;}
+  jbCfg=null;
+  setSyncUI(false);
+  if(showMsg)toast('تم قطع الاتصال');
+}
+
+function startSyncPolling(){
+  if(jbPollTimer)clearInterval(jbPollTimer);
+  jbPollTimer=setInterval(async()=>{
+    if(!jbCfg){clearInterval(jbPollTimer);return;}
+    try{await pullFromCloud(false);}catch(e){console.warn('Poll err:',e);}
+  },120000); // every 2 minutes
 }
 
 function handleCloudUpdate(key,val){
@@ -2895,83 +2908,69 @@ function handleCloudUpdate(key,val){
   else if(key===K.DEPTS){orgDepts=val;if(typeof buildEntryGrid==='function')buildEntryGrid();if(typeof updateDashboard==='function')updateDashboard();}
   else if(key===K.ISSUES){if(typeof renderInbox==='function')renderInbox();}
   else if(key===K.MESSAGES){if(typeof updateMsgBadge==='function')updateMsgBadge();}
-  // Pulse the sync dot
   const dot=document.getElementById('sync-dot');
-  if(dot&&fbDb){dot.style.transform='scale(1.6)';setTimeout(()=>{dot.style.transform='';},350);}
+  if(dot&&jbCfg){dot.style.transform='scale(1.6)';setTimeout(()=>{dot.style.transform='';},350);}
 }
 
-async function pullFromCloud(){
-  if(!fbDb)return;
+async function pullFromCloud(updateStatus=true){
+  if(!jbCfg)return;
   _cloudUpdateInProgress=true;
   try{
-    for(const key of SYNC_KEYS){
-      const snap=await fbDb.ref('msc-zahra/'+key).once('value');
-      const val=snap.val();
-      if(val!==null&&val!==undefined) handleCloudUpdate(key,val);
-    }
+    const json=await jbFetch(`https://api.jsonbin.io/v3/b/${jbCfg.binId}/latest`,{headers:{'X-Bin-Meta':'false'}});
+    const record=json.record||json;
+    SYNC_KEYS.forEach(key=>{if(record[key]!==undefined&&record[key]!==null)handleCloudUpdate(key,record[key]);});
+    if(updateStatus){const s=document.getElementById('sync-status-text');if(s&&jbCfg)s.textContent='متصل — آخر مزامنة: '+new Date().toLocaleTimeString('ar');}
   }finally{_cloudUpdateInProgress=false;}
 }
 
-async function pushToCloud(){
-  if(!fbDb){toast('لا يوجد اتصال بـ Firebase','err');return;}
+async function pushToCloud(showToast=true){
+  if(!jbCfg){if(showToast)toast('لا يوجد اتصال بالسحابة','err');return;}
   _cloudUpdateInProgress=true;
   try{
-    const snapData={
-      [K.DATA]:load(K.DATA,defaultData()),
-      [K.REPORTS]:load(K.REPORTS,[]),
-      [K.FEES]:load(K.FEES,DEFAULT_FEES),
-      [K.USERS]:JSON.parse(localStorage.getItem(K.USERS)||'[]'),
-      [K.ISSUES]:load(K.ISSUES,[]),
-      [K.MESSAGES]:load(K.MESSAGES,[]),
-      [K.DEPTS]:load(K.DEPTS,DEFAULT_ORG_DEPTS)
-    };
-    await Promise.all(SYNC_KEYS.map(key=>fbDb.ref('msc-zahra/'+key).set(snapData[key])));
-    toast('تم رفع جميع البيانات إلى السحابة');
+    await jbFetch(`https://api.jsonbin.io/v3/b/${jbCfg.binId}`,{method:'PUT',body:JSON.stringify(buildSyncPayload())});
+    const s=document.getElementById('sync-status-text');if(s&&jbCfg)s.textContent='متصل — آخر مزامنة: '+new Date().toLocaleTimeString('ar');
+    if(showToast)toast('تم رفع البيانات إلى السحابة');
   }catch(e){
-    toast('فشل الرفع: '+(e.message||String(e)),'err');
+    if(showToast)toast('فشل الرفع: '+(e.message||e),'err');
     console.error('pushToCloud err:',e);
   }finally{_cloudUpdateInProgress=false;}
 }
 
 async function tryAutoConnectFirebase(){
-  if(typeof firebase==='undefined')return;
-  const cfgStr=localStorage.getItem(FB_CFG_KEY);
+  const cfgStr=localStorage.getItem(JB_CFG_KEY);
   if(!cfgStr)return;
-  const inputEl=document.getElementById('firebase-cfg-input');
-  if(inputEl)inputEl.value=cfgStr;
-  try{await connectFirebase(cfgStr);}
-  catch(e){console.warn('Auto Firebase connect failed:',e);}
+  try{
+    jbCfg=JSON.parse(cfgStr);
+    const inputEl=document.getElementById('firebase-cfg-input');
+    if(inputEl)inputEl.value=jbCfg.apiKey;
+    await pullFromCloud();
+    startSyncPolling();
+    setSyncUI(true);
+  }catch(e){jbCfg=null;console.warn('Auto sync connect failed:',e);}
 }
 
 function buildSyncCard(){
   const connectBtn=document.getElementById('sync-connect-btn');
-  const disconnectBtn=document.getElementById('sync-disconnect-btn');
-  const actionsEl=document.getElementById('sync-actions');
   if(!connectBtn)return;
   connectBtn.onclick=async()=>{
-    const cfg=document.getElementById('firebase-cfg-input').value;
-    if(!cfg.trim()){const m=document.getElementById('sync-msg');if(m){m.style.color='var(--red,#ef4444)';m.textContent='أدخل إعدادات Firebase أولاً';m.style.display='block';}return;}
-    await connectFirebase(cfg);
+    const key=document.getElementById('firebase-cfg-input').value.trim();
+    if(!key){const m=document.getElementById('sync-msg');if(m){m.style.color='var(--red,#ef4444)';m.textContent='أدخل مفتاح API أولاً';m.style.display='block';}return;}
+    await connectSync(key);
   };
-  disconnectBtn.onclick=()=>{
-    disconnectFirebase();
-    localStorage.removeItem(FB_CFG_KEY);
+  document.getElementById('sync-disconnect-btn').onclick=()=>{
+    disconnectSync();
+    localStorage.removeItem(JB_CFG_KEY);
     const m=document.getElementById('sync-msg');
-    if(m){m.style.color='var(--text2)';m.textContent='تم قطع الاتصال وحذف الإعداد المحفوظ';m.style.display='block';}
+    if(m){m.style.color='var(--text2)';m.textContent='تم قطع الاتصال وحذف الإعداد';m.style.display='block';}
   };
   const pullBtn=document.getElementById('sync-pull-btn');
   const pushBtn=document.getElementById('sync-push-btn');
-  if(pullBtn)pullBtn.onclick=pullFromCloud;
-  if(pushBtn)pushBtn.onclick=pushToCloud;
-  // If already connected (auto-reconnected), update UI
-  if(fbDb){
-    const dotEl=document.getElementById('sync-dot');
-    const statusEl=document.getElementById('sync-status-text');
-    if(dotEl)dotEl.style.background='var(--brand-light,#4BBFB8)';
-    if(statusEl)statusEl.textContent='متصل — مزامنة فعّالة';
-    if(connectBtn)connectBtn.style.display='none';
-    if(disconnectBtn)disconnectBtn.style.display='';
-    if(actionsEl)actionsEl.style.display='';
+  if(pullBtn)pullBtn.onclick=()=>pullFromCloud(true);
+  if(pushBtn)pushBtn.onclick=()=>pushToCloud(true);
+  if(jbCfg){
+    setSyncUI(true);
+    const cfgStr=localStorage.getItem(JB_CFG_KEY);
+    if(cfgStr){const c=JSON.parse(cfgStr);const el=document.getElementById('firebase-cfg-input');if(el)el.value=c.apiKey;}
   }
 }
 
